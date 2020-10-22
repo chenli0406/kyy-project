@@ -46,7 +46,7 @@
       "pages/search": {
         "component": "index"
       },
-      "pages/article": {
+      "pages/info-detail": {
         "component": "index"
       },
       "pages/comment": {
@@ -91,13 +91,15 @@
     "menu": false,
     "pages": {
       "pages/index": {
-        "titleBarText": ""
+        "titleBarText": "",
+         "menu": true
       },
       "pages/search": {
-        "titleBarText": ""
+        "titleBarText": "",
+         "menu": true
       },
-      "pages/article": {
-        "titleBarText": ""
+      "pages/info-detail": {
+        "titleBarText": "资讯详情"
       },
       "pages/comment": {
         "titleBarText": ""
@@ -130,7 +132,8 @@
         "titleBarText": ""
       },
       "pages/information": {
-        "titleBarText": ""
+        "titleBarText": "",
+        "menu": false
       }
     }
   }

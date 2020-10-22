@@ -66,11 +66,10 @@
 import router from '@system.router'
 
 export default {
-  data: {
-    translateY: '',
+  private: {
     showContent: false,
     adverImg: require('../../assets/images/index/adverImg.png'),
-    defaultAvatar: require('../../assets/images/index/default-avatar.png'),
+    defaultAvatar: require('../../assets/images/index/default-avatar.png'), 
   },
   onInit() {
   },
@@ -85,13 +84,13 @@ export default {
   // 资讯跳转路由
   getRouterinfo() {
     router.push({
-      uri: '/pages/information'
+      uri: 'pages/information'
     })
   },
   // 跳转收藏
   getRouterCollect() {
     router.push({
-      uri: '/pages/theme-list'
+      uri: 'pages/collection'
     });
     this.showContent = false;
   },

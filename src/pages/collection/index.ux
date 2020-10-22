@@ -1,36 +1,99 @@
 <template>
   <div class="page-wrapper">
-    <title-bar title="我的收藏" show-back="{{true}}"></title-bar>
-    <car-list
-      list="{{result}}"
-      show-price="{{false}}"
-      show-comment="{{true}}"
-      show-num="{{false}}"
-    ></car-list>
+    <title-bar title="收藏" show-back="{{true}}"></title-bar>
+    <list class="list-box">
+      <list-item type="listItem" for="{{list}}">
+        <div class="item-container">
+          <img class="img" src="../../assets/images/collect-item.png" />
+          <div style="flex-direction: column; align-items: flex-start;">
+            <text class="item-title">{{$item.title}}</text>
+            <text class="item">{{$item.url}}</text>
+          </div>
+        </div>
+        <div  class="check-box" @click="del($item.id)"></div>
+      </list-item>
+    </list>
+   <div style="flex-direction: row;">
+     <button class=""><text>删除</text></button>
+     <button class=""><text>完成</text></button>
+   </div>
   </div>
 </template>
 
 <import name="title-bar" src="../../components/common/bar/title-bar"></import>
-<import name="car-list" src="../../components/car/car-list"></import>
 <script>
 import router from '@system.router'
 export default {
   protected: {},
   private: {
-    result: [
+    list: [
       {
-        id: '33302033441',
-        image: '/assets/images/car.png',
-        title: '科沃兹01',
-        comment: '科沃兹/紧凑型SUV'
-      }
-    ]
+        id: "1",
+        title: "花瓣网-陪你做生活的设计师花瓣网",
+        url: "https://huaban.com/home/"
+      },
+      {
+        id: "2",
+        title: "花瓣网-陪你做生活的设计师",
+        url: "https://huaban.com/home/"
+      },
+      {
+        id: "3",
+        title: "花瓣网-陪你做生活的设计师",
+        url: "https://huaban.com/home/"
+      },
+    ],
+    ids: [],
   },
-  onInit() {}
-  /* -------------------SelfCustomEvent------------------ */
+  onInit() { },
+  del(val){
+    this.ids.push(val);
+    
+  }
 }
 </script>
 
 <style lang="less">
 @import '../../assets/styles/index.less';
+.page-wrapper {
+  background-color: #fff;
+  .list-box {
+    padding: 20px 30px;
+    list-item {
+      padding: 15px 0;
+      height: 130px;
+      border-bottom: 1px solid #eee;
+      .item-container {
+        .item-title {
+          height: 40px;
+          line-height: 40px;
+          width: 100%;
+          color: #000;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .item {
+          height: 28px;
+          font-size: 26px;
+          color: #666666;
+          line-height: 60px;
+        }
+        .img {
+          width: 70px;
+          height: 70px;
+          background: #567aff;
+          margin-right: 35px;
+        }
+      }
+      .check-box{
+        align-items: center;
+        width: 40px;
+        height: 40px;
+        border: 2px solid #ccc;
+        border-radius: 50%;
+      }
+    }
+  }
+}
 </style>

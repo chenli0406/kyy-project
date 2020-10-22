@@ -8,9 +8,9 @@ const storage = require('@system.storage')
 function showMenu() {
   const page = router.getState()
   const itemList =
-    page.path === '/pages/main' ? ['保存桌面', '取消'] : ['保存桌面', '返回首页', '取消']
+    page.path === '/pages/index' ? ['保存桌面', '取消'] : ['保存桌面', '返回首页', '取消']
   const itemFuncMapping =
-    page.path === '/pages/main' ? [createShortcut, null] : [createShortcut, gotoMain, null]
+    page.path === '/pages/index' ? [createShortcut, null] : [createShortcut, gotoMain, null]
   prompt.showContextMenu({
     itemList,
     success: function(ret) {
@@ -54,9 +54,9 @@ function createShortcut() {
 function gotoMain() {
   let page = router.getState()
   console.log(page)
-  if (page.path !== '/pages/main') {
+  if (page.path !== '/pages/index') {
     router.push({
-      uri: '/pages/main'
+      uri: '/pages/index'
     })
   }
 }

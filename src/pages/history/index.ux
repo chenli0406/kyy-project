@@ -1,16 +1,14 @@
 <template>
   <div class="page-wrapper">
     <title-bar title="{{title}}" show-back="{{true}}"></title-bar>
-    <car-list list="{{result}}" show-num="{{false}}" if="{{result.length}}"></car-list>
-    <div if="{{!result.length}}" class="no-data">
+    <!-- <div if="{{!result.length}}" class="no-data">
       <image class="no-data-img" src="/assets/images/no-data.png"></image>
       <text class="text-remark-big">暂无数据</text>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <import name="title-bar" src="../../components/common/bar/title-bar"></import>
-<import name="car-list" src="../../components/car/car-list"></import>
 <script>
 import router from '@system.router'
 export default {

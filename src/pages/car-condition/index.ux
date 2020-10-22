@@ -17,7 +17,6 @@
           <div class="space-between-condition" if="{{filterType === 'brand'}}">
             <text class="brand-name">{{ filter }}</text>
           </div>
-          <car-list list="{{result}}"></car-list>
         </div>
       </tab-content>
     </tabs>
@@ -26,7 +25,6 @@
 
 <import name="title-bar" src="../../components/common/bar/title-bar"></import>
 <import name="underline-tab-bar" src="../../components/common/tab/underline-tab-bar"></import>
-<import name="car-list" src="../../components/car/car-list"></import>
 <script>
 import router from '@system.router'
 export default {

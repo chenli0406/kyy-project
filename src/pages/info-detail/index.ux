@@ -1,0 +1,72 @@
+
+<template>
+  <div class="page-wrapper">
+    <title-barmenu title="资讯详情" show-back="{{true}}"></title-barmenu>
+    <div>
+      <text class="title">{{ title }}</text>
+    </div>
+    <div class="content">
+      <richtext type="html" class="rich-text">{{content}}</richtext>
+    </div>
+  </div>
+</template>
+<import name="title-barmenu" src="../../components/common/bar/title-barmenu"></import>
+<script>
+export default {
+  data: {
+    articleId: "",
+    title: "美国特朗普14岁小儿子曾确诊感染新冠，现检测结果已转阴现检测结果已转阴...",
+    content: "<p>Lorem ipsum dolor sit amet, consemet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipisctetur adipiscing elit.</p> Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. ",
+  },
+  onInit() {
+    // 查询article
+    this.queryActicle()
+  },
+  queryActicle() {
+    // 根据路由传的articleId查询
+    console.log(this.articleId)
+  },
+}
+</script>
+
+<style lang="less">
+@import '../../assets/styles/index.less';
+.page-wrapper {
+  background-color: #fff;
+  .title {
+    padding: 20px 30px;
+    font-size: 40px;
+    line-height: 60px;
+  }
+  .content {
+    font-size: 30px;
+    line-height: 40px;
+    padding: 20px 30px; 
+    margin-bottom: 50px;
+  }
+}
+.title-bar {
+  height: 130px;
+  width: 100%;
+  padding: @gap-3 0 @gap-3 @gap-3;
+  background-color: @white;
+  .flex-box-mixins(row, flex-end, center);
+  .back{
+    font-size: 40px;
+    width: 60px;
+    height: 70px;
+  }
+  .menu {
+    font-size: 40px;
+    width: 100px;
+    height: 70px;
+    text-align: center;
+  }
+  .cancel {
+    font-size: 30px;
+    width: 110px;
+    height: 70px;
+    text-align: center;
+  }
+}
+</style>

@@ -1,10 +1,9 @@
 <template>
-  <div class="title-bar">
+  <div class="search-box">
     <text class="back iconfont" if="showBack" onclick="goBack">&#xe606;</text>
     <div class="search" onclick="toSearch">
       <text>请输入搜索内容或网址</text>
     </div>
-    <text class="iconfont menu" onclick="showMenu">&#xe60c;</text>
   </div>
 </template>
 
@@ -32,4 +31,8 @@ export default {
 
 <style lang="less">
 @import '../../../assets/styles/index.less';
+.search-box{
+  padding: 30px;
+  background-color: #fff;
+}
 </style>

@@ -2,6 +2,7 @@
   <div class="title-bar">
     <text class="back iconfont" if="showBack" onclick="goBack">&#xe606;</text>
     <text class="center-title">{{ title }}</text>
+    <text class="iconfont menu" onclick="showMenu">&#xe60c;</text>
   </div>
 </template>
 
@@ -15,9 +16,13 @@ export default {
     },
     title: {}
   },
+  /* -------------------SelfCustomEvent------------------ */
   goBack() {
     router.back()
   },
+  showMenu() {
+    this.$app.$def.showMenu()
+  }
 }
 </script>
 
