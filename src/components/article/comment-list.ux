@@ -1,0 +1,77 @@
+<template>
+  <div class="page-container-white">
+    <div class="comment-container" for="{{list}}">
+      <text class="iconfont comment-left">&#xe643;</text>
+      <div class="comment-right">
+        <text class="text-remark">{{ $item.name }}</text>
+        <text class="text-black">{{ $item.comment }}</text>
+        <div class="comment-resource" if="{{$item.resource}}">
+          <div class="space-between-line">
+            <text class="text-remark-black">{{ $item.resource.name }}</text>
+            <text class="text-remark">{{ $item.resource.time }}</text>
+          </div>
+          <text class="text-remark-big">{{ $item.resource.comment }}</text>
+        </div>
+        <div class="space-between-line reply">
+          <text class="text-remark">{{ $item.time }}</text>
+          <text class="iconfont" onclick="replyComment($item)">&#xe60e;</text>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  props: ['list'],
+  /* -------------------SelfCustomEvent------------------ */
+  replyComment(item) {
+    this.$emit('replyComment', { comment: item })
+  }
+}
+</script>
+
+<style lang="less">
+@import '../../assets/styles/index.less';
+.comment-container {
+  padding: @gap-3 @gap-3 0 @gap-3;
+  .flex-box-mixins(row, flex-start, flex-start);
+}
+.comment-left {
+  width: 60px;
+  font-size: 40px;
+  padding-right: @gap-2;
+}
+.comment-right {
+  flex: 1;
+  flex-direction: column;
+  .border-bottom-mixins();
+  .text-remark,
+  .text-black {
+    margin-bottom: @gap-3;
+  }
+}
+.comment-resource {
+  background-color: @bg-grey;
+  padding: 26px;
+  .flex-box-mixins(column, flex-start, flex-start);
+  .space-between-line {
+    padding-bottom: 26px;
+  }
+  .text-remark {
+    margin-bottom: 0px;
+  }
+}
+.reply {
+  .text-remark {
+    padding: @gap-2 0;
+    margin-bottom: 0px;
+  }
+  .iconfont {
+    padding: @gap-2 0;
+    margin-bottom: 0px;
+    width: 100px;
+    text-align: right;
+  }
+}
+</style>

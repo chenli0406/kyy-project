@@ -1,0 +1,129 @@
+<template>
+  <div class="page-container">
+    <search-bar></search-bar>
+    <brand-list>
+      <div class="section-container">
+        <div class="section">
+          <div class="section-title">
+            <div class="section-title-line"></div>
+            <text class="text-title">条件选车</text>
+          </div>
+          <div class="section-content">
+            <div
+              for="sectionList"
+              class="condition-item"
+              onclick="gotoCondition($item, 'condition')"
+            >
+              <text class="section-label">{{ $item }}</text>
+            </div>
+          </div>
+        </div>
+        <div class="section brand">
+          <div class="section-title">
+            <div class="section-title-line"></div>
+            <text class="text-title">热门品牌</text>
+          </div>
+          <div class="section-content">
+            <div for="brandList" class="brand-item" onclick="gotoCondition($item, 'brand')">
+              <div class="brand-logo">
+                <image src="{{$item.logo}}" class="brand-image"></image>
+              </div>
+              <text class="section-item-text">{{ $item.title }}</text>
+            </div>
+          </div>
+        </div>
+      </div>
+    </brand-list>
+  </div>
+</template>
+
+<import name="search-bar" src="../common/bar/search-bar"></import>
+<import name="brand-list" src="./brand-list"></import>
+
+<script>
+export default {
+  props: [],
+  data: {
+    car: {
+      list: [],
+      pageNo: 1,
+      pageSize: 5,
+      total: null,
+      load: true
+    },
+    sectionList: ['5-8万', '15-20万', '20-25万', '7座', '轿车', 'SUV', 'MPV', 'ESP'],
+    brandList: [
+      {
+        title: '大众',
+        logo: '/assets/images/logo1.png'
+      },
+      {
+        title: '丰田',
+        logo: '/assets/images/logo2.png'
+      },
+      {
+        title: '福特',
+        logo: '/assets/images/logo3.png'
+      },
+      {
+        title: '现代',
+        logo: '/assets/images/logo4.png'
+      },
+      {
+        title: '本田',
+        logo: '/assets/images/logo5.png'
+      },
+      {
+        title: '宝马',
+        logo: '/assets/images/logo6.png'
+      },
+      {
+        title: '吉利',
+        logo: '/assets/images/logo7.png'
+      },
+      {
+        title: '奇瑞',
+        logo: '/assets/images/logo8.png'
+      },
+      {
+        title: '奥迪',
+        logo: '/assets/images/logo9.png'
+      },
+      {
+        title: '奔驰',
+        logo: '/assets/images/logo10.png'
+      }
+    ]
+  },
+  /* -------------------SelfCustomEvent------------------ */
+  gotoCondition(condition, type) {
+    let para = {
+      type: type,
+      condition: type === 'condition' ? condition : condition.title
+    }
+    // 跳转到条件找车页面
+    $utils.route2theUrl('pages/car-condition', para)
+  }
+}
+</script>
+
+<style lang="less">
+@import '../../assets/styles/index.less';
+
+.condition-item {
+  width: 25%;
+}
+
+.brand-item {
+  width: 20%;
+  margin-bottom: @gap-1;
+  flex-direction: column;
+  .brand-logo {
+    justify-content: center;
+    align-content: center;
+  }
+  .brand-image {
+    height: 80px;
+  }
+}
+</style>

@@ -1,0 +1,240 @@
+<import name="my-load-more" src="apex-ui/components/load-more/index"></import>
+
+<template>
+  <div class="page-wrapper">
+    <search-bar show-back="{{true}}"></search-bar>
+    <list id="article" onscrollbottom="queryList">
+      <list-item type="article">
+        <article article="{{article}}"></article>
+      </list-item>
+      <list-item type="ad"> <ad ad="{{ad}}"></ad> </list-item>
+      <list-item type="comment-title">
+        <div class="section-title-bordered">
+          <div class="section-title-line"></div>
+          <text class="text-title">最新评论</text>
+        </div>
+      </list-item>
+      <list-item type="comment">
+        <comment-list list="{{comment.list}}" onreply-comment="replyComment"></comment-list>
+      </list-item>
+      <list-item type="loadMore" class="load-status" if="{{comment.load}}">
+        <my-load-more tip="加载更多" ></my-load-more>
+      </list-item>
+      <list-item type="noMore" class="load-status" if="{{!comment.load}}">
+        <my-load-more tip="没有更多内容了" loading="{{ false }}" ></my-load-more>
+      </list-item>
+    </list>
+    <comment-bar
+      onscroll-to-comment="scrollToComment"
+      onpublish-comment="publishComment"
+    ></comment-bar>
+  </div>
+</template>
+
+<import name="search-bar" src="../../components/common/bar/search-bar"></import>
+<import name="article" src="../../components/article/article"></import>
+<import name="ad" src="../../components/article/ad"></import>
+<import name="comment-list" src="../../components/article/comment-list"></import>
+<import name="comment-bar" src="../../components/article/comment-bar"></import>
+<script>
+export default {
+  protected: {
+    articleId: ''
+  },
+  private: {
+    article: {},
+    ad: {
+      image: '/assets/images/pic_1.png',
+      title: '奥迪A6L',
+      price: '40.28-69.48万'
+    },
+    comment: {
+      list: [],
+      pageNo: 1,
+      pageSize: 10,
+      total: null,
+      load: true
+    }
+  },
+  onInit() {
+    // 查询article
+    this.queryActicle()
+    // 查询评论列表
+    this.queryList(1)
+  },
+  /* -------------------SelfCustomEvent------------------ */
+  queryActicle() {
+    // 根据路由传的articleId查询
+    console.log(this.articleId)
+    this.article = {
+      id: '123',
+      title: '天术今近常新文合',
+      image: '/assets/images/user.png',
+      remark: '数据中心',
+      time: '2014-08-02',
+      list: [
+        {
+          type: 'text',
+          content: '影他通元规还认据每要只建交。'
+        },
+        {
+          type: 'image',
+          content: '/assets/images/pic_3.png'
+        },
+        {
+          type: 'text',
+          content: '矿主连而转林县技状情后影他战。般查增老些置本知者维之参大因合只。'
+        },
+        {
+          type: 'text',
+          content: '门音反内为想保片特须容局等并候音金。'
+        },
+        {
+          type: 'text',
+          content:
+            '着国收社听非农情走织置称处色影。可回老热计少打争内近以极。生该么消除石作精林联程县外门图。'
+        },
+        {
+          type: 'image',
+          content: '/assets/images/pic_2.png'
+        },
+        {
+          type: 'text',
+          content: '维白格识教本政识类叫术与除权万除事。'
+        }
+      ]
+    }
+  },
+  queryList(pageNo) {
+    if (!isNaN(pageNo) && pageNo !== this.comment.pageNo) {
+      return
+    }
+    if (this.comment.total && this.comment.pageNo * this.comment.pageSize > this.comment.total) {
+      this.comment.load = false
+      return
+    }
+    // 延时模拟接口请求
+    setTimeout(() => {
+      this.queryFn()
+    }, 100)
+  },
+  queryFn() {
+    /*
+    根据pageNo和pageSize查询列表
+    由接口返回数据设置total，并将数据push到list
+    */
+    this.comment.pageNo++
+    this.comment.total = 30
+    this.comment.list.push(
+      {
+        id: '440000201012179259',
+        name: '文伟',
+        comment: '下发些选见路新反龙图',
+        time: '1999-02-24',
+        resource: {
+          id: '130000197204308818',
+          name: '罗娟',
+          comment: '志太量们员用集国明县',
+          time: '2006-10-14'
+        }
+      },
+      {
+        id: '350000198510075755',
+        name: '姜丽',
+        comment: '政体外里风期强成会资它全指组类位须学华声都如这反',
+        time: '1972-12-16',
+        resource: {
+          id: '230000200510227707',
+          name: '赵娟',
+          comment: '大相军认然发志同相长究群更战置水学且六几以北酸',
+          time: '2006-08-01'
+        }
+      },
+      {
+        id: '810000201404230788',
+        name: '尹丽',
+        comment: '局为起片毛品文张程感力基头',
+        time: '1978-07-20',
+        resource: null
+      },
+      {
+        id: '71000019860811975X',
+        name: '石超',
+        comment: '公认包白真层安式我图间劳电而产整其且提',
+        time: '2018-11-24',
+        resource: null
+      },
+      {
+        id: '410000198504160239',
+        name: '邱勇',
+        comment: '收社少率为真决术青土没再技再把次',
+        time: '2018-07-17',
+        resource: null
+      },
+      {
+        id: '310000201411238018',
+        name: '董平',
+        comment: '指量广单条政全三存没',
+        time: '2001-12-31',
+        resource: {
+          id: '140000201803229434',
+          name: '高静',
+          comment: '至改确边安克受才劳走进复大容干适家其务',
+          time: '1979-09-27'
+        }
+      },
+      {
+        id: '630000197911116119',
+        name: '谭静',
+        comment: '党么学油品克标区列低铁身斗况列断合性中题维',
+        time: '1983-03-19',
+        resource: null
+      },
+      {
+        id: '1630000197911116119',
+        name: '小明',
+        comment: '空寿司斗况列断合性中题维',
+        time: '1983-03-19',
+        resource: null
+      },
+      {
+        id: '122230000197911116119',
+        name: '木增',
+        comment: '上课上课合性中题维',
+        time: '1983-08-21',
+        resource: null
+      },
+      {
+        id: '23888888888888881111',
+        name: '静香',
+        comment: '水库大开大合上手机费',
+        time: '2003-06-26',
+        resource: null
+      }
+    )
+  },
+  scrollToComment() {
+    this.$element('article').scrollTo({ index: 2 })
+  },
+  publishComment() {
+    $utils.route2theUrl('pages/comment', {
+      title: this.article.title,
+      id: this.article.id
+    })
+  },
+  replyComment(parameter) {
+    let comment = parameter.detail.comment
+    $utils.route2theUrl('pages/comment-reply', {
+      title: this.article.title,
+      id: this.article.id,
+      commentId: comment.id,
+      commentText: comment.comment,
+      commentName: comment.name
+    })
+  }
+}
+</script>
+
+<style lang="less">
+@import '../../assets/styles/index.less';
+</style>

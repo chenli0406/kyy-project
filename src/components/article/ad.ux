@@ -1,0 +1,40 @@
+<template>
+  <div class="ad">
+    <image class="ad-left" src="{{ad.image}}"></image>
+    <div class="ad-right">
+      <text class="text-title">{{ ad.title }}</text>
+      <div>
+        <text class="text-remark">指导价：</text>
+        <text class="text-remark-warning">{{ ad.price }}</text>
+      </div>
+      <text class="button" onclick="onBtnClick">询价</text>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  props: ['ad']
+  /* -------------------SelfCustomEvent------------------ */
+}
+</script>
+
+<style lang="less">
+@import '../../assets/styles/index.less';
+.ad {
+  padding: @gap-3;
+  width: 100%;
+  height: 260px;
+  margin-bottom: @gap-2;
+  background-color: @white;
+  .ad-left {
+    width: 40%;
+    height: 100%;
+  }
+  .ad-right {
+    width: 60%;
+    padding-left: @gap-3;
+    .flex-box-mixins(column, space-between, flex-start);
+  }
+}
+</style>

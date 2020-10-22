@@ -1,0 +1,137 @@
+{
+  "package": "com.example.demo",
+  "name": "demo",
+  "versionName": "1.0.0",
+  "versionCode": "3",
+  "minPlatformVersion": "1020",
+  "icon": "/assets/images/index/1.png",
+  "features": [
+    {
+      "name": "system.prompt"
+    },
+    {
+      "name": "system.router"
+    },
+    {
+      "name": "system.shortcut"
+    },
+    {
+      "name": "system.webview"
+    },
+    {
+      "name": "service.share"
+    },
+    {
+      "name": "system.fetch"
+    },
+    {
+      "name": "system.storage"
+    }
+  ],
+  "permissions": [
+    {
+      "origin": "*"
+    }
+  ],
+  "config": {
+    "logLevel": "debug",
+    "designWidth": 800
+  },
+  "router": {
+    "entry": "pages/index",
+    "pages": {
+      "pages/index": {
+        "component": "index"
+      },
+      "pages/search": {
+        "component": "index"
+      },
+      "pages/article": {
+        "component": "index"
+      },
+      "pages/comment": {
+        "component": "index"
+      },
+      "pages/comment-reply": {
+        "component": "index"
+      },
+      "pages/car-condition": {
+        "component": "index"
+      },
+      "pages/car-detail": {
+        "component": "index"
+      },
+      "pages/theme-list": {
+        "component": "index"
+      },
+      "pages/forum-list": {
+        "component": "index"
+      },
+      "pages/history": {
+        "component": "index"
+      },
+      "pages/collection": {
+        "component": "index"
+      },
+      "pages/message": {
+        "component": "index"
+      },
+      "pages/login": {
+        "component": "index"
+      },
+      "pages/information": {
+        "component": "index"
+      }
+    }
+  },
+  "display": {
+    "titleBar": false,
+    "titleBarBackgroundColor": "#f2f2f2",
+    "titleBarTextColor": "#333333",
+    "menu": false,
+    "pages": {
+      "pages/index": {
+        "titleBarText": ""
+      },
+      "pages/search": {
+        "titleBarText": ""
+      },
+      "pages/article": {
+        "titleBarText": ""
+      },
+      "pages/comment": {
+        "titleBarText": ""
+      },
+      "pages/comment-reply": {
+        "titleBarText": ""
+      },
+      "pages/car-condition": {
+        "titleBarText": ""
+      },
+      "pages/car-detail": {
+        "titleBarText": ""
+      },
+      "pages/theme-list": {
+        "titleBarText": ""
+      },
+      "pages/forum-list": {
+        "titleBarText": ""
+      },
+      "pages/history": {
+        "titleBarText": ""
+      },
+      "pages/collection": {
+        "titleBarText": ""
+      },
+      "pages/message": {
+        "titleBarText": ""
+      },
+      "pages/login": {
+        "titleBarText": ""
+      },
+      "pages/information": {
+        "titleBarText": ""
+      }
+    }
+  }
+}

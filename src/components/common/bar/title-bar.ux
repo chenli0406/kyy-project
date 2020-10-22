@@ -1,0 +1,36 @@
+<template>
+  <div class="title-bar">
+    <text class="back iconfont" if="showBack" onclick="goBack">&#xe606;</text>
+    <text class="center-title">{{ title }}</text>
+    <text class="iconfont menu" onclick="showMenu">&#xe60c;</text>
+  </div>
+</template>
+
+<script>
+import router from '@system.router'
+export default {
+  data: {},
+  props: {
+    showBack: {
+      default: false
+    },
+    title: {}
+  },
+  /* -------------------SelfCustomEvent------------------ */
+  goBack() {
+    router.back()
+  },
+  showMenu() {
+    this.$app.$def.showMenu()
+  }
+}
+</script>
+
+<style lang="less">
+@import '../../../assets/styles/index.less';
+.center-title {
+  flex: 1;
+  .text-black;
+  text-align: center;
+}
+</style>

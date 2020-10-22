@@ -1,0 +1,87 @@
+<template>
+  <div class="page-wrapper">
+    <title-bar title="登录/注册" show-back="{{true}}"></title-bar>
+    <div class="login-container">
+      <div class="login-item">
+        <input
+          type="text"
+          class="login-input"
+          placeholder="请输入手机号码"
+          value="{{phone}}"
+          onchange="changePhone"
+        />
+        <text class="text-primary" onclick="requestVerify">发送验证码</text>
+      </div>
+
+      <div class="login-item">
+        <input
+          type="text"
+          class="login-input"
+          placeholder="请输入手机验证码"
+          value="{{verifyCode}}"
+          onchange="changeVerifyCode"
+        />
+      </div>
+      <text class="login-btn" onclick="login">确定</text>
+    </div>
+  </div>
+</template>
+
+<import name="title-bar" src="../../components/common/bar/title-bar"></import>
+
+<script>
+import prompt from '@system.prompt'
+export default {
+  data: {
+    phone: '',
+    verifyCode: ''
+  },
+  onInit() {},
+  changePhone(e) {
+    this.phone = e.value
+  },
+  changeVerifyCode(e) {
+    this.verifyCode = e.value
+  },
+  requestVerify() {
+    prompt.showToast({
+      message: `请接收验证码`
+    })
+  },
+  login() {
+    $utils.setStorage('userLogined', 'true')
+    $utils.route2theUrl('pages/main', { logined: true }, true)
+  }
+}
+</script>
+
+<style lang="less">
+@import '../../assets/styles/index.less';
+
+.login-container {
+  .page-container-white;
+  padding: @gap-3;
+
+  .login-item {
+    width: 100%;
+    height: 120px;
+    justify-content: space-between;
+    align-items: center;
+    .border-bottom-mixins;
+    .login-input {
+      text-align: left;
+      flex: 1;
+    }
+  }
+
+  .login-btn {
+    width: 100%;
+    height: 80px;
+    margin-top: 80px;
+    color: @white;
+    background-color: @brand;
+    border-radius: 4px;
+    text-align: center;
+  }
+}
+</style>

@@ -1,0 +1,36 @@
+<template>
+  <div class="page-wrapper">
+    <title-bar title="我的收藏" show-back="{{true}}"></title-bar>
+    <car-list
+      list="{{result}}"
+      show-price="{{false}}"
+      show-comment="{{true}}"
+      show-num="{{false}}"
+    ></car-list>
+  </div>
+</template>
+
+<import name="title-bar" src="../../components/common/bar/title-bar"></import>
+<import name="car-list" src="../../components/car/car-list"></import>
+<script>
+import router from '@system.router'
+export default {
+  protected: {},
+  private: {
+    result: [
+      {
+        id: '33302033441',
+        image: '/assets/images/car.png',
+        title: '科沃兹01',
+        comment: '科沃兹/紧凑型SUV'
+      }
+    ]
+  },
+  onInit() {}
+  /* -------------------SelfCustomEvent------------------ */
+}
+</script>
+
+<style lang="less">
+@import '../../assets/styles/index.less';
+</style>

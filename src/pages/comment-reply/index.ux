@@ -1,0 +1,64 @@
+<template>
+  <div class="page-wrapper comment-page">
+    <title-bar title="评论" show-back="{{true}}"></title-bar>
+    <div class="page-container-white">
+      <text class="comment-title">{{ title }}</text>
+      <text class="text-remark-big resource-title">评论内容：</text>
+      <text class="text-black resource-text">{{ commentText }}</text>
+      <div class="section-title">
+        <div class="section-title-line"></div>
+        <text class="text-title">回复</text>
+      </div>
+      <div class="text-line">
+        <textarea
+          class="textarea"
+          placeholder="回复 {{commentName}}"
+          onchange="changeReply"
+        ></textarea>
+      </div>
+      <div class="btn-line">
+        <text class="publish-btn" onclick="onBtnClick">发布</text>
+      </div>
+    </div>
+  </div>
+</template>
+
+<import name="title-bar" src="../../components/common/bar/title-bar"></import>
+<script>
+import router from '@system.router'
+export default {
+  protected: {
+    title: '',
+    id: '',
+    commentId: '',
+    commentText: '',
+    commentName: ''
+  },
+  private: {
+    reply: ''
+  },
+  /* -------------------SelfCustomEvent------------------ */
+  changeReply(param) {
+    this.reply = param.value
+  },
+  onBtnClick() {
+    console.log(this.reply)
+    // 评论成功后，跳转回原来页面
+    router.back()
+  }
+}
+</script>
+
+<style lang="less">
+@import '../../assets/styles/index.less';
+.comment-title {
+  .title;
+  padding: @gap-3;
+}
+.resource-title {
+  padding: @gap-3 @gap-3 @gap-2 @gap-3;
+}
+.resource-text {
+  padding: 0 @gap-3 @gap-3 @gap-3;
+}
+</style>

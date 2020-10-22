@@ -1,0 +1,73 @@
+<template>
+  <div class="page-wrapper">
+    <title-bar title="{{title}}" show-back="{{true}}"></title-bar>
+    <car-list list="{{result}}" show-num="{{false}}" if="{{result.length}}"></car-list>
+    <div if="{{!result.length}}" class="no-data">
+      <image class="no-data-img" src="/assets/images/no-data.png"></image>
+      <text class="text-remark-big">暂无数据</text>
+    </div>
+  </div>
+</template>
+
+<import name="title-bar" src="../../components/common/bar/title-bar"></import>
+<import name="car-list" src="../../components/car/car-list"></import>
+<script>
+import router from '@system.router'
+export default {
+  protected: {
+    title: ''
+  },
+  private: {
+    result: [
+      {
+        id: '610000200602033441',
+        image: '/assets/images/pic_5.png',
+        title: '知必与',
+        price: '7-6'
+      },
+      {
+        id: '650000197412185412',
+        image: '/assets/images/pic_1.png',
+        title: '接造自',
+        price: '6-8'
+      },
+      {
+        id: '45000019790621049X',
+        image: '/assets/images/pic_2.png',
+        title: '中华影',
+        price: '6-5'
+      },
+      {
+        id: '540000198207231239',
+        image: '/assets/images/pic_3.png',
+        title: '系验与',
+        price: '7-8'
+      },
+      {
+        id: '810000199209283884',
+        image: '/assets/images/pic_4.png',
+        title: '立情',
+        price: '8-5'
+      }
+    ]
+  },
+  onInit() {
+    if (this.title === '询价记录') {
+      this.result = []
+    }
+  }
+  /* -------------------SelfCustomEvent------------------ */
+}
+</script>
+
+<style lang="less">
+@import '../../assets/styles/index.less';
+.no-data {
+  flex: 1;
+  .flex-box-mixins(column, center, center);
+}
+.no-data-img {
+  width: 200px;
+  margin-bottom: @gap-2;
+}
+</style>

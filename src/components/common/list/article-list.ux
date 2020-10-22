@@ -1,0 +1,92 @@
+<import name="my-load-more" src="apex-ui/components/load-more/index"></import>
+
+<template>
+  <list class="list-container" onscrollbottom="loadMore">
+    <list-item type="{{$item.image ? 'item-image' : 'item-no-image'}}" class="article-item {{$item.image ? 'item-image' : 'item-no-image'}}" for="{{list}}" onclick="detail($item)">
+      <div class="list-text">
+        <text class="text-black list-title">{{ $item.title }}</text>
+      </div>
+      <div class="list-image">
+        <div for="{{$item.image}}" class="list-img">
+          <img src="{{$item}}" />
+        </div>
+      </div>
+    </list-item>
+    <list-item type="loadMore" class="load-status" if="showLoad">
+      <my-load-more tip="加载更多"></my-load-more>
+    </list-item>
+    <list-item type="noMore" class="load-status" if="!showLoad">
+      <my-load-more tip="没有更多内容了" loading="{{ false }}"></my-load-more>
+    </list-item>
+  </list>
+</template>
+
+<script>
+import router from '@system.router'
+export default {
+  props: {
+    list: {},
+    showRank: {
+      default: false
+    },
+    showLoad: {
+      default: true
+    }
+  },
+  onInit() {
+
+  },
+  detail(item) {
+    // 根据id查询详情
+    console.log(item.id)
+    $utils.route2theUrl('pages/article', { articleId: item.id })
+  },
+  loadMore() {
+    this.$emit('loadMore')
+  }
+}
+</script>
+
+<style lang="less">
+@import '../../../assets/styles/index.less';
+
+.article-item {
+  .list-item;
+  .flex-box-mixins(column, space-between, flex-start);
+  .list-text {
+    margin-bottom: 20px;
+    line-height: 40px;
+    height: 120px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    -webkit-line-clamp: 2;
+    .list-title {
+      font-family: Source Han Sans CN;
+      font-weight: 400;
+      color: #000000;
+      line-height: 60px;
+    }
+  }
+  .list-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: flex-start;
+    border-radius: 6px;
+    .list-img {
+      margin: 0px 20px;
+    }
+  }
+}
+.item-image {
+  border: none;
+}
+.item-no-image {
+  .list-title {
+    padding-bottom: 50px;
+  }
+}
+</style>

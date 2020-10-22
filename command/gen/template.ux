@@ -1,0 +1,37 @@
+<template>
+  <div class="page-wrapper @PAGE_CLASS_NAME">
+    <div class="wrapper-padding">
+      <input class="button" type="button" onclick="onBtnClick" value="按钮" />
+    </div>
+  </div>
+</template>
+
+<script>
+  export default {
+    private: {
+    },
+    protected: {
+    },
+
+    onInit () {
+    },
+    onReady () {
+    },
+    onShow () {
+    },
+    onHide() {
+    },
+    onMenuPress () {
+      this.$app.$def.showMenu()
+    },
+
+    /* -------------------SelfCustomEvent------------------ */
+    onBtnClick () {
+      // do your want.
+    }
+  }
+</script>
+
+<style lang="less">
+@import './../../assets/styles/index.less';
+</style>

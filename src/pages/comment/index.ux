@@ -1,0 +1,53 @@
+<template>
+  <div class="page-wrapper comment-page">
+    <title-bar title="评论" show-back="{{true}}"></title-bar>
+    <div class="page-container-white">
+      <text class="comment-title">{{ title }}</text>
+      <div class="section-title">
+        <div class="section-title-line"></div>
+        <text class="text-title">发表评论</text>
+      </div>
+      <div class="text-line">
+        <textarea class="textarea" placeholder="回复 楼主" onchange="changeComment"></textarea>
+      </div>
+      <div class="btn-line">
+        <text class="publish-btn" onclick="onBtnClick">发布</text>
+      </div>
+    </div>
+  </div>
+</template>
+
+<import name="title-bar" src="../../components/common/bar/title-bar"></import>
+<script>
+import router from '@system.router'
+export default {
+  protected: {
+    title: '',
+    id: ''
+  },
+  private: {
+    comment: ''
+  },
+  onInit() {
+    console.log(this.title, this.id)
+  },
+  /* -------------------SelfCustomEvent------------------ */
+  changeComment(param) {
+    this.comment = param.value
+  },
+  onBtnClick() {
+    // 发送comment到后台
+    console.log(this.comment)
+    // 评论成功后，跳转回原来页面
+    router.back()
+  }
+}
+</script>
+
+<style lang="less">
+@import '../../assets/styles/index.less';
+.comment-title {
+  .title;
+  padding: @gap-3;
+}
+</style>

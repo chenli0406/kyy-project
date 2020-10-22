@@ -1,0 +1,465 @@
+<template>
+  <div class="page-container">
+    <list id="list" class="brand-container">
+      <list-item type="custom" ondisappear="showLetter" onappear="hideLetter">
+        <slot></slot>
+      </list-item>
+      <list-item for="brandList" type="{{$item.type}}" id="{{$item.title}}-{{$idx}}">
+        <div if="{{$item.type === 'letter'}}" class="letter-item">
+          <text>{{ $item.title }}</text>
+        </div>
+        <div if="{{$item.type === 'car'}}" class="car-item" onclick="detail($item)">
+          <div class="car-image">
+            <image src="{{$item.logo}}"></image>
+          </div>
+          <text>{{ $item.title }}</text>
+        </div>
+      </list-item>
+    </list>
+    <div class="letter-list" show="{{letterShow}}">
+      <text for="letter in letterList" onclick="scrollLetter" class="letter-text">
+        {{ letter }}
+      </text>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  props: [],
+  data: {
+    brandList: [
+      {
+        type: 'letter',
+        title: 'A'
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: '奥迪',
+        logo: '/assets/images/logo9.png'
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: '阿斯顿·马丁',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'AC Schenitzer',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: '阿尔法·罗密欧',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'ALPINA',
+        logo: ''
+      },
+      {
+        type: 'letter',
+        title: 'B'
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: '奔驰',
+        logo: '/assets/images/logo10.png'
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: '本田',
+        logo: '/assets/images/logo5.png'
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: '宝马',
+        logo: '/assets/images/logo6.png'
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: '别克',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: '比亚迪',
+        logo: ''
+      },
+      {
+        type: 'letter',
+        title: 'C'
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: '长安',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: '长城',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: '长安欧尚',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: '成功汽车',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: '长安跨越',
+        logo: ''
+      },
+      {
+        type: 'letter',
+        title: 'D'
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: '大众',
+        logo: '/assets/images/logo1.png'
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: '东风',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: '东风风神',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: '东风风行',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: '东风风光',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: '东风小康',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: '东风风度',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: '东南',
+        logo: ''
+      },
+      {
+        type: 'letter',
+        title: 'E'
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'EEEEEE1',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'EEEEEE2',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'EEEEEE3',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'EEEEEE4',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'EEEEEE5',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'EEEEEE6',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'EEEEEE7',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'EEEEEE8',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'EEEEEE9',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'EEEEEE10',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'EEEEEE11',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'EEEEEE12',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'EEEEEE13',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'EEEEEE14',
+        logo: ''
+      },
+      {
+        type: 'letter',
+        title: 'F'
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'fffff',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'fffff',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'fffff',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'fffff',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'fffff',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'fffff',
+        logo: ''
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'fffff',
+        logo: ''
+      },
+      {
+        type: 'letter',
+        title: 'G'
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'GGGGG',
+        logo: ''
+      },
+      ,
+      {
+        type: 'letter',
+        title: 'H'
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'HHHHHH',
+        logo: ''
+      },
+      ,
+      {
+        type: 'letter',
+        title: 'I'
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'IIIII',
+        logo: ''
+      },
+      ,
+      {
+        type: 'letter',
+        title: 'J'
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'JJJJ',
+        logo: ''
+      },
+      ,
+      {
+        type: 'letter',
+        title: 'K'
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'KKKKK',
+        logo: ''
+      },
+      ,
+      {
+        type: 'letter',
+        title: 'L'
+      },
+      {
+        type: 'car',
+        id: '1123',
+        title: 'LLLLL',
+        logo: ''
+      }
+    ],
+    letterList: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'],
+    letterMap: {},
+    letterShow: false
+  },
+  onInit() {
+    this.getLetterList()
+  },
+  /* -------------------SelfCustomEvent------------------ */
+  getLetterList() {
+    this.letterList.forEach(element => {
+      let idx = this.brandList.findIndex(item => {
+        return item && item.type === 'letter' && item.title === element
+      })
+      this.letterMap[element] = idx + 1
+    })
+  },
+  showLetter() {
+    this.letterShow = true
+  },
+  hideLetter() {
+    this.letterShow = false
+  },
+  scrollLetter(e) {
+    let key = e.target.attr.value || 'A'
+    this.$element('list').scrollTo({ index: this.letterMap[key] })
+  },
+  detail(item) {
+    let para = {
+      type: 'brand',
+      condition: item.title
+    }
+    // 跳转到条件找车页面
+    $utils.route2theUrl('pages/car-condition', para)
+  }
+}
+</script>
+
+<style lang="less">
+@import '../../assets/styles/index.less';
+
+.brand-container {
+  .list-container;
+  padding: 0;
+}
+.letter-item {
+  width: 100%;
+  padding: @gap-2 @gap-3;
+  background-color: @bg-grey;
+  text {
+    font-size: 25px;
+  }
+}
+.car-item {
+  width: 100%;
+  height: 140px;
+  padding: @gap-3;
+  border-bottom-width: 1px;
+  border-bottom-color: @border-grey;
+  background-color: @white;
+  .car-image {
+    width: 108px;
+    height: 100%;
+    margin-right: 40px;
+    background-color: @white-grey;
+  }
+}
+
+.letter-list {
+  position: fixed;
+  top: 200px;
+  right: 0px;
+  width: 80px;
+  flex-direction: column;
+  .letter-text {
+    text-align: center;
+    font-size: 28px;
+    padding: 5px @gap-2;
+  }
+}
+</style>

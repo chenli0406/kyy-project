@@ -1,0 +1,148 @@
+<template>
+  <div class="page-wrapper">
+    <search-input-bar onsearch="search"></search-input-bar>
+    <tabs onchange="changeTab" if="{{searchText}}">
+      <underline-tab-bar tab-list="{{tabList}}" selected-tab="{{selectedTab}}"></underline-tab-bar>
+      <tab-content>
+        <div for="tabList">
+          <article-list
+            list="{{article.list}}"
+            if="{{$idx === selectedTab}}"
+            show-load="{{article.load}}"
+            onload-more="queryList"
+          ></article-list>
+        </div>
+      </tab-content>
+    </tabs>
+  </div>
+</template>
+
+<import name="search-input-bar" src="../../components/common/bar/search-input-bar"></import>
+<import name="underline-tab-bar" src="../../components/common/tab/underline-tab-bar"></import>
+<import name="article-list" src="../../components/common/list/article-list"></import>
+
+<script>
+export default {
+  private: {
+    tabList: ['综合', '文章', '视频', '论坛', '找车'],
+    selectedTab: 0,
+    searchText: '',
+    article: {
+      list: [],
+      pageNo: 1,
+      pageSize: 10,
+      total: null,
+      load: true
+    }
+  },
+  onReady() {
+    this.queryList(1)
+  },
+  /* -------------------SelfCustomEvent------------------ */
+  search(info) {
+    this.searchText = info.detail
+    // 根据返回的关键字，查询接口，返回articleList
+  },
+  changeTab(e) {
+    let index = e.index || 0
+    this.selectedTab = index
+  },
+  queryList(pageNo) {
+    if (!isNaN(pageNo) && pageNo !== this.article.pageNo) {
+      return
+    }
+    if (this.article.total && this.article.pageNo * this.article.pageSize > this.article.total) {
+      this.article.load = false
+      return
+    }
+    // 延时模拟接口请求
+    setTimeout(() => {
+      this.queryFn()
+    }, 100)
+  },
+  queryFn() {
+    /*
+    根据pageNo和pageSize查询列表
+    由接口返回数据设置total，并将数据push到list
+    */
+    this.article.pageNo++
+    this.article.total = 10
+    this.article.list.push(
+      {
+        id: '530000198707174021',
+        title: '过年由何多构着资新规拉任称亲它样',
+        remark: '84万浏览数',
+        time: '1993-11-10',
+        image: '/assets/images/pic_1.png'
+      },
+      {
+        id: '450000199712188860',
+        title: '律出建而及性',
+        remark: '75回帖',
+        time: '2015-02-06',
+        image: ''
+      },
+      {
+        id: '13000020171007286X',
+        title: '委要立段行参华需头立三深速',
+        remark: '52回帖',
+        time: '2018-06-28',
+        image: '/assets/images/pic_2.png'
+      },
+      {
+        id: '150000201004011166',
+        title: '日然信号院资力通带学省市员海必拉更电平',
+        remark: '16回帖',
+        time: '2005-10-21',
+        image: '/assets/images/pic_3.png'
+      },
+      {
+        id: '220000200311267835',
+        title: '率共级技实相此展感东划造适斗或近效需然',
+        remark: '32回帖',
+        time: '1985-05-27',
+        image: ''
+      },
+      {
+        id: '210000198702072339',
+        title: '例律然子什争离由连应效展干直亲运',
+        remark: '94回帖',
+        time: '1974-05-08',
+        image: ''
+      },
+      {
+        id: '44000020050123471X',
+        title: '并领斯非应',
+        remark: '62万浏览数',
+        time: '1987-02-03',
+        image: '/assets/images/pic_4.png'
+      },
+      {
+        id: '220000200311267835',
+        title: '率共级技实相此展感东划造适斗或近效需然',
+        remark: '32回帖',
+        time: '1985-05-27',
+        image: ''
+      },
+      {
+        id: '210000198702072339',
+        title: '例律然子什争离由连应效展干直亲运',
+        remark: '94回帖',
+        time: '1974-05-08',
+        image: ''
+      },
+      {
+        id: '44000020050123471X',
+        title: '并领斯非应',
+        remark: '62万浏览数',
+        time: '1987-02-03',
+        image: '/assets/images/pic_5.png'
+      }
+    )
+  }
+}
+</script>
+
+<style lang="less">
+@import '../../assets/styles/index.less';
+</style>

@@ -1,0 +1,39 @@
+<template>
+  <div class="title-bar">
+    <div class="search" onclick="search">
+      <text class="iconfont search-icon">&#xe661;</text>
+      <input
+        type="text"
+        id="search-input"
+        class="search-input"
+        placeholder="请输入关键字"
+        value="{{searchText}}"
+        onchange="search"
+      />
+    </div>
+    <text class="cancel" onclick="goBack">取消</text>
+  </div>
+</template>
+
+<script>
+import router from '@system.router'
+export default {
+  data: {
+    searchText: ''
+  },
+  onReady() {
+    this.$element('search-input').focus({ focus: true })
+  },
+  /* -------------------SelfCustomEvent------------------ */
+  search(e) {
+    this.$emit('search', e.value)
+  },
+  goBack() {
+    router.back()
+  }
+}
+</script>
+
+<style lang="less">
+@import '../../../assets/styles/index.less';
+</style>

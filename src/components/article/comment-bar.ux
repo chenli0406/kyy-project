@@ -1,0 +1,38 @@
+<template>
+  <div class="space-between-container">
+    <text class="comment-primary" onclick="publishComment">发表评论...</text>
+    <text class="iconfont icon-comment" onclick="scrollToComment">&#xe60e;</text>
+  </div>
+</template>
+
+<script>
+export default {
+  props: [],
+  /* -------------------SelfCustomEvent------------------ */
+  scrollToComment() {
+    this.$emit('scrollToComment')
+  },
+  publishComment() {
+    this.$emit('publishComment')
+  }
+}
+</script>
+
+<style lang="less">
+@import '../../assets/styles/index.less';
+.space-between-container {
+  background-color: #fafafa;
+  .space-between-line;
+  .border-top-mixins();
+}
+.comment-primary {
+  font-size: 6 * @size-factor;
+  color: @brand;
+  padding: @gap-3;
+  flex: 1;
+}
+.icon-comment {
+  font-size: 8 * @size-factor;
+  padding: @gap-3;
+}
+</style>

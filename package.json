@@ -1,0 +1,45 @@
+{
+  "name": "kyy",
+  "version": "1.0.0",
+  "subversion": {
+    "toolkit": "0.4.2"
+  },
+  "description": "快应用汽车模版",
+  "scripts": {
+    "start": "hap server --watch",
+    "launch": "concurrently \"node ./command/server.js\" \"npm run watch\"",
+    "server": "hap server",
+    "gen": "node ./command/gen/index.js",
+    "build": "hap build",
+    "release": "hap release",
+    "watch": "hap watch",
+    "debug": "hap debug",
+    "precommit-msg": "echo '🚧 start pre-commit checks...' && exit 0",
+    "prettier": "prettier --write 'src/**/*.js' 'src/**/*.ux'",
+    "prettier-watch": "onchange 'src/**/*.js' 'src/**/*.ux' -- prettier --write {{changed}}"
+  },
+  "devDependencies": {
+    "apex-ui": "latest",
+    "babel-eslint": "^10.0.2",
+    "concurrently": "^4.1.0",
+    "eslint": "5.16.0",
+    "eslint-plugin-hybrid": "0.0.5",
+    "hap-toolkit": "^0.4.2",
+    "less": "^3.9.0",
+    "less-loader": "^4.1.0",
+    "onchange": "^5.2.0",
+    "prettier": "^1.15.3",
+    "prettier-plugin-quickapp": "^0.1.0",
+    "quist-ui": "^1.1.2"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "semi": false,
+    "printWidth": 100,
+    "proseWrap": "never"
+  },
+  "keywords": [
+    "快应用",
+    "汽车"
+  ]
+}

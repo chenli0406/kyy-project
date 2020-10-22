@@ -1,0 +1,159 @@
+<import name="my-avatar" src="apex-ui/components/avatar/index"></import>
+
+<template>
+  <div class="page-container-white">
+    <div class="login" onclick="login" if="{{!logined}}">
+      <div class="login-user"><text class="iconfont">&#xe643;</text></div>
+      <text class="login-text">登录/注册</text>
+    </div>
+    <div class="login" if="{{logined}}">
+      <my-avatar src="/assets/images/user.png" size="large"></my-avatar>
+      <text class="login-text">用户名</text>
+    </div>
+    <div class="section">
+      <div class="section-title">
+        <div class="section-title-line"></div>
+        <text class="text-title">个人服务</text>
+      </div>
+      <div class="section-content">
+        <div for="serviceList" class="section-item" onclick="switchPage($item)">
+          <div class="section-icon">
+            <text class="iconfont">{{ $item.icon }}</text>
+          </div>
+          <text class="section-item-text">{{ $item.title }}</text>
+        </div>
+      </div>
+    </div>
+    <div class="quit-container" if="{{logined}}">
+      <text class="quit-btn" onclick="quit">退出</text>
+    </div>
+  </div>
+</template>
+
+<script>
+import prompt from '@system.prompt'
+export default {
+  props: [],
+  data: {
+    serviceList: [
+      {
+        title: '浏览历史',
+        icon: '\ue62f',
+        page: 'pages/history'
+      },
+      {
+        title: '我的收藏',
+        icon: '\ue613',
+        page: 'pages/collection'
+      },
+      {
+        title: '询价记录',
+        icon: '\ue61b',
+        page: 'pages/history'
+      },
+      {
+        title: '我的消息',
+        icon: '\ue60e',
+        page: 'pages/message'
+      }
+    ],
+    logined: false
+  },
+  onReady() {
+    $utils.getStorage('userLogined').then(value => {
+      this.logined = value === 'true'
+    })
+  },
+  /* -------------------SelfCustomEvent------------------ */
+  switchPage(item) {
+    // 根据item跳转到对应页面
+    $utils.route2theUrl(item.page, { title: item.title })
+  },
+  login() {
+    $utils.route2theUrl('pages/login')
+  },
+  quit() {
+    prompt.showDialog({
+      title: '确定退出登录？',
+      message: '',
+      buttons: [
+        {
+          text: '确定',
+          color: '#20a0ff'
+        },
+        {
+          text: '取消',
+          color: '#7a8ba9'
+        }
+      ],
+      success: data => {
+        if (data.index === 0) {
+          $utils.setStorage('userLogined', 'false')
+          this.logined = false
+        }
+      },
+      cancel: () => {
+        console.log('handling cancel')
+      },
+      fail: (data, code) => {
+        console.log(`handling fail, code = ${code}`)
+      }
+    })
+  }
+}
+</script>
+
+<style lang="less">
+@import '../../assets/styles/index.less';
+
+.login {
+  height: 500px;
+  background-color: @brand;
+  .flex-box-mixins(column, center, center);
+  .login-user {
+    width: 120px;
+    height: 120px;
+    background-color: #cdcdcd;
+    border-radius: 60px;
+    margin-bottom: @gap-2;
+    .iconfont {
+      font-size: 120px;
+      color: @white;
+    }
+  }
+  .login-text {
+    color: @white;
+  }
+}
+
+.page-container .section {
+  margin-bottom: @gap-2;
+}
+.section-item {
+  width: 25%;
+  padding-top: @gap-2;
+  flex-direction: column;
+  .section-icon {
+    .flex-box-mixins(row, center, center);
+    .iconfont {
+      font-size: 45px;
+    }
+  }
+}
+
+.quit-container {
+  width: 100%;
+  .flex-box-mixins(row, center, center);
+}
+.quit-btn {
+  width: 80%;
+  height: 80px;
+  margin-top: 80px;
+  border-radius: 4px;
+  text-align: center;
+  border-radius: 40px;
+  border-color: @grey;
+  border-style: solid;
+  border-width: 1px;
+}
+</style>

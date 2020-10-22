@@ -1,0 +1,67 @@
+<template>
+  <div class="tabs">
+    <div class="tab-content"><slot></slot></div>
+    <div class="tab-bar">
+      <div class="tab-item" for="tabList" onclick="changeTab($idx)">
+        <text
+          class="iconfont"
+          style="color: {{$idx === selectedTab ? activatedColor : deactivatedColor}}"
+        >
+          {{ $item.icon }}
+        </text>
+        <text
+          class="tab-title"
+          style="color: {{$idx === selectedTab ? activatedColor : deactivatedColor}}"
+        >
+          {{ $item.title }}
+        </text>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  props: {
+    tabList: {},
+    selectedTab: {},
+    deactivatedColor: {
+      default: '#707780'
+    },
+    activatedColor: {
+      default: '#20a0ff'
+    }
+  },
+  changeTab(index) {
+    this.$emit('changeTab', { index })
+  }
+}
+</script>
+
+<style lang="less">
+@import '../../../assets/styles/index.less';
+.tabs {
+  flex: 1;
+  flex-direction: column;
+  .tab-content {
+    flex: 1;
+  }
+}
+.tab-bar {
+  background-color: @bg-grey;
+  .border-top-mixins();
+  padding: 15px 0;
+  height: 110px;
+  justify-content: space-around;
+  .tab-item {
+    flex: 1;
+    .flex-box-mixins(column, center, center);
+    .iconfont {
+      font-size: 50px;
+    }
+    .tab-title {
+      font-size: 20px;
+    }
+  }
+}
+</style>

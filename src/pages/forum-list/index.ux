@@ -1,0 +1,121 @@
+<template>
+  <div class="page-wrapper">
+    <title-bar title="{{title}}" show-back="{{true}}"></title-bar>
+    <article-list
+      list="{{article.list}}"
+      show-load="{{article.load}}"
+      onload-more="queryList"
+    ></article-list>
+  </div>
+</template>
+
+<import name="title-bar" src="../../components/common/bar/title-bar"></import>
+<import name="article-list" src="../../components/common/list/article-list"></import>
+<script>
+import router from '@system.router'
+export default {
+  protected: {
+    title: ''
+  },
+  private: {
+    article: {
+      list: [],
+      pageNo: 1,
+      pageSize: 10,
+      total: null,
+      load: true
+    }
+  },
+  onReady() {
+    this.queryList(1)
+  },
+  /* -------------------SelfCustomEvent------------------ */
+  queryList(pageNo) {
+    if (!isNaN(pageNo) && pageNo !== this.article.pageNo) {
+      return
+    }
+    if (this.article.total && this.article.pageNo * this.article.pageSize > this.article.total) {
+      this.article.load = false
+      return
+    }
+    // 延时模拟接口请求
+    setTimeout(() => {
+      this.queryFn()
+    }, 100)
+  },
+  queryFn() {
+    /*
+    根据pageNo和pageSize查询列表
+    由接口返回数据设置total，并将数据push到list
+    */
+    this.article.pageNo++
+    this.article.total = 20
+    this.article.list.push(
+      {
+        id: '530000198707174021',
+        title: '过年由何多构着资新规拉任称亲它样',
+        remark: '84万浏览数',
+        time: '5分钟内'
+      },
+      {
+        id: '450000199712188860',
+        title: '律出建而及性',
+        remark: '75回帖',
+        time: '3分钟内'
+      },
+      {
+        id: '13000020171007286X',
+        title: '委要立段行参华需头立三深速',
+        remark: '52回帖',
+        time: '2018-06-28'
+      },
+      {
+        id: '150000201004011166',
+        title: '日然信号院资力通带学省市员海必拉更电平上课上课上课考试',
+        remark: '16回帖',
+        time: '2005-10-21'
+      },
+      {
+        id: '220000200311267835',
+        title: '率共级技实相此展感东划造适斗或近效需然',
+        remark: '32回帖',
+        time: '1985-05-27'
+      },
+      {
+        id: '210000198702072339',
+        title: '例律然子什争离由连应效展干直亲运',
+        remark: '94回帖',
+        time: '1974-05-08'
+      },
+      {
+        id: '44000020050123471X',
+        title: '萨克斯',
+        remark: '62万浏览数',
+        time: '1987-02-03'
+      },
+      {
+        id: '2020200202222271X',
+        title: '嗖嗖的',
+        remark: '76万浏览数',
+        time: '2017-02-03'
+      },
+      {
+        id: '38849949595999559',
+        title: '滴滴答答',
+        remark: '55万浏览数',
+        time: '2017-07-30'
+      },
+      {
+        id: '7277393939939393',
+        title: '都是蓝色',
+        remark: '32万浏览数',
+        time: '2018-02-24'
+      }
+    )
+  }
+}
+</script>
+
+<style lang="less">
+@import '../../assets/styles/index.less';
+</style>
