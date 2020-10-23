@@ -1,148 +1,129 @@
 <template>
   <div class="page-wrapper">
     <search-input-bar onsearch="search"></search-input-bar>
-    <tabs onchange="changeTab" if="{{searchText}}">
-      <underline-tab-bar tab-list="{{tabList}}" selected-tab="{{selectedTab}}"></underline-tab-bar>
-      <tab-content>
-        <div for="tabList">
-          <article-list
-            list="{{article.list}}"
-            if="{{$idx === selectedTab}}"
-            show-load="{{article.load}}"
-            onload-more="queryList"
-          ></article-list>
-        </div>
-      </tab-content>
-    </tabs>
+    <div class="search-hot">
+      <div class="hot-list">
+        <text class="hot-item" for="hotList" @click="toSearch($item.title)">{{ $item.title | ellipsis}}</text>
+      </div>
+       <div class="search-title" if={{hotList.length}}>
+        <text class="search-refresh" @click="delHostList">
+          <image class="img" src="../../assets/images/del.png"></image>
+        </text>
+      </div>
+      <div class="adimg-box" if={{dialog}}>
+        <div class="close" @click="closeDialog"><image src="../../assets/images/dialong.png"></image></div>
+        <text class="adImg"><image src="../../assets/images/6.png"></image></text>
+      </div>
+    </div>
   </div>
 </template>
 
 <import name="search-input-bar" src="../../components/common/bar/search-input-bar"></import>
-<import name="underline-tab-bar" src="../../components/common/tab/underline-tab-bar"></import>
-<import name="article-list" src="../../components/common/list/article-list"></import>
-
 <script>
 export default {
   private: {
-    tabList: ['综合', '文章', '视频', '论坛', '找车'],
-    selectedTab: 0,
     searchText: '',
-    article: {
-      list: [],
-      pageNo: 1,
-      pageSize: 10,
-      total: null,
-      load: true
-    }
+  },
+  public: {
+    dialog: true,
+    hotList: [
+      {
+        id: "1",
+        title: "花瓣网手绘图",
+      },
+      {
+        id: "1",
+        title: "http://lanhu.com",
+      },
+      {
+        id: "1",
+        title: "花瓣网手绘图",
+      }, {
+        id: "1",
+        title: "https://lanhuapp.com/web/#/item/project/product?5...",
+      }, {
+        id: "1",
+        title: "花瓣网手绘图",
+      },
+    ]
   },
   onReady() {
-    this.queryList(1)
   },
-  /* -------------------SelfCustomEvent------------------ */
+ 
   search(info) {
     this.searchText = info.detail
     // 根据返回的关键字，查询接口，返回articleList
   },
-  changeTab(e) {
-    let index = e.index || 0
-    this.selectedTab = index
+  delHostList() {
+
   },
-  queryList(pageNo) {
-    if (!isNaN(pageNo) && pageNo !== this.article.pageNo) {
-      return
-    }
-    if (this.article.total && this.article.pageNo * this.article.pageSize > this.article.total) {
-      this.article.load = false
-      return
-    }
-    // 延时模拟接口请求
-    setTimeout(() => {
-      this.queryFn()
-    }, 100)
+  toSearch(val) {
+    $utils.route2theUrl('pages/info-detail', {id: val})
+
   },
-  queryFn() {
-    /*
-    根据pageNo和pageSize查询列表
-    由接口返回数据设置total，并将数据push到list
-    */
-    this.article.pageNo++
-    this.article.total = 10
-    this.article.list.push(
-      {
-        id: '530000198707174021',
-        title: '过年由何多构着资新规拉任称亲它样',
-        remark: '84万浏览数',
-        time: '1993-11-10',
-        image: '/assets/images/pic_1.png'
-      },
-      {
-        id: '450000199712188860',
-        title: '律出建而及性',
-        remark: '75回帖',
-        time: '2015-02-06',
-        image: ''
-      },
-      {
-        id: '13000020171007286X',
-        title: '委要立段行参华需头立三深速',
-        remark: '52回帖',
-        time: '2018-06-28',
-        image: '/assets/images/pic_2.png'
-      },
-      {
-        id: '150000201004011166',
-        title: '日然信号院资力通带学省市员海必拉更电平',
-        remark: '16回帖',
-        time: '2005-10-21',
-        image: '/assets/images/pic_3.png'
-      },
-      {
-        id: '220000200311267835',
-        title: '率共级技实相此展感东划造适斗或近效需然',
-        remark: '32回帖',
-        time: '1985-05-27',
-        image: ''
-      },
-      {
-        id: '210000198702072339',
-        title: '例律然子什争离由连应效展干直亲运',
-        remark: '94回帖',
-        time: '1974-05-08',
-        image: ''
-      },
-      {
-        id: '44000020050123471X',
-        title: '并领斯非应',
-        remark: '62万浏览数',
-        time: '1987-02-03',
-        image: '/assets/images/pic_4.png'
-      },
-      {
-        id: '220000200311267835',
-        title: '率共级技实相此展感东划造适斗或近效需然',
-        remark: '32回帖',
-        time: '1985-05-27',
-        image: ''
-      },
-      {
-        id: '210000198702072339',
-        title: '例律然子什争离由连应效展干直亲运',
-        remark: '94回帖',
-        time: '1974-05-08',
-        image: ''
-      },
-      {
-        id: '44000020050123471X',
-        title: '并领斯非应',
-        remark: '62万浏览数',
-        time: '1987-02-03',
-        image: '/assets/images/pic_5.png'
+  // 关闭弹窗
+  closeDialog(){
+      this.dialog = false;
+  },
+  ellipsis (value) {
+      if (!value) return ''
+      if (value.length > 40) {
+        return value.slice(0,40) + '...'
       }
-    )
-  }
+      return value
+    }
 }
 </script>
 
 <style lang="less">
 @import '../../assets/styles/index.less';
+.page-wrapper {
+  background-color: #fff;
+}
+.search-hot {
+  padding: 20px 30px;
+  width: 100%;
+  .flex-box-mixins(column, flex-start, flex-start);
+  .search-title {
+    width: 100%;
+    margin-bottom: 30px;
+    justify-content: flex-end;
+    .img{
+        width: 40px;
+        height: 40px;
+    }
+  }
+  .hot-list {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .hot-item {
+    height: 70px;
+    align-items: center;
+    background-color: #F7F8FB;
+    border-radius: 44px;
+    font-size: 26px;
+    color: #000;
+    padding: 0px 15px;
+    text-align: center;
+    border-radius: 30px;
+    margin: 10px 40px 10px 0;
+  }
+ .adimg-box{
+  padding: 0px 60px;
+   position: fixed;
+   bottom: 100px;
+  .flex-box-mixins(column, flex-end, flex-end);
+   .close{
+    width: 50px;
+    height: 50px;
+    margin-top: 20px;
+  }
+  .adImg{
+    width: 90%;
+    margin: 0 auto;
+  }
+  }
+  
+}
 </style>

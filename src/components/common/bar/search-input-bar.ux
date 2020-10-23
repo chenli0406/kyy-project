@@ -1,7 +1,6 @@
 <template>
   <div class="title-bar">
     <div class="search" onclick="search">
-      <text class="iconfont search-icon">&#xe661;</text>
       <input
         type="text"
         id="search-input"

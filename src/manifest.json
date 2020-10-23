@@ -26,6 +26,9 @@
     },
     {
       "name": "system.storage"
+    },
+    {
+      "name": "system.clipboard"
     }
   ],
   "permissions": [
@@ -40,6 +43,9 @@
   "router": {
     "entry": "pages/index",
     "pages": {
+      "pages/main": {
+        "component": "index"
+      },
       "pages/index": {
         "component": "index"
       },
@@ -59,9 +65,6 @@
         "component": "index"
       },
       "pages/car-detail": {
-        "component": "index"
-      },
-      "pages/theme-list": {
         "component": "index"
       },
       "pages/forum-list": {
@@ -90,16 +93,24 @@
     "titleBarTextColor": "#333333",
     "menu": false,
     "pages": {
+      "pages/main": {
+        "titleBarText": ""
+      },
       "pages/index": {
         "titleBarText": "",
-         "menu": true
+        "menu": true
       },
       "pages/search": {
         "titleBarText": "",
-         "menu": true
+        "menu": true
       },
       "pages/info-detail": {
-        "titleBarText": "资讯详情"
+        "fullScreen": false,
+        "titleBarText": "资讯详情",
+        "titleBar": true,
+        "titleBarBackgroundColor": "#f2f2f2",
+        "titleBarTextColor": "#333333",
+        "menu": true
       },
       "pages/comment": {
         "titleBarText": ""
@@ -113,9 +124,6 @@
       "pages/car-detail": {
         "titleBarText": ""
       },
-      "pages/theme-list": {
-        "titleBarText": ""
-      },
       "pages/forum-list": {
         "titleBarText": ""
       },
@@ -123,7 +131,12 @@
         "titleBarText": ""
       },
       "pages/collection": {
-        "titleBarText": ""
+        "fullScreen": false,
+        "titleBarText": "收藏",
+        "titleBar": true,
+        "titleBarBackgroundColor": "#f2f2f2",
+        "titleBarTextColor": "#333333",
+        "menu": false
       },
       "pages/message": {
         "titleBarText": ""
@@ -132,8 +145,7 @@
         "titleBarText": ""
       },
       "pages/information": {
-        "titleBarText": "",
-        "menu": false
+        "titleBarText": ""
       }
     }
   }

@@ -3,18 +3,13 @@
     <div class="tab-content"><slot></slot></div>
     <div class="tab-bar">
       <div class="tab-item" for="tabList" onclick="changeTab($idx)">
-        <text
+        <!-- <text
           class="iconfont"
           style="color: {{$idx === selectedTab ? activatedColor : deactivatedColor}}"
         >
           {{ $item.icon }}
-        </text>
-        <text
-          class="tab-title"
-          style="color: {{$idx === selectedTab ? activatedColor : deactivatedColor}}"
-        >
-          {{ $item.title }}
-        </text>
+        </text> -->
+        <image class="iconfont" src="{{$item.icon}}"></image>
       </div>
     </div>
   </div>
@@ -57,7 +52,7 @@ export default {
     flex: 1;
     .flex-box-mixins(column, center, center);
     .iconfont {
-      font-size: 50px;
+      width: 40px;
     }
     .tab-title {
       font-size: 20px;

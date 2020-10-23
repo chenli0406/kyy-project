@@ -4,7 +4,7 @@
   <list class="list-container" onscrollbottom="loadMore">
     <list-item type="{{$item.image ? 'item-image' : 'item-no-image'}}" class="article-item {{$item.image ? 'item-image' : 'item-no-image'}}" for="{{list}}" onclick="detail($item)">
       <div class="list-text">
-        <text class="text-black list-title">{{ $item.title }}</text>
+        <text class="text-black list-title">{{ $item.title | ellipsis}}</text>
       </div>
       <div class="list-image">
         <div for="{{$item.image}}" class="list-img">
@@ -43,7 +43,14 @@ export default {
   },
   loadMore() {
     this.$emit('loadMore')
-  }
+  },
+  ellipsis (value) {
+      if (!value) return ''
+      if (value.length > 40) {
+        return value.slice(0,40) + '...'
+      }
+      return value
+    }
 }
 </script>
 
@@ -55,19 +62,9 @@ export default {
   .flex-box-mixins(column, space-between, flex-start);
   .list-text {
     margin-bottom: 20px;
-    line-height: 40px;
-    height: 120px;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    word-break: break-all;
-    -webkit-line-clamp: 2;
     .list-title {
-      font-family: Source Han Sans CN;
       font-weight: 400;
       color: #000000;
-      line-height: 60px;
     }
   }
   .list-image {
@@ -80,9 +77,6 @@ export default {
       margin: 0px 20px;
     }
   }
-}
-.item-image {
-  border: none;
 }
 .item-no-image {
   .list-title {

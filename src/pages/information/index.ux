@@ -93,14 +93,14 @@ export default {
   // 跳转收藏
   getRouterCollect() {
     router.push({
-      uri: '/pages/theme-list'
+      uri: 'pages/collection'
     });
     this.showContent = false;
   },
   onCancel() { },
   testin(){
     return false;
-  }
+  },
 }
 </script>
 

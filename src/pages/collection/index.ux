@@ -1,26 +1,23 @@
 <template>
   <div class="page-wrapper">
-    <title-bar title="收藏" show-back="{{true}}"></title-bar>
     <list class="list-box">
-      <list-item type="listItem" for="{{list}}">
+      <list-item for="{{list}}">
         <div class="item-container">
-          <img class="img" src="../../assets/images/collect-item.png" />
-          <div style="flex-direction: column; align-items: flex-start;">
-            <text class="item-title">{{$item.title}}</text>
-            <text class="item">{{$item.url}}</text>
+          <image class="img" src="../../assets/images/collect-item.png"></image>
+          <div class="item-box" style="flex-direction: column; align-items: flex-start;">
+            <text class="item-t">{{$item.title | ellipsisA}}</text>
+            <text class="item">{{$item.url | ellipsis}}</text>
           </div>
         </div>
-        <div  class="check-box" @click="del($item.id)"></div>
+        <div class="check-box" @click="del($item.id)"></div>
       </list-item>
     </list>
-   <div style="flex-direction: row;">
-     <button class=""><text>删除</text></button>
-     <button class=""><text>完成</text></button>
-   </div>
+    <div class="btn-box" style="flex-direction: row;justify-content:center">
+      <text class="{{ ids.length > 0 ? 'btn': 'btn-1' }}">删除</text>
+      <text class="btn">完成</text>
+    </div>
   </div>
 </template>
-
-<import name="title-bar" src="../../components/common/bar/title-bar"></import>
 <script>
 import router from '@system.router'
 export default {
@@ -40,16 +37,30 @@ export default {
       {
         id: "3",
         title: "花瓣网-陪你做生活的设计师",
-        url: "https://huaban.com/home/"
+        url: "https://huaban.com/home/https://huaban.com/home/https://huaban.com/home/"
       },
     ],
     ids: [],
+
   },
   onInit() { },
-  del(val){
-    this.ids.push(val);
-    
-  }
+  del(val) {
+    //  this.ids.push(val);
+  },
+  ellipsis (value) {
+      if (!value) return ''
+      if (value.length > 30) {
+        return value.slice(0,30) + '...'
+      }
+      return value
+    },
+  ellipsisA (value) {
+      if (!value) return ''
+      if (value.length > 14) {
+        return value.slice(0,14) + '...'
+      }
+      return value
+    }
 }
 </script>
 
@@ -62,37 +73,75 @@ export default {
     list-item {
       padding: 15px 0;
       height: 130px;
+      line-height: 130px;
+      margin-bottom: 10px;
       border-bottom: 1px solid #eee;
       .item-container {
-        .item-title {
+        .item-box{
+           width: 80%;
+        }
+        .item-t {
           height: 40px;
-          line-height: 40px;
-          width: 100%;
+          width: 80%;
+          font-size: 30px;
           color: #000;
-          overflow: hidden;
           text-overflow: ellipsis;
-          white-space: nowrap;
+          margin-bottom: 10px;
         }
         .item {
           height: 28px;
+          width: 80%;
           font-size: 26px;
           color: #666666;
-          line-height: 60px;
+          margin-top: 10px;
         }
         .img {
-          width: 70px;
-          height: 70px;
+          width: 60px;
+          height: 60px;
+          align-items: center;
           background: #567aff;
           margin-right: 35px;
+          margin-top: 10px;
         }
       }
-      .check-box{
+      .check-box {
+         margin-top: 10px;
         align-items: center;
         width: 40px;
         height: 40px;
         border: 2px solid #ccc;
         border-radius: 50%;
       }
+      .check-active {
+        width: 40px;
+        height: 40px;
+        background-image: url('../../assets/images/check.png');
+        background-position: center;
+      }
+    }
+  }
+  .btn-box {
+    position: fixed;
+    bottom: 40px;
+    .btn-1 {
+      width: 36%;
+      height: 80px;
+      font-size: 40px;
+      color: #999999;
+      text-align: center;
+      margin: 20px;
+      background-color: #e2e2e2;
+      border-radius: 40px;
+    }
+    .btn {
+      width: 36%;
+      height: 80px;
+      color: #fff;
+      font-size: 40px;
+      text-align: center;
+      background-color: #567aff;
+      margin: 20px;
+      border-radius: 40px;
     }
   }
 }

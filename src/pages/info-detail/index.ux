@@ -1,30 +1,90 @@
 
 <template>
   <div class="page-wrapper">
-    <title-barmenu title="资讯详情" show-back="{{true}}"></title-barmenu>
+    <div class="ad-btn" @click="dialog">
+      <image class="ad-img" src="../../assets/images/ad-img1.png"></image>
+    </div>
     <div>
       <text class="title">{{ title }}</text>
     </div>
     <div class="content">
       <richtext type="html" class="rich-text">{{content}}</richtext>
     </div>
+     <div class="return-btn" @click="getHome">
+      <image class="re-img" src="../../assets/images/return-home.png"></image>
+    </div>
+    <div class="test" if={{showContent}} >
+      <div class="maskBox" @click="close"></div>
+      <div class="model translateYByEntry">
+        <div class="btn" @click="copyUrl">
+           <image class="img" src="../../assets/images/copy.png"></image>
+           <text>复制链接</text>
+        </div>
+         <div class="btn" @click="getRefresh">
+           <image  class="img" src="../../assets/images/refresh.png"></image>
+           <text>刷新</text>
+        </div>
+         <div class="btn" @click="getHome">
+           <image class="img" src="../../assets/images/r-home.png"></image>
+           <text>首页</text>
+        </div>
+      </div>
+  </div>
+    <div class="adimg-box" if={{adDialog}}>
+      <div class="box">
+        <div class="adClose" @click="closeDialog"><image src="../../assets/images/dialong.png"></image></div>
+        <text class="adImg"><image src="../../assets/images/6.png"></image></text>
+      </div>
+   </div>
   </div>
 </template>
-<import name="title-barmenu" src="../../components/common/bar/title-barmenu"></import>
 <script>
+import prompt from '@system.prompt'
+import clipboard from '@system.clipboard' 
 export default {
   data: {
+    showContent: false,
+    adDialog: false,
     articleId: "",
     title: "美国特朗普14岁小儿子曾确诊感染新冠，现检测结果已转阴现检测结果已转阴...",
     content: "<p>Lorem ipsum dolor sit amet, consemet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipisctetur adipiscing elit.</p> Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. ",
   },
   onInit() {
     // 查询article
-    this.queryActicle()
+    this.queryActicle();
+    this.showContent = false;
   },
   queryActicle() {
     // 根据路由传的articleId查询
     console.log(this.articleId)
+  },
+  onMenuPress(){
+    this.showContent = true;
+  },
+  getHome(){
+    $utils.route2theUrl('pages/index')
+  },
+  dialog(){
+    this.adDialog = true;
+  },
+  closeDialog(){
+   this.adDialog = false;
+  },
+  // 复制
+  copyUrl(){
+    clipboard.set({
+      text: window.location.href,
+      })
+    prompt.showToast({
+          message: '复制成功'
+     });
+     this.close();
+  },
+  close(){
+     this.showContent = false;
+  },
+  getRefresh(){
+     this.close();
   },
 }
 </script>
@@ -32,17 +92,42 @@ export default {
 <style lang="less">
 @import '../../assets/styles/index.less';
 .page-wrapper {
+   padding: 20px 30px;
   background-color: #fff;
+  .ad-btn{
+    width: 110px;
+    height: 110px;
+    position: fixed;
+    top:10px;
+    right: 30px;
+    background-image: url('../../assets/images/circle.png');
+    background-size: 100% 120%;
+    .ad-img{
+      width: 100px;
+      height: 100px;
+      align-content: center;
+    }
+  }
+  .return-btn{
+    width: 110px;
+    height: 110px;
+    position: fixed;
+    bottom:100px;
+    right: 30px;
+    align-items: center;
+    .re-img{
+      width: 100%;
+      height: 100%;
+    }
+  }
   .title {
-    padding: 20px 30px;
     font-size: 40px;
     line-height: 60px;
   }
   .content {
     font-size: 30px;
     line-height: 40px;
-    padding: 20px 30px; 
-    margin-bottom: 50px;
+    margin-bottom: 20px;
   }
 }
 .title-bar {
@@ -69,4 +154,97 @@ export default {
     text-align: center;
   }
 }
+
+ @keyframes translateYByEntry {
+    from {
+      transform: translateY(0px);
+    }
+    to {
+      transform: translateY(-700px);
+    }
+  }
+   @keyframes translateYByLeave {
+    from {
+      transform: translateY(-700px);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+  .translateYByEntry {
+    animation-name: translateYByEntry;
+    animation-duration: 500ms;
+    animation-fill-mode: forwards;
+  }
+  .translateYByLeave {
+    animation-name: translateYByLeave;
+    animation-duration: 500ms;
+    animation-fill-mode: forwards;
+  }
+  .test {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,.4);
+    padding-bottom: 400px;
+    .model {
+      width:100%;
+      height: 250px;
+      position: fixed;
+      left: 0;
+      bottom: -700px;
+      border-top-left-radius:50px;
+      border-top-right-radius:50px;
+      background-color:#ffffff;
+      z-index: 10;
+      padding-top: 50px;
+      padding: 0px 60px;
+      font-size: 30px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      .btn{
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        .img{
+          width: 80px;
+          height: 80px;
+        }
+        
+      }
+    }
+  }
+  .maskBox{
+    width: 100%;
+    height: 100%;
+  }
+
+
+.adimg-box{
+  position:fixed; 
+  margin: 0 auto;
+  background-color: rgba(0,0,0,.4);
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .box{
+    padding: 0px 60px;
+    .flex-box-mixins(column, flex-end, flex-end);
+   .close{
+    width: 50px;
+    height: 50px;
+    margin-top: 20px;
+  }
+  .adImg{
+    width: 90%;
+    margin: 0 auto;
+  }
+  }
+  
+  }
 </style>

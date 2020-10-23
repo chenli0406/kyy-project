@@ -8,10 +8,12 @@ import router from '@system.router'
 const hook2global = global.__proto__ || global
 hook2global.$apis = $apis
 hook2global.$utils = $utils
+hook2global.prompt = prompt
 
 export default {
   $apis: $apis,
   router: router,
+  prompt: prompt,
   showMenu: $utils.showMenu,
   createShortcut: $utils.createShortcut
 }

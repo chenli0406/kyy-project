@@ -145,7 +145,7 @@ export default {
     )
   },
   gotoThemeList(item) {
-    $utils.route2theUrl('pages/theme-list', { title: item.title })
+    // $utils.route2theUrl('pages/theme-list', { title: item.title })
   }
 }
 </script>

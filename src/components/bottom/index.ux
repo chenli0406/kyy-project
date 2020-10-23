@@ -43,7 +43,7 @@
     padding-bottom: 700px;
     .model {
       width:100%;
-      height: 700px;
+      height: 600px;
       position: fixed;
       left: 0;
       bottom: -700px;

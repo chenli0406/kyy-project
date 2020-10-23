@@ -1,0 +1,65 @@
+<template>
+  <div class="page-wrapper">
+    <main-tabs tab-list="{{tabList}}" selected-tab="{{selectedTab}}" onchange-tab="changeTab">
+      <!-- <index if="{{selectedTab === 0}}"></index>
+      <information if="{{selectedTab === 1}}"></information>
+      <collection if="{{selectedTab === 2}}"></collection> -->
+      <div><me if="{{selectedTab === 0}}"></me></div>
+    </main-tabs>
+  </div>
+</template>
+
+<!-- <import name="main-tabs" src="../../components/common/tab/main-tabs"></import>
+<import name="index" src="../../pages/index/index"></import>
+<import name="information" src="../../pages/information/index"></import>
+<import name="collection" src="../../pages/collection/index"></import> -->
+<import name="me" src="../../components/me"></import>
+
+<script>
+export default {
+  protected: {
+    logined: false
+  },
+  private: {
+    tabList: [
+      {
+        icon: '../../assets/images/index/index-active.png'
+      },
+      {
+        icon: '../../assets/images/index/info.png'
+      },
+      {
+        icon: '../../assets/images/index/collect.png'
+      },
+      {
+        icon: '../../assets/images/index/set.png'
+      }
+    ],
+    selectedTab: 0,
+    deactivatedColor: '#707780',
+    activatedColor: ' #20a0ff',
+    timeout: null
+  },
+  onReady() {
+    // 登录后，跳转到“我”的tab
+    if (this.logined) {
+      this.changeTab({ detail: { index: 3 } })
+    }
+  },
+  /* -------------------SelfCustomEvent------------------ */
+  changeTab(e) {
+    // 过快地切换自定义的tab，可能出现布局错乱问题，用延时方式解决。
+    if (this.timeout) {
+      clearTimeout(this.timeout)
+    }
+    this.timeout = setTimeout(() => {
+      let index = e.detail.index || 0
+      this.selectedTab = index
+    }, 100)
+  }
+}
+</script>
+
+<style lang="less">
+@import '../../assets/styles/index.less';
+</style>
