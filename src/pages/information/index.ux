@@ -6,16 +6,16 @@
     <!-- 底部菜单 -->
     <home></home>
     <div class="bottom">
-      <div @click="getRouterIndex()">
+      <div class="b-box" @click="getRouterIndex()">
         <img src="../../assets/images/index/index.png" />
       </div>
-      <div @click="testin()">
+      <div class="b-box" @click="testin()">
         <img src="../../assets/images/index/info-active.png" />
       </div>
-      <div @click="getRouterCollect()">
+      <div  class="b-box" @click="getRouterCollect()">
         <img src="../../assets/images/index/collect.png">
       </div>
-      <div @click="getPopup()">
+      <div class="b-box" @click="getPopup()">
         <img src="../../assets/images/index/set.png" />
       </div>
     </div>
@@ -113,6 +113,7 @@ export default {
     position: fixed;
     bottom: 0;
     width: 100%;
+    z-index:9999;
     height: 120px;
     z-index: 999;
     background-color: #fff;
@@ -120,6 +121,12 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    .b-box{
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+    }
     image {
       width: 40px;
       height: 40px;

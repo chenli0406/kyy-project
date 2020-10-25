@@ -241,6 +241,7 @@ export default {
     margin-top: 20px;
   }
   .adImg{
+    
     width: 90%;
     margin: 0 auto;
   }

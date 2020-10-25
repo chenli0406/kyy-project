@@ -2,6 +2,7 @@
   <div class="title-bar">
     <text class="back iconfont" if="showBack" onclick="goBack">&#xe606;</text>
     <text class="center-title">{{ title }}</text>
+    <image onClick="del" style="padding:0px 30px" src="../../../assets/images/del.png"></image>
   </div>
 </template>
 
@@ -18,6 +19,9 @@ export default {
   goBack() {
     router.back()
   },
+  del(){
+     this.$emit('del')
+  }
 }
 </script>
 

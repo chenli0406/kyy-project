@@ -1,6 +1,5 @@
 <template>
   <div class="page-wrapper">
-    <title-bar title="{{title}}" show-back="{{true}}"></title-bar>
     <!-- <div if="{{!result.length}}" class="no-data">
       <image class="no-data-img" src="/assets/images/no-data.png"></image>
       <text class="text-remark-big">暂无数据</text>
@@ -12,7 +11,6 @@
           <image class="img" src="../../assets/images/collect-item.png"></image>
           <div class="item-box" style="flex-direction: column; align-items: flex-start;">
             <text class="item-t">{{$item.title | ellipsisA}}</text>
-            <text class="item">{{$item.url | ellipsis}}</text>
           </div>
         </div>
 
@@ -20,50 +18,33 @@
     </list>
   </div>
 </template>
-
-<import name="title-bar" src="../../components/common/bar/title-bar"></import>
 <script>
 import router from '@system.router'
 export default {
-  protected: {
-    title: '历史记录'
-  },
   private: {
     list: [
       {
         id: "1",
         title: "花瓣网-陪你做生活的设计师花瓣网",
-        url: "https://huaban.com/home/"
       },
       {
         id: "2",
         title: "花瓣网-陪你做生活的设计师",
-        url: "https://huaban.com/home/"
+      
       },
       {
         id: "3",
         title: "花瓣网-陪你做生活的设计师",
-        url: "https://huaban.com/home/https://huaban.com/home/https://huaban.com/home/"
+     
       },
     ]
   },
-  ellipsis(value) {
-    if (!value) return ''
-    if (value.length > 30) {
-      return value.slice(0, 30) + '...'
-    }
-    return value
-  },
   ellipsisA(value) {
     if (!value) return ''
-    if (value.length > 14) {
-      return value.slice(0, 14) + '...'
+    if (value.length > 20) {
+      return value.slice(0, 20) + '...'
     }
     return value
-  },
-  del(){
-    console.log("111");
-    
   }
 }
 </script>
@@ -108,20 +89,12 @@ export default {
         text-overflow: ellipsis;
         margin-bottom: 10px;
       }
-      .item {
-        height: 28px;
-        width: 80%;
-        font-size: 26px;
-        color: #666666;
-        margin-top: 10px;
-      }
       .img {
         width: 60px;
         height: 60px;
         align-items: center;
         background: #567aff;
         margin-right: 35px;
-        margin-top: 10px;
       }
     }
     .check-box {

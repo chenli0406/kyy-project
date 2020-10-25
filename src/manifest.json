@@ -84,7 +84,21 @@
       },
       "pages/information": {
         "component": "index"
+      },
+      "pages/set": {
+        "component": "index"
+      },
+      "pages/aboutUs": {
+        "component": "index"
+      },
+      "pages/search-detail": {
+        "component": "index"
+      },
+      "pages/download": {
+        "component": "index"
       }
+      
+      
     }
   },
   "display": {
@@ -111,6 +125,30 @@
         "titleBarBackgroundColor": "#f2f2f2",
         "titleBarTextColor": "#333333",
         "menu": true
+      },
+      "pages/download": {
+        "fullScreen": false,
+        "titleBarText": "下载管理",
+        "titleBar": true,
+        "titleBarBackgroundColor": "#f2f2f2",
+        "titleBarTextColor": "#333333",
+        "menu": true
+      },
+      "pages/set": {
+        "fullScreen": false,
+        "titleBarText": "设置",
+        "titleBar": true,
+        "titleBarBackgroundColor": "#f2f2f2",
+        "titleBarTextColor": "#333333",
+        "menu": false
+      },
+      "pages/aboutUs": {
+        "fullScreen": false,
+        "titleBarText": "关于我们",
+        "titleBar": true,
+        "titleBarBackgroundColor": "#f2f2f2",
+        "titleBarTextColor": "#333333",
+        "menu": false
       },
       "pages/comment": {
         "titleBarText": ""
@@ -146,7 +184,11 @@
       },
       "pages/information": {
         "titleBarText": ""
+      },
+      "pages/search-detail": {
+        "titleBarText": ""
       }
+      
     }
   }
 }

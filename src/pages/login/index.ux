@@ -1,47 +1,43 @@
 <template>
   <div class="page-wrapper">
-    <title-bar title="登录/注册" show-back="{{true}}"></title-bar>
+    <div class="logo-box">
+      <image class="logo" src="../../assets/images/logo.png"></image>
+    </div>
+    <div class="title">
+      <text style="color:#000">XX浏览器</text>
+    </div>
     <div class="login-container">
       <div class="login-item">
-        <input
-          type="text"
-          class="login-input"
-          placeholder="请输入手机号码"
-          value="{{phone}}"
-          onchange="changePhone"
-        />
-        <text class="text-primary" onclick="requestVerify">发送验证码</text>
+        <image class="img" src="../../assets/images/login-user.png"></image>
+        <input type="text" maxlength="11" class="login-input" placeholder="请输入手机号码" value="{{phone}}" onchange="changePhone" />
       </div>
 
       <div class="login-item">
-        <input
-          type="text"
-          class="login-input"
-          placeholder="请输入手机验证码"
-          value="{{verifyCode}}"
-          onchange="changeVerifyCode"
-        />
+        <image class="img" src="../../assets/images/login-pw.png"></image>
+        <input type="password" maxlength="10" class="login-input" placeholder="请输入密码" value="{{password}}" onchange="changePassword" />
       </div>
-      <text class="login-btn" onclick="login">确定</text>
+      <text class="login-btn" onclick="login">登录/注册</text>
+    </div>
+    <div class="bottom">
+      <text style="color:#567AFF">《隐私政策》</text>
+      <text style="color:#000">和</text>
+      <text style="color:#567AFF">《用户协议》</text>
     </div>
   </div>
 </template>
-
-<import name="title-bar" src="../../components/common/bar/title-bar"></import>
-
 <script>
 import prompt from '@system.prompt'
 export default {
   data: {
     phone: '',
-    verifyCode: ''
+    password: ''
   },
-  onInit() {},
+  onInit() { },
   changePhone(e) {
     this.phone = e.value
   },
-  changeVerifyCode(e) {
-    this.verifyCode = e.value
+  changePassword(e) {
+    this.password = e.value
   },
   requestVerify() {
     prompt.showToast({
@@ -49,39 +45,107 @@ export default {
     })
   },
   login() {
-    $utils.setStorage('userLogined', 'true')
-    $utils.route2theUrl('pages/main', { logined: true }, true)
+    // if (this.phone == '') {
+    //   prompt.showToast({
+    //     message: `手机号不能为空`,
+    //   });
+    //   return false;
+    // }
+    // if (this.password == '') {
+    //   prompt.showToast({
+    //     message: `密码不能为空`
+    //   });
+    //   return false;
+    // }
+    // if(!(/^[1][3,4,5,7,8][0-9]{9}$/.test(this.phone))){ 
+    //     prompt.showToast({
+    //     message: `请输入正确的手机号`
+    //    });  
+    //    return false;
+    // } 
+    //  if(!(/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/.test(this.password))){ 
+    //     prompt.showToast({
+    //     message: `密码长度要大于6位，由数字和字母组成`
+    //    });  
+    //    return false;
+    // } 
+    
+    console.log(this.phone)
+    // $utils.setStorage('userLogined', 'true')
+      $utils.route2theUrl('pages/main', { logined: true }, true)
   }
 }
 </script>
 
 <style lang="less">
 @import '../../assets/styles/index.less';
-
-.login-container {
-  .page-container-white;
-  padding: @gap-3;
-
-  .login-item {
-    width: 100%;
-    height: 120px;
-    justify-content: space-between;
-    align-items: center;
-    .border-bottom-mixins;
-    .login-input {
-      text-align: left;
-      flex: 1;
+.page-wrapper {
+  height: 100%;
+  background-image: url('../../assets/images/bg-banner.png');
+  background-size: 100% 100%;
+  .logo-box {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+    margin-top: 20%;
+    margin-bottom: 20px;
+    justify-content: center;
+    .logo {
+      width: 100%;
+      height: 100%;
     }
   }
+  .title {
+    margin: 0 auto;
+    height: 37px;
+    font-size: 40px;
+    color: #000000;
+    line-height: 60px;
+    margin-bottom: 100px;
+  }
+  .login-container {
+    flex: 1;
+    flex-direction: column;
 
-  .login-btn {
-    width: 100%;
-    height: 80px;
-    margin-top: 80px;
-    color: @white;
-    background-color: @brand;
-    border-radius: 4px;
-    text-align: center;
+    .login-item {
+      width: 70%;
+      background-color: #f7f8fb;
+      border-radius: 70px;
+      height: 100px;
+      padding: 0px 20px;
+      margin: 20px auto;
+      align-items: center;
+      flex-direction: row;
+      .border-bottom-mixins;
+      .login-input {
+        text-align: left;
+        flex: 1;
+        margin: 0px 10px;
+      }
+      .img {
+        width: 30px;
+        height: 30px;
+        margin: 0 10px;
+      }
+    }
+    .login-btn {
+      width: 50%;
+      height: 100px;
+      background-color: #567aff;
+      border-radius: 70px;
+      margin-top: 80px;
+      font-size: 34px;
+      color: @white;
+      text-align: center;
+      margin: 0 auto;
+      margin-top: 20px;
+    }
+  }
+  .bottom {
+    flex-direction: row;
+    position: fixed;
+    bottom: 100px;
+    justify-content: center;
   }
 }
 </style>

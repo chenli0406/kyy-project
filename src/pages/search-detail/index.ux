@@ -1,52 +1,38 @@
-
 <template>
   <div class="page-wrapper">
-
-    <div class="logo-box">
-      <image class="logo" src="../../assets/images/logo.png"></image>
-    </div>
-    <div class="title">
-      <text style="color:#000">XX浏览器</text>
-    </div>
+    <!-- 搜索 -->
     <div class="title-bar">
       <div class="search-box">
         <div class="search" onclick="toSearch">
-          <text></text>
+          <input type="text" id="search-input" class="search-input" placeholder="请输入关键字" value="{{searchText}}" onchange="search" />
         </div>
       </div>
     </div>
-    <div class="menuBox">
-      <div  for={{menuList}} class="menuList">
-         <image src={{$item.icon}}></image>
-         <text style="text-align: center;padding:20px 0;color:#000">{{$item.title}}</text>
-      </div>
-       <div  class="menuList">
-         <image src='../../assets/images/index/default-avatar.png'></image>
-           <text style="text-align: center;padding:20px 0;color:#000"></text>
-      </div>
-      <div  class="menuList">
-      </div>
-      <div  class="menuList">  
-      </div>
-       <div  class="menuList">
-      </div>
+     <div class="ad-btn" @click="dialog">
+      <image class="ad-img" src="../../assets/images/ad-img1.png"></image>
+    </div>
+    <div class="content">
+      <richtext type="html" class="rich-text">{{content}}</richtext>
     </div>
     <!-- 底部菜单 -->
     <div class="bottom">
-      <div class="b-box">
-        <img src="../../assets/images/index/index-active.png" />
-      </div>
-      <div class="b-box" @click="getRouterinfo()">
-        <img src="../../assets/images/index/info.png" />
+      <div class="b-box" @click="goBack()">
+        <image src="../../assets/images/left.png"></image>
       </div>
       <div class="b-box" @click="getRouterCollect()">
-        <img src="../../assets/images/index/collect.png">
+        <image src="../../assets/images/right.png"></image>
       </div>
       <div class="b-box" @click="getPopup()">
-        <img src="../../assets/images/index/set.png" />
+        <image src="../../assets/images/index/set.png"></image>
+      </div>
+      <div class="b-box" @click="getCollect()">
+        <image if={{flag}} src="../../assets/images/index/collect.png"></image>
+        <image else src="../../assets/images/index/collect.png"></image>
+      </div>
+      <div class="b-box" @click="getHome()">
+        <image src="../../assets/images/index/index.png"></image>
       </div>
     </div>
-    <!--弹窗登录 -->
     <div class="test" if={{showContent}}>
       <div class="maskBox" @click="closeBox"></div>
       <div class="model translateYByEntry">
@@ -90,78 +76,56 @@
         </div>
       </div>
     </div>
+    <!-- 广告 -->
+    <div class="adimg-box" if={{adDialog}}>
+      <div class="box">
+        <div class="adClose" @click="closeDialog">
+          <image src="../../assets/images/dialong.png"></image>
+        </div>
+        <text class="adImg">
+          <image src="../../assets/images/6.png"></image>
+        </text>
+      </div>
+    </div>
   </div>
 </template>
-
-<import name="main-tabs" src="../../components/common/tab/main-tabs"></import>
-
 <script>
 import router from '@system.router'
 export default {
-  private: {
-    showContent: false,
-    adverImg: require('../../assets/images/index/adverImg.png'),
+  data: {
+    flag: false,
+    adDialog: false,
     defaultAvatar: require('../../assets/images/index/default-avatar.png'),
-    menuList:[
-      {
-        icon: "../../assets/images/index/1.png",
-        url: "",
-        title: "爱奇艺",
-      },
-      {
-        icon: "../../assets/images/index/2.png",
-        url: "",
-        title: "新浪微博",
-      },
-      {
-        icon: "../../assets/images/index/3.png",
-        url: "",
-        title: "ONE",
-      },
-        {
-        icon: "../../assets/images/index/3.png",
-        url: "",
-        title: "ONE",
-      },
-       {
-        icon: "../../assets/images/index/3.png",
-        url: "",
-        title: "ONE",
-      },
-    ]
+    searchText: '',
+    showContent: false,
+    content: " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.",
   },
   onInit() {
     this.showContent = false;
   },
-  //弹出底部 
+  toSearch() {
+    // $utils.route2theUrl('pages/search', {})
+  },
+  search(e) {
+  },
   getPopup() {
     this.showContent = true;
   },
-  // 关闭底部弹窗
   closeBox() {
-
-    this.showContent = false;
+    this.showContent = false
   },
-  // 资讯跳转路由
-  getRouterinfo() {
-    router.push({
-      uri: 'pages/information'
-    })
+  dialog(){
+    this.adDialog = true;
   },
-  getRouterCollect() {
-    router.push({
-      uri: 'pages/collection'
-    })
-  },
-  toSearch() {
-    $utils.route2theUrl('pages/search', {})
+  closeDialog(){
+   this.adDialog = false;
   },
   // 菜单跳转
   getRouter(type) {
     console.log(type)
     switch (type) {
       case 'dol':
-        $utils.route2theUrl('pages/download')
+        $utils.route2theUrl('')
         break;
       case 'collection':
         $utils.route2theUrl('pages/collection')
@@ -185,48 +149,54 @@ export default {
     });
     this.showContent = false;
   },
-  onCancel() { },
-  onBackPress() {
-    console.info(`触发：onBackPress`)
+  getHome() {
+    router.push({
+      uri: 'pages/index'
+    });
   },
-  onDestroy() {
-    console.info(`触发：onDestroy`);
+  getCollect() {
+    this.flag = true;
   },
-  onBackPress() {
-    console.info(`触发：onBackPress`)
+  goBack() {
+    router.back()
   }
+
 }
 </script>
 
 <style lang="less">
 @import '../../assets/styles/index.less';
 .page-wrapper {
+  padding: 10px 30px;
   background-color: #fff;
+   .ad-btn{
+    width: 110px;
+    height: 110px;
+    position: fixed;
+    top:130px;
+    right: 30px;
+    background-image: url('../../assets/images/circle.png');
+    background-size: 100% 120%;
+    .ad-img{
+      width: 100px;
+      height: 100px;
+      align-content: center;
+    }
+  }
   .title-bar {
+    position: fixed;
+    top: 0px;
     padding: 10px 30px;
     .search-box {
       width: 100%;
+      background-color: #fff;
     }
   }
-  .logo-box {
-    width: 200px;
-    height: 200px;
-    margin: 0 auto;
-    margin-top: 25%;
-    margin-bottom: 20px;
-    justify-content: center;
-    .logo {
-      width: 100%;
-      height: 100%;
-    }
-  }
-  .title {
-    margin: 0 auto;
-    height: 37px;
-    font-size: 40px;
-    color: #000000;
+  .content {
+    font-size: 30px;
     line-height: 60px;
-    margin-bottom: 50px;
+    margin-top: 130px;
+    margin-bottom: 200px;
   }
   .bottom {
     text-align: center;
@@ -254,6 +224,7 @@ export default {
     }
   }
 }
+
 .popupBottom {
   .flex-box-mixins(column, space-between, space-between);
   width: 100%;
@@ -350,6 +321,7 @@ export default {
   animation-fill-mode: forwards;
 }
 .test {
+  z-index: 9999;
   width: 100%;
   height: 100%;
   position: fixed;
@@ -363,31 +335,53 @@ export default {
     position: fixed;
     left: 0;
     bottom: -700px;
-    border-top-left-radius: 40px;
-    border-top-right-radius: 40px;
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
     background-color: #ffffff;
-    z-index: 1000;
+    z-index: 10;
+    padding-top: 50px;
+    padding: 0px 30px;
+    font-size: 30px;
     display: flex;
     flex-direction: column;
+    .btn {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      .img {
+        width: 80px;
+        height: 80px;
+      }
+    }
   }
 }
 .maskBox {
   width: 100%;
   height: 100%;
 }
-.menuBox{
- padding: 20px 30px;
-  width: 100%;
-  flex-wrap: wrap;
-  flex-direction: row;
-  justify-content: space-between;
-  .menuList{
-    width: 20%;
-    margin: 0px 10px;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    
+
+.adimg-box{
+  position:fixed; 
+  margin: 0 auto;
+  background-color: rgba(0,0,0,.4);
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .box{
+    padding: 0px 60px;
+    .flex-box-mixins(column, flex-end, flex-end);
+   .close{
+    width: 50px;
+    height: 50px;
+    margin-top: 20px;
   }
-}
+  .adImg{
+    
+    width: 90%;
+    margin: 0 auto;
+  }
+  }
+  
+  }
 </style>

@@ -53,12 +53,13 @@ export default {
   search(info) {
     this.searchText = info.detail
     // 根据返回的关键字，查询接口，返回articleList
+    //$utils.route2theUrl('pages/search-detail', {id: this.searchText})
   },
   delHostList() {
 
   },
   toSearch(val) {
-    $utils.route2theUrl('pages/info-detail', {id: val})
+    $utils.route2theUrl('pages/search-detail', {id: val})
 
   },
   // 关闭弹窗
