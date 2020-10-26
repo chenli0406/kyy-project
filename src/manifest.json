@@ -29,6 +29,12 @@
     },
     {
       "name": "system.clipboard"
+    },
+    {
+      "name": "system.webview"
+    },
+    {
+      "name": "system.barcode"
     }
   ],
   "permissions": [
@@ -43,9 +49,6 @@
   "router": {
     "entry": "pages/index",
     "pages": {
-      "pages/main": {
-        "component": "index"
-      },
       "pages/index": {
         "component": "index"
       },
@@ -55,28 +58,10 @@
       "pages/info-detail": {
         "component": "index"
       },
-      "pages/comment": {
-        "component": "index"
-      },
-      "pages/comment-reply": {
-        "component": "index"
-      },
-      "pages/car-condition": {
-        "component": "index"
-      },
-      "pages/car-detail": {
-        "component": "index"
-      },
-      "pages/forum-list": {
-        "component": "index"
-      },
       "pages/history": {
         "component": "index"
       },
       "pages/collection": {
-        "component": "index"
-      },
-      "pages/message": {
         "component": "index"
       },
       "pages/login": {
@@ -96,9 +81,10 @@
       },
       "pages/download": {
         "component": "index"
+      },
+      "pages/addMenu": {
+        "component": "index"
       }
-      
-      
     }
   },
   "display": {
@@ -107,9 +93,6 @@
     "titleBarTextColor": "#333333",
     "menu": false,
     "pages": {
-      "pages/main": {
-        "titleBarText": ""
-      },
       "pages/index": {
         "titleBarText": "",
         "menu": true
@@ -150,21 +133,6 @@
         "titleBarTextColor": "#333333",
         "menu": false
       },
-      "pages/comment": {
-        "titleBarText": ""
-      },
-      "pages/comment-reply": {
-        "titleBarText": ""
-      },
-      "pages/car-condition": {
-        "titleBarText": ""
-      },
-      "pages/car-detail": {
-        "titleBarText": ""
-      },
-      "pages/forum-list": {
-        "titleBarText": ""
-      },
       "pages/history": {
         "titleBarText": ""
       },
@@ -176,9 +144,6 @@
         "titleBarTextColor": "#333333",
         "menu": false
       },
-      "pages/message": {
-        "titleBarText": ""
-      },
       "pages/login": {
         "titleBarText": ""
       },
@@ -187,8 +152,10 @@
       },
       "pages/search-detail": {
         "titleBarText": ""
+      },
+      "pages/addMenu": {
+        "titleBarText": ""
       }
-      
     }
   }
 }

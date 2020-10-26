@@ -4,7 +4,7 @@
   "subversion": {
     "toolkit": "0.4.2"
   },
-  "description": "快应用汽车模版",
+  "description": "浏览器",
   "scripts": {
     "start": "hap server --watch",
     "launch": "concurrently \"node ./command/server.js\" \"npm run watch\"",
@@ -29,8 +29,7 @@
     "less-loader": "^4.1.0",
     "onchange": "^5.2.0",
     "prettier": "^1.15.3",
-    "prettier-plugin-quickapp": "^0.1.0",
-    "quist-ui": "^1.1.2"
+    "prettier-plugin-quickapp": "^0.1.0"
   },
   "prettier": {
     "singleQuote": true,
@@ -39,6 +38,6 @@
     "proseWrap": "never"
   },
   "keywords": [
-    "快应用"
+    "浏览器"
   ]
 }

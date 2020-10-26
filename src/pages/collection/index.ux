@@ -1,7 +1,7 @@
 <template>
   <div class="page-wrapper">
     <list class="list-box">
-      <list-item for="{{list}}">
+      <list-item type="listItem"  for="{{list}}">
         <div class="item-container">
           <image class="img" src="../../assets/images/collect-item.png"></image>
           <div class="item-box" style="flex-direction: column; align-items: flex-start;">
@@ -45,7 +45,17 @@ export default {
   },
   onInit() { },
   del(val) {
-    //  this.ids.push(val);
+    console.log(val);
+     this.ids.push(val);
+    // for(let i = 0; i< this.ids.length; i++){
+    //      if(this.ids[i] == val){
+    //        this.ids.splice(i,1)
+    //      }else{
+    //           this.ids.push(val);
+    //      }
+    // }
+    console.log(this.ids);
+     
   },
   ellipsis (value) {
       if (!value) return ''
@@ -99,7 +109,6 @@ export default {
           width: 60px;
           height: 60px;
           align-items: center;
-          background: #567aff;
           margin-right: 35px;
           margin-top: 10px;
         }

@@ -1,14 +1,15 @@
 <template>
   <div class="search-box">
-    <text class="back iconfont" if="showBack" onclick="goBack">&#xe606;</text>
-    <div class="search" onclick="toSearch">
-      <text>请输入搜索内容或网址</text>
+    <div class="search">
+      <text class="search-input" onclick="toSearch">请输入搜索内容或网址</text>
+      <image class="img" src="../../../assets/images/saoma.png" onclick="toSaoma"></image>
     </div>
   </div>
 </template>
 
 <script>
-import router from '@system.router'
+import router from '@system.router';
+import barcode from '@system.barcode';
 export default {
   data: {},
   props: {
@@ -16,23 +17,37 @@ export default {
       default: false
     }
   },
-  /* -------------------SelfCustomEvent------------------ */
-  goBack() {
-    router.back()
-  },
   toSearch() {
     $utils.route2theUrl('pages/search', {})
   },
-  showMenu() {
-    this.$app.$def.showMenu()
+  toSaoma() {
+    barcode.scan({
+      success: function (data) {
+        console.log(`handling success: ${data.result}`)
+      },
+      fail: function (data, code) {
+        console.log(`handling fail, code = ${code}`)
+      }
+    })
   }
 }
 </script>
 
 <style lang="less">
 @import '../../../assets/styles/index.less';
-.search-box{
+.search-box {
+  width: 100%;
   padding: 30px;
   background-color: #fff;
+  .search {
+    .search-input {
+      width: 84%;
+    }
+    .img {
+      width: 40px;
+      height: 40px;
+      margin-left: 10px;
+    }
+  }
 }
 </style>

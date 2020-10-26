@@ -9,8 +9,11 @@
         value="{{searchText}}"
         onchange="search"
       />
+      <image class="img" src="../../../assets/images/saoma.png"></image>
+      <text style="padding: 0px 10px;">|</text>
+      <text class="cancel" onclick="goBack">取消</text>
     </div>
-    <text class="cancel" onclick="goBack">取消</text>
+    
   </div>
 </template>
 

@@ -1,53 +1,57 @@
 
 <template>
   <div class="page-wrapper">
-
+    <div class="ad-btn" @click="dialog">
+      <image class="ad-img" src="../../assets/images/ad-img1.png"></image>
+    </div>
+    <div class="reportBox" @click="getReport">
+      <text style="color: #fff;">举报</text>
+    </div>
     <div class="logo-box">
       <image class="logo" src="../../assets/images/logo.png"></image>
     </div>
-    <div class="title">
-      <text style="color:#000">XX浏览器</text>
-    </div>
     <div class="title-bar">
       <div class="search-box">
-        <div class="search" onclick="toSearch">
-          <text></text>
+        <div class="search">
+          <text class="search-input" onclick="toSearch"></text>
+          <image class="img" src="../../assets/images/saoma.png" onclick="toSaoma"></image>
         </div>
       </div>
     </div>
     <div class="menuBox">
-      <div  for={{menuList}} class="menuList">
-         <image src={{$item.icon}}></image>
-         <text style="text-align: center;padding:20px 0;color:#000">{{$item.title}}</text>
+      <div for={{menuList}} class="menuList" @click="gotoUrl($item.url)">
+        <image src={{$item.icon}}></image>
+        <text style="font-size:26px;text-align: center;padding:15px 0;color:#000">{{$item.title}}</text>
       </div>
-       <div  class="menuList">
-         <image src='../../assets/images/index/default-avatar.png'></image>
-           <text style="text-align: center;padding:20px 0;color:#000"></text>
+      <div class="menuList" @click="addMenu">
+        <image src='../../assets/images/index/menuAdd.png'></image>
+        <text style="text-align: center;padding: 0;color:#000"></text>
       </div>
-      <div  class="menuList">
+      <div class="menuList">
       </div>
-      <div  class="menuList">  
+      <div class="menuList">
       </div>
-       <div  class="menuList">
+      <div class="menuList">
       </div>
     </div>
     <!-- 底部菜单 -->
     <div class="bottom">
       <div class="b-box">
-        <img src="../../assets/images/index/index-active.png" />
+        <image src="../../assets/images/index/index-active.png" />
+        </image>
       </div>
       <div class="b-box" @click="getRouterinfo()">
-        <img src="../../assets/images/index/info.png" />
+        <image src="../../assets/images/index/info.png"></image>
       </div>
       <div class="b-box" @click="getRouterCollect()">
-        <img src="../../assets/images/index/collect.png">
+        <image src="../../assets/images/index/collect.png"></image>
       </div>
       <div class="b-box" @click="getPopup()">
-        <img src="../../assets/images/index/set.png" />
+        <image src="../../assets/images/index/set.png"></image>
       </div>
     </div>
     <!--弹窗登录 -->
-    <div class="test" if={{showContent}}>
+    <div class="test" if={{showContent}} onclick="stopPropagation()">
       <div class="maskBox" @click="closeBox"></div>
       <div class="model translateYByEntry">
         <div class="popupBottom">
@@ -63,49 +67,68 @@
           </div>
           <div class="menu">
             <div class="menu-item" @click="getRouter('dol')">
-              <img src="../../assets/images/index/download.png">
+              <image src="../../assets/images/index/download.png"> </image>
               <text>下载管理</text>
             </div>
             <div class="menu-item" @click="getRouter('collection')">
-              <img src="../../assets/images/index/collect-1.png">
+              <image src="../../assets/images/index/collect-1.png"></image>
               <text>添加收藏</text>
             </div>
             <div class="menu-item" @click="getRouter('history')">
-              <img src="../../assets/images/index/history.png">
+              <image src="../../assets/images/index/history.png"></image>
               <text>历史记录</text>
             </div>
-            <div class="menu-item">
-              <img src="../../assets/images/index/complaint.png">
+            <div class="menu-item" @click="openDialog">
+              <image src="../../assets/images/index/complaint.png"></image>
               <text>投诉反馈</text>
             </div>
             <div class="menu-item" @click="getRouter('set')">
-              <img src="../../assets/images/index/set-btn.png">
+              <image src="../../assets/images/index/set-btn.png"></image>
               <text>设置</text>
             </div>
             <div class="menu-item">
-              <img src="../../assets/images/index/refresh.png">
+              <image src="../../assets/images/index/refresh.png"></image>
               <text>刷新</text>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <!-- 广告 -->
+    <div class="adimg-box" if={{adDialog}} onclick="stopPropagation()">
+      <div class="box">
+        <div class="adClose" @click="closeDialog">
+          <image src="../../assets/images/close-index.png"></image>
+        </div>
+        <text class="adImg">
+          <image src="../../assets/images/10.png"></image>
+        </text>
+      </div>
+    </div>
+    <!-- 举报 -->
+    <dialog if={{showDialog}} @close="getClose"></dialog>
+    <!-- 反馈 -->
+    <feedback if={{feedbackDailog}} @close="closeFeedback"></feedback>
   </div>
 </template>
-
-<import name="main-tabs" src="../../components/common/tab/main-tabs"></import>
-
+<import  name="dialog" src="../../components/dialog/index"></import>
+<import  name="feedback" src="../../components/feedback/index"></import>
 <script>
-import router from '@system.router'
+import router from '@system.router';
+import webview from '@system.webview'
+import barcode from '@system.barcode';
 export default {
   private: {
     showContent: false,
+    adDialog: false,
+    showDialog: false,
+    feedbackDailog: false,
     adverImg: require('../../assets/images/index/adverImg.png'),
     defaultAvatar: require('../../assets/images/index/default-avatar.png'),
-    menuList:[
+    menuList: [
       {
         icon: "../../assets/images/index/1.png",
-        url: "",
+        url: "http://www.baidu.cn",
         title: "爱奇艺",
       },
       {
@@ -118,12 +141,12 @@ export default {
         url: "",
         title: "ONE",
       },
-        {
+      {
         icon: "../../assets/images/index/3.png",
         url: "",
         title: "ONE",
       },
-       {
+      {
         icon: "../../assets/images/index/3.png",
         url: "",
         title: "ONE",
@@ -132,6 +155,9 @@ export default {
   },
   onInit() {
     this.showContent = false;
+  },
+  onReady() {
+
   },
   //弹出底部 
   getPopup() {
@@ -142,11 +168,24 @@ export default {
 
     this.showContent = false;
   },
+  closeFeedback() {
+    this.feedbackDailog = false;
+  },
+  openDialog() {
+    this.showContent = false;
+    this.feedbackDailog = true;
+  },
+  getReport() {
+    this.showDialog = true;
+  },
   // 资讯跳转路由
   getRouterinfo() {
     router.push({
       uri: 'pages/information'
     })
+  },
+  getClose() {
+    this.showDialog = false;
   },
   getRouterCollect() {
     router.push({
@@ -161,7 +200,7 @@ export default {
     console.log(type)
     switch (type) {
       case 'dol':
-        $utils.route2theUrl('pages/download')
+        $utils.route2theUrl('pages/download');
         break;
       case 'collection':
         $utils.route2theUrl('pages/collection')
@@ -176,7 +215,7 @@ export default {
         break;
     }
     //$utils.route2theUrl(item.page, { title: item.title })
-    this.showContent = false;
+
   },
   // 登录
   login() {
@@ -187,13 +226,42 @@ export default {
   },
   onCancel() { },
   onBackPress() {
+    this.showContent = false;
     console.info(`触发：onBackPress`)
   },
   onDestroy() {
+    this.showContent = false;
     console.info(`触发：onDestroy`);
   },
-  onBackPress() {
-    console.info(`触发：onBackPress`)
+  addMenu() {
+    router.push({
+      uri: 'pages/addMenu'
+    })
+    this.showContent = false;
+  },
+  gotoUrl(val) {
+    webview.loadUrl({
+      url: val,
+      allowthirdpartycookies: true,
+    })
+  },
+  stopPropagation() {
+  },
+  dialog() {
+    this.adDialog = true;
+  },
+  closeDialog() {
+    this.adDialog = false;
+  },
+  toSaoma() {
+    barcode.scan({
+      success: function (data) {
+        console.log(`handling success: ${data.result}`)
+      },
+      fail: function (data, code) {
+        console.log(`handling fail, code = ${code}`)
+      }
+    })
   }
 }
 </script>
@@ -202,18 +270,50 @@ export default {
 @import '../../assets/styles/index.less';
 .page-wrapper {
   background-color: #fff;
+  .ad-btn {
+    width: 110px;
+    height: 110px;
+    position: fixed;
+    top: 100px;
+    right: 30px;
+    background-image: url('../../assets/images/circle.png');
+    background-size: 100% 120%;
+    .ad-img {
+      width: 100px;
+      height: 100px;
+      align-content: center;
+    }
+  }
+  .reportBox {
+    width: 100px;
+    height: 100px;
+    position: fixed;
+    bottom: 140px;
+    right: 30px;
+    background-color: #567aff;
+    border-radius: 50%;
+    justify-content: center;
+  }
   .title-bar {
     padding: 10px 30px;
     .search-box {
       width: 100%;
+      .search {
+        .search-input {
+          width: 84%;
+        }
+        .img {
+          margin-left: 10px;
+        }
+      }
     }
   }
   .logo-box {
-    width: 200px;
-    height: 200px;
+    width: 180px;
+    height: 180px;
     margin: 0 auto;
     margin-top: 25%;
-    margin-bottom: 20px;
+    margin-bottom: 50px;
     justify-content: center;
     .logo {
       width: 100%;
@@ -236,7 +336,7 @@ export default {
     height: 120px;
     z-index: 999;
     background-color: #fff;
-    box-shadow: 0px 0px 40px 0px rgba(149, 149, 149, 0.14);
+    border-top: 1px solid rgba(149, 149, 149, 0.2);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -251,6 +351,20 @@ export default {
       width: 40px;
       height: 40px;
       margin: 0px 60px;
+    }
+  }
+  .menuBox {
+    padding: 20px 30px;
+    width: 100%;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-between;
+    .menuList {
+      width: 22%;
+      margin: 0 10px;
+      flex-direction: column;
+      align-items: center;
+      border-radius: 50%;
     }
   }
 }
@@ -350,6 +464,7 @@ export default {
   animation-fill-mode: forwards;
 }
 .test {
+  z-index: 9999;
   width: 100%;
   height: 100%;
   position: fixed;
@@ -366,28 +481,47 @@ export default {
     border-top-left-radius: 40px;
     border-top-right-radius: 40px;
     background-color: #ffffff;
-    z-index: 1000;
     display: flex;
     flex-direction: column;
+    .btn {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      .img {
+        width: 80px;
+        height: 80px;
+      }
+    }
+  }
+  .maskBox {
+    width: 100%;
+    height: 100%;
   }
 }
-.maskBox {
-  width: 100%;
+.adimg-box {
+  position: fixed;
+  margin: 0 auto;
+  background-color: rgba(0, 0, 0, 0.4);
   height: 100%;
-}
-.menuBox{
- padding: 20px 30px;
-  width: 100%;
-  flex-wrap: wrap;
-  flex-direction: row;
-  justify-content: space-between;
-  .menuList{
-    width: 20%;
-    margin: 0px 10px;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .box {
+    padding: 0px 60px;
+    .flex-box-mixins(column, flex-end, flex-end);
+    .close {
+      width: 50px;
+      height: 50px;
+      margin-top: 20px;
+    }
+    .adClose {
+      width: 60px;
+      height: 60px;
+    }
+    .adImg {
+      width: 90%;
+      margin: 0 auto;
+    }
   }
 }
 </style>

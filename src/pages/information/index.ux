@@ -12,7 +12,7 @@
       <div class="b-box" @click="testin()">
         <img src="../../assets/images/index/info-active.png" />
       </div>
-      <div  class="b-box" @click="getRouterCollect()">
+      <div class="b-box" @click="getRouterCollect()">
         <img src="../../assets/images/index/collect.png">
       </div>
       <div class="b-box" @click="getPopup()">
@@ -20,50 +20,54 @@
       </div>
     </div>
     <!--弹窗登录 -->
-    <div>
-      <bottom-box if="{{showContent}}" @close="closeBox">
+    <div class="test" if={{showContent}} onclick="stopPropagation()">
+      <div class="maskBox" @click="closeBox"></div>
+      <div class="model translateYByEntry">
         <div class="popupBottom">
-          <div class="avatar-box flex-direction: row;">
+          <div class="avatar-box">
             <div class="avatar-img">
               <img src="{{defaultAvatar}}" />
             </div>
-            <div class="login-btn flex-direction: row;">
-              <div><text>点击登录</text></div>
+            <div class="login-btn">
+              <text class="login-title" @click="login">点击登录</text>
               <text class="login-btn-title">欢迎使用XX浏览器</text>
             </div>
-            <button class="btn"><text>加入桌面</text></button>
+            <text class="btn">加入桌面</text>
           </div>
           <div class="menu">
-            <p class="menu-item" url="/pages/download/download" @click="getRouterCollect">
-              <img src="../../assets/images/index/download.png">
+            <div class="menu-item" @click="getRouter('dol')">
+              <image src="../../assets/images/index/download.png"> </image>
               <text>下载管理</text>
-            </p>
-            <p class="menu-item" url="/pages/collect/collect">
-              <img src="../../assets/images/index/collect-1.png">
+            </div>
+            <div class="menu-item" @click="getRouter('collection')">
+              <image src="../../assets/images/index/collect-1.png"></image>
               <text>添加收藏</text>
-            </p>
-            <p class="menu-item" url="/pages/history/history">
-              <img src="../../assets/images/index/history.png">
+            </div>
+            <div class="menu-item" @click="getRouter('history')">
+              <image src="../../assets/images/index/history.png"></image>
               <text>历史记录</text>
-            </p>
-            <p class="menu-item">
-              <img src="../../assets/images/index/complaint.png">
+            </div>
+            <div class="menu-item" @click="openDialog">
+              <image src="../../assets/images/index/complaint.png"></image>
               <text>投诉反馈</text>
-            </p>
-            <p class="menu-item" url="/pages/set/set">
-              <img src="../../assets/images/index/set-btn.png">
+            </div>
+            <div class="menu-item" @click="getRouter('set')">
+              <image src="../../assets/images/index/set-btn.png"></image>
               <text>设置</text>
-            </p>
-            <p class="menu-item">
-              <img src="../../assets/images/index/refresh.png">
+            </div>
+            <div class="menu-item">
+              <image src="../../assets/images/index/refresh.png"></image>
               <text>刷新</text>
-            </p>
+            </div>
           </div>
         </div>
-      </bottom-box>
+      </div>
     </div>
+       <!-- 反馈 -->
+    <feedback if={{feedbackDailog}}  @close="closeFeedback"></feedback>
   </div>
 </template>
+<import  name="feedback" src="../../components/feedback/index"></import>
 <script>
 import router from '@system.router'
 
@@ -71,24 +75,33 @@ export default {
   data: {
     translateY: '',
     showContent: false,
-    adverImg: require('../../assets/images/index/adverImg.png'),
+    feedbackDailog: false,
     defaultAvatar: require('../../assets/images/index/default-avatar.png'),
   },
   onInit() {
+    this.showContent = false;
   },
   //弹出底部 
   getPopup() {
-     this.showContent = true;
+    this.showContent = true;
   },
   // 关闭底部弹窗
   closeBox() {
     this.showContent = false;
+  },
+    closeFeedback(){
+     this.feedbackDailog = false;
+  },
+  openDialog(){
+    this.showContent = false;
+    this.feedbackDailog = true;
   },
   // 资讯跳转路由
   getRouterIndex() {
     router.push({
       uri: '/pages/index'
     })
+    this.showContent = false;
   },
   // 跳转收藏
   getRouterCollect() {
@@ -98,22 +111,56 @@ export default {
     this.showContent = false;
   },
   onCancel() { },
-  testin(){
+  testin() {
     return false;
   },
+  // 菜单跳转
+  getRouter(type) {
+    console.log(type)
+    switch (type) {
+      case 'dol':
+        $utils.route2theUrl('pages/download');
+        break;
+      case 'collection':
+        $utils.route2theUrl('pages/collection')
+        break;
+      case 'history':
+        $utils.route2theUrl('pages/history')
+        break;
+      case 'set':
+        $utils.route2theUrl('pages/set')
+        break;
+      default:
+        break;
+    }
+    //$utils.route2theUrl(item.page, { title: item.title })
+
+  },
+  // 登录
+  login() {
+    router.push({
+      uri: 'pages/login'
+    });
+    this.showContent = false;
+  },
+  // 阻止事件冒泡
+  stopPropagation() {
+  },
+
 }
 </script>
 
 <style lang="less">
 @import '../../assets/styles/index.less';
 .page-wrapper {
+  height: 100%;
   .bottom {
-    z-index:99999;
+    z-index: 99999;
     text-align: center;
     position: fixed;
     bottom: 0;
     width: 100%;
-    z-index:9999;
+    z-index: 9999;
     height: 120px;
     z-index: 999;
     background-color: #fff;
@@ -121,7 +168,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    .b-box{
+    .b-box {
       width: 100%;
       height: 100%;
       align-items: center;
@@ -135,8 +182,14 @@ export default {
   }
 }
 .popupBottom {
+  .flex-box-mixins(column, space-between, space-between);
+  width: 100%;
   padding: 20px;
   .avatar-box {
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
     padding: 40px 0 20px 0;
     margin: 0px 30px;
     .avatar-img {
@@ -150,12 +203,15 @@ export default {
       }
     }
     .login-btn {
-      width: 30%;
-      font-size: 34px;
-      font-weight: 600;
-      text-align: left;
-      margin: 0 30px;
-      color: #000000;
+      .flex-box-mixins(column, flex-start, flex-start);
+      text-align: right;
+      width: 40%;
+      .login-title {
+        font-size: 30px;
+        font-weight: 600;
+        color: #000;
+        line-height: 60px;
+      }
       .login-btn-title {
         font-size: 20px;
         font-weight: 400;
@@ -170,9 +226,13 @@ export default {
       height: 80px;
       line-height: 80px;
       font-size: 30px;
+      text-align: center;
     }
   }
   .menu {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
     font-size: 24px;
     font-weight: 400;
     color: #2c2c2c;
@@ -181,10 +241,74 @@ export default {
       height: 70px;
     }
     .menu-item {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       width: 25%;
       margin: 20px 0;
       text-align: center;
     }
+  }
+}
+@keyframes translateYByEntry {
+  from {
+    transform: translateY(0px);
+  }
+  to {
+    transform: translateY(-700px);
+  }
+}
+@keyframes translateYByLeave {
+  from {
+    transform: translateY(-700px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+.translateYByEntry {
+  animation-name: translateYByEntry;
+  animation-duration: 500ms;
+  animation-fill-mode: forwards;
+}
+.translateYByLeave {
+  animation-name: translateYByLeave;
+  animation-duration: 500ms;
+  animation-fill-mode: forwards;
+}
+.test {
+  z-index: 9999;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding-bottom: 700px;
+  .model {
+    width: 100%;
+    height: 600px;
+    position: fixed;
+    left: 0;
+    bottom: -700px;
+    border-top-left-radius: 40px;
+    border-top-right-radius: 40px;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    .btn {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      .img {
+        width: 80px;
+        height: 80px;
+      }
+    }
+  }
+  .maskBox {
+    width: 100%;
+    height: 100%;
   }
 }
 </style>

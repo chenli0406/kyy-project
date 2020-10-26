@@ -30,7 +30,7 @@
         </div>
       </div>
   </div>
-    <div class="adimg-box" if={{adDialog}}>
+    <div class="adimg-box" if={{adDialog}} onclick="stopPropagation()">
       <div class="box">
         <div class="adClose" @click="closeDialog"><image src="../../assets/images/dialong.png"></image></div>
         <text class="adImg"><image src="../../assets/images/6.png"></image></text>
@@ -86,6 +86,8 @@ export default {
   getRefresh(){
      this.close();
   },
+   stopPropagation(){
+  }
 }
 </script>
 

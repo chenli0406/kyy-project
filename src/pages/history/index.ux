@@ -6,7 +6,7 @@
       <text class="text-remark-big">暂无数据</text>
     </div> -->
     <list class="list-box">
-      <list-item for="{{list}}">
+      <list-item type="listItem" for="{{list}}">
         <text class="date">2020020</text>
         <div class="item-container">
           <image class="img" src="../../assets/images/collect-item.png"></image>
@@ -119,7 +119,6 @@ export default {
         width: 60px;
         height: 60px;
         align-items: center;
-        background: #567aff;
         margin-right: 35px;
         margin-top: 10px;
       }

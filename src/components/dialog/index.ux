@@ -1,0 +1,151 @@
+
+<template>
+    <!-- 举报 -->
+    <div class="adimg-box" onclick="stopPropagation()">
+        <div class="box">
+            <text class="box-title">我要举报</text>
+            <div class="list-select">
+                <select class="list-option" onchange="onSelectBanks">
+                    <option class="option" value="0">举报类型1</option>
+                    <option class="option" value="{{$item.id}}" for="options" selected="{{$item.id==id}}">{{$item.name}}</option>
+                </select>
+            </div>
+            <textarea maxlength="100" class="textarea" placeholder="请详细描述您遇到的问题或您的建议" onchange="change">{{ content }}</textarea>
+            <input class="input" type="text" maxlength="11" placeholder="请留下您的联系方式" value="{{phone}}" onchange="changePhone" />
+            <text class="btn" @click="submit">确认</text>
+        </div>
+        <text class="adClose" @click="close">
+            <image src="../../assets/images/close-index.png"></image>
+        </text>
+    </div>
+
+</template>
+<script>
+import prompt from '@system.prompt'
+export default {
+    props: ['propShow'],
+    data: {
+        content: "",
+        phone: "",
+        selectedVal: "",
+        options: [
+            {
+                id: "1",
+                name: "举报类型1"
+            },
+            {
+                id: "2",
+                name: "举报类型2"
+            },
+            {
+                id: "3",
+                name: "举报类型3"
+            },
+            {
+                id: "4",
+                name: "举报类型4"
+            },
+
+        ]
+    },
+    stopPropagation() {
+    },
+    close() {
+        this.$emit('close', false)
+    },
+    changePhone(e) {
+        this.phone = e.value
+
+    },
+    change(e) {
+        this.content = e.value;
+    },
+    submit() {
+    },
+    onSelectBanks(e) {
+        this.selectedVal = e.newValue;
+    }
+}
+</script>
+
+<style lang="less">
+@import '../../assets/styles/index.less';
+.adimg-box {
+  font-family: Source Han Sans CN;
+  position: fixed;
+  margin: 0 auto;
+  background-color: rgba(0, 0, 0, 0.4);
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  .box {
+    width: 80%;
+    background-color: #fff;
+    border-radius: 40px;
+    padding: 40px 60px;
+    .flex-box-mixins(column, center, center);
+    .close {
+      width: 50px;
+      height: 50px;
+      margin-top: 20px;
+    }
+    .btn {
+      width: 60%;
+      border-radius: 40px;
+      height: 80px;
+      background-color: #567aff;
+      text-align: center;
+      color: #fff;
+    }
+    .box-title {
+      font-size: 40px;
+      color: #000;
+      font-weight: 500;
+      margin-bottom: 30px;
+    }
+    .textarea {
+      width: 100%;
+      height: 230px;
+      background-color: #f7f8fb;
+      border-radius: 35px;
+      padding: 30px;
+      font-size: 26px;
+      border: none;
+      outline: none;
+      margin-bottom: 30px;
+    }
+    .input {
+      width: 100%;
+      background-color: #f7f8fb;
+      padding: 30px;
+      border-radius: 55px;
+      font-size: 26px;
+      margin-bottom: 30px;
+    }
+    .list-select {
+      width: 100%;
+      padding: 30px;
+      background-color: #f7f8fb;
+      border-radius: 55px;
+      color: #000;
+      margin-bottom: 30px;
+    }
+    .list-option {
+      width: 100%;
+      font-size: 26px;
+      background-color: #f7f8fb;
+      color: #000;
+      padding: 10px;
+      .option {
+      }
+    }
+  }
+  .adClose {
+    width: 60px;
+    height: 60px;
+    margin-top: 20px;
+  }
+}
+</style>

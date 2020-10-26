@@ -18,7 +18,16 @@
           >
           </article-list>
         </div>
-        <div><recommend if="{{selectedTab === 1}}"></recommend></div>
+        <div>
+          <article-list
+            list="{{hot.list}}"
+            show-rank="{{true}}"
+            show-load="{{hot.load}}"
+            onload-more="queryHotList"
+            if="{{selectedTab === 1}}"
+          >
+          </article-list>
+        </div>
         <div>
           <article-list
             list="{{hot.list}}"
@@ -29,6 +38,7 @@
           >
           </article-list>
         </div>
+
         <div>
           <article-list
             list="{{hot.list}}"
@@ -39,7 +49,6 @@
           >
           </article-list>
         </div>
-
         <div>
           <article-list
             list="{{hot.list}}"
@@ -47,8 +56,7 @@
             show-load="{{hot.load}}"
             onload-more="queryHotList"
             if="{{selectedTab === 4}}"
-          >
-          </article-list>
+          ></article-list>
         </div>
         <div>
           <article-list
@@ -59,7 +67,7 @@
             if="{{selectedTab === 5}}"
           ></article-list>
         </div>
-        <div>
+         <div>
           <article-list
             list="{{hot.list}}"
             show-rank="{{true}}"
@@ -76,7 +84,6 @@
 <import name="search-bar" src="../common/bar/search-bar"></import>
 <import name="underline-tab-bar" src="../common/tab/underline-tab-bar"></import>
 <import name="article-list" src="../common/list/article-list"></import>
-<import name="recommend" src="./recommend.ux"></import>
 
 <script>
 export default {
