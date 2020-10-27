@@ -1,6 +1,6 @@
 {
-  "package": "com.example.demo",
-  "name": "demo",
+  "package": "com.example.kyy",
+  "name": "kyy",
   "versionName": "1.0.0",
   "versionCode": "3",
   "minPlatformVersion": "1020",
@@ -35,6 +35,9 @@
     },
     {
       "name": "system.barcode"
+    },
+    {
+      "name": "system.device"
     }
   ],
   "permissions": [

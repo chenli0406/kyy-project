@@ -19,12 +19,16 @@
       </div>
     </div>
     <div class="menuBox">
-      <div for={{menuList}} class="menuList" @click="gotoUrl($item.url)">
-        <image src={{$item.icon}}></image>
+      <div for={{menuList}} class="menuList" @click="gotoUrl($item.link)">
+        <div class="img-menu">
+           <image class="img"  src={{$item.picture}}></image>
+        </div>
         <text style="font-size:26px;text-align: center;padding:15px 0;color:#000">{{$item.title}}</text>
       </div>
       <div class="menuList" @click="addMenu">
-        <image src='../../assets/images/index/menuAdd.png'></image>
+        <div class="img-menu">
+           <image class="img" src='../../assets/images/index/menuAdd.png'></image>
+        </div>
         <text style="text-align: center;padding: 0;color:#000"></text>
       </div>
       <div class="menuList">
@@ -117,6 +121,8 @@
 import router from '@system.router';
 import webview from '@system.webview'
 import barcode from '@system.barcode';
+import device from '@system.device';
+
 export default {
   private: {
     showContent: false,
@@ -125,39 +131,70 @@ export default {
     feedbackDailog: false,
     adverImg: require('../../assets/images/index/adverImg.png'),
     defaultAvatar: require('../../assets/images/index/default-avatar.png'),
-    menuList: [
-      {
-        icon: "../../assets/images/index/1.png",
-        url: "http://www.baidu.cn",
-        title: "爱奇艺",
-      },
-      {
-        icon: "../../assets/images/index/2.png",
-        url: "",
-        title: "新浪微博",
-      },
-      {
-        icon: "../../assets/images/index/3.png",
-        url: "",
-        title: "ONE",
-      },
-      {
-        icon: "../../assets/images/index/3.png",
-        url: "",
-        title: "ONE",
-      },
-      {
-        icon: "../../assets/images/index/3.png",
-        url: "",
-        title: "ONE",
-      },
-    ]
+    menuList: [],
+    device: {
+      id: "",
+      imei: "",
+      brand: "",
+      manufacturer: "",
+      model: "",
+      osType: "",
+      osVersionName: "",
+      osVersionCode: "",
+      platformVersionName: "",
+      platformVersionCode: "",
+      region: "",
+      screenWidth: 0,
+      screenHeight: 0
+    },
+    packages: [],
   },
   onInit() {
     this.showContent = false;
+    let _this = this;
+    //获取设备DeviceId
+    device.getDeviceId({
+      success: function (data) {
+        _this.device.id = data.deviceId;
+        $utils.setStorage('deviceId', `${data.deviceId}`);
+      },
+      fail: function (data, code) {
+      }
+    })
+    // 获取设备信息
+    device.getInfo({
+      success: function (ret) {
+        _this.device.brand = ret.brand;
+        _this.device.manufacturer = ret.manufacturer;
+        _this.device.model = ret.model;
+        _this.device.osType = ret.osType;
+        _this.device.osVersionName = ret.osVersionName;
+        _this.device.osVersionCode = ret.osVersionCode;
+        _this.device.platformVersionName = ret.platformVersionName;
+        _this.device.platformVersionCode = ret.platformVersionCode;
+        _this.device.region = ret.region;
+        _this.device.screenWidth = ret.screenWidth;
+        _this.device.screenHeight = ret.screenHeight;
+
+        let para = new Object();
+        var host = device.host;
+
+        _this.packages.push(host.package)
+        para.device = _this.device;
+        para.packages = _this.packages;
+        $apis.common.getLaunch(para).then((res) => {
+          let data = JSON.parse(res.data)
+          _this.menuList = data.flatAds;
+        })
+      }
+    })
+
+    $utils.getStorage('deviceId').then(value => {
+      var deviceId = value;
+    })
+    $apis.common.getPing().then((res) => { });
   },
   onReady() {
-
   },
   //弹出底部 
   getPopup() {
@@ -364,7 +401,16 @@ export default {
       margin: 0 10px;
       flex-direction: column;
       align-items: center;
-      border-radius: 50%;
+      border: 1px solid #000000;
+      .img-menu {
+        border-radius: 50%;
+        width: 100%;
+        
+        .img{
+          width: 100%;
+          height: 100%;
+        }
+      }
     }
   }
 }

@@ -82,6 +82,7 @@ function setStorage(key, value) {
 }
 
 function getStorage(key) {
+  // eslint-disable-next-line no-undef
   return new Promise((resolve, reject) => {
     // 获取storage
     storage.get({

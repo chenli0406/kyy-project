@@ -1,19 +1,25 @@
 import $fetch from '@system.fetch'
 import $utils from './utils'
+const prompt = require('@system.prompt')
 
+let deviceId = window.localStorage.deviceId;
 function requestHandle(params) {
-  console.log(`🤖 当前正在发起请求的 Url 是： ${params.url}`)
+  // eslint-disable-next-line no-undef
   return new Promise((resolve, reject) => {
     $fetch.fetch({
       url: params.url,
       method: params.method,
-      data: params.data,
+      data: JSON.stringify(params.data),
+      header:{
+        'Content-Type': 'application/json; charset=utf-8',
+        'DeviceId':  deviceId
+      },
       success: data => {
-        const serverResponse = JSON.parse(data.data)
-        if (serverResponse.success || serverResponse.status === 0) {
-          resolve(serverResponse.result || serverResponse.value)
+        const serverResponse = data;
+        if (serverResponse.code == 200) {
+          resolve(serverResponse)
         } else {
-          reject(serverResponse.message)
+            reject(serverResponse.message)
         }
       },
       fail: (data, code) => {
