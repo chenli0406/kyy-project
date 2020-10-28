@@ -8,73 +8,15 @@
         mode="scrollable"
       ></underline-tab-bar>
       <tab-content class="tab-content">
-        <div>
+        <div for={{tabList}}>
           <article-list
             list="{{hot.list}}"
             show-rank="{{true}}"
             show-load="{{hot.load}}"
             onload-more="queryHotList"
-            if="{{selectedTab === 0}}"
+            if="{{selectedTab === $idx}}"
           >
           </article-list>
-        </div>
-        <div>
-          <article-list
-            list="{{hot.list}}"
-            show-rank="{{true}}"
-            show-load="{{hot.load}}"
-            onload-more="queryHotList"
-            if="{{selectedTab === 1}}"
-          >
-          </article-list>
-        </div>
-        <div>
-          <article-list
-            list="{{hot.list}}"
-            show-rank="{{true}}"
-            show-load="{{hot.load}}"
-            onload-more="queryHotList"
-            if="{{selectedTab === 2}}"
-          >
-          </article-list>
-        </div>
-
-        <div>
-          <article-list
-            list="{{hot.list}}"
-            show-rank="{{true}}"
-            show-load="{{hot.load}}"
-            onload-more="queryHotList"
-            if="{{selectedTab === 3}}"
-          >
-          </article-list>
-        </div>
-        <div>
-          <article-list
-            list="{{hot.list}}"
-            show-rank="{{true}}"
-            show-load="{{hot.load}}"
-            onload-more="queryHotList"
-            if="{{selectedTab === 4}}"
-          ></article-list>
-        </div>
-        <div>
-          <article-list
-            list="{{hot.list}}"
-            show-rank="{{true}}"
-            show-load="{{hot.load}}"
-            onload-more="queryHotList"
-            if="{{selectedTab === 5}}"
-          ></article-list>
-        </div>
-         <div>
-          <article-list
-            list="{{hot.list}}"
-            show-rank="{{true}}"
-            show-load="{{hot.load}}"
-            onload-more="queryHotList"
-            if="{{selectedTab === 6}}"
-          ></article-list>
         </div>
       </tab-content>
     </tabs>
@@ -89,8 +31,9 @@
 export default {
   props: [],
   data: {
-    tabList: ['热榜', '推荐', '原创', '视频', '分类', '分类', '分类'],
+    tabList: [],
     selectedTab: 0,
+    category: "",
     hot: {
       list: [],
       pageNo: 1,
@@ -99,86 +42,84 @@ export default {
       load: true
     }
   },
+  onInit() {
+    this.getArticleType();
+  },
   onReady() {
-    this.queryHotList(1)
   },
   changeTab(e) {
     let index = e.index || 0
-    this.selectedTab = index
+    this.selectedTab = index;
+    if(this.selectedTab == 0){
+       if(this.tabList.length >0){
+          this.getArticleList(this.tabList[0]);
+       }
+    }else {
+       for(let i = 0; i< this.tabList.length;i++){
+       if( i == index){
+         this.category = this.tabList[i];
+       }
+    }
+    this.getArticleList(this.category);
+    }
+   
   },
-  queryHotList(pageNo) {
+  queryHotList(pageNo,) {
     if (!isNaN(pageNo) && pageNo !== this.hot.pageNo) {
       return
     }
-    if (this.hot.total && this.hot.pageNo * this.hot.pageSize > this.hot.total) {
-      this.hot.load = false
-      return
-    }
-    // 延时模拟接口请求
+    // 延时接口请求
     setTimeout(() => {
       this.queryFn()
     }, 100)
   },
   queryFn() {
     /* 
-    根据pageNo和pageSize查询列表
-    由接口返回数据设置total，并将数据push到list
+    根据pageNo查询列表
+    由接口返回数据，并将数据push到list
     */
-    this.hot.pageNo++
-    this.hot.total = 30
-    this.hot.list.push(
-      {
-        id: '340000198710091037',
-        title: '美国特朗普14岁小儿子曾确诊感染新冠，现检测结果已转阴现检测结果已转阴现检测结果已转阴现检测结果已转阴现检测结果已转阴现检测结果已转阴现检测结果已转阴现检测结果已转阴现检测结果已转阴现检测结果检测结果检测结果检测结果检测结果检测结果已转阴现检测结果已转阴...',
-        image: ['../../assets/images/info/4.png','../../assets/images/info/5.png','../../assets/images/info/5.png']
-      },
-      {
-        id: '230000197210242900',
-        title: '东风满眼，珠江潮涌。深圳经济特区迎来了40岁“生日”。在更高起点上推进改革开放',
-        image: ['../../assets/images/info/1.png']
-      },
-      {
-        id: '110000199611044659',
-        title: '土耳其哈塔伊森林大火持续 火势仍未得到控制',
-        image: ['../../assets/images/info/2.png']
-      },
-      {
-        id: '610000197908071331',
-        title: '技果飞美院象照历千少着离受金名想。',
-        image: ['../../assets/images/info/3.png']
-      },
-      {
-        id: '510000198909241735',
-        title: '见科即件边队手直际将和收。',
-        image: ['../../assets/images/info/1.png']
-      },
-      {
-        id: '3400001987100910374',
-        title: '上来啦感照果九自经。',
-        image: ['../../assets/images/info/1.png']
-      },
-      {
-        id: '5230000197210242900',
-        title: '你但就是看节级儿取于验书山此值。',
-        image: ['../../assets/images/info/1.png']
-      },
-      {
-        id: '5110000199611044659',
-        title: '快点开始你解社意位声设证原传调上专。',
-        image: ['../../assets/images/info/1.png']
-      },
-      {
-        id: '5610000197908071331',
-        title: '看看书技果飞美院象照历千少着离受金名想。',
-        image: ['../../assets/images/info/1.png']
-      },
-      {
-        id: '5510000198909241735',
-        title: '达到见科即件边队手直际将和收。',
-        image: ['../../assets/images/info/1.png']
-      }
-    )
-  }
+    this.hot.pageNo++;
+    let para = new Object();
+    para.page = this.hot.pageNo;
+    for(let i = 0; i< this.tabList.length; i++){
+       if(i == this.selectedTab){
+         para.category = this.tabList[i];
+       }
+    }
+    $apis.common.getArticlesList(para).then((res) => {
+       let data = JSON.parse(res.data);
+       if(data.code == 0){
+         this.hot.pageNo = data.page;
+         this.hot.load = data.hasMore;
+         this.hot.list.concat(data.articles);
+         for(let key of data.articles){
+             this.hot.list.push(key)
+         }
+       }
+    })
+  },
+  // 资讯分类
+  getArticleType() {
+    $apis.common.getArticleType().then((res) => {
+      let data = JSON.parse(res.data);
+       this.tabList = data.data;
+        this.getArticleList(this.tabList[0]);
+    })
+  },
+  // 资讯列表
+  getArticleList(val) {
+    let para = new Object();
+    para.page = this.hot.pageNo;
+    para.category = val;
+    $apis.common.getArticlesList(para).then((res) => {
+       let data = JSON.parse(res.data);
+       if(data.code == 0){
+         this.hot.pageNo = data.page;
+         this.hot.load = data.hasMore;
+         this.hot.list = data.articles;
+       }
+    })
+  },
 }
 </script>
 

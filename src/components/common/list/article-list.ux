@@ -7,9 +7,7 @@
         <text class="text-black list-title">{{ $item.title | ellipsis}}</text>
       </div>
       <div class="list-image">
-        <div for="{{$item.image}}" class="list-img">
-          <img src="{{$item}}" />
-        </div>
+          <image class="img" src="{{$item.picture}}" ></image>
       </div>
     </list-item>
     <list-item type="loadMore" class="load-status" if="showLoad">
@@ -39,7 +37,7 @@ export default {
   detail(item) {
     // 根据id查询详情
     console.log(item.id)
-    $utils.route2theUrl('pages/info-detail', { articleId: item.id })
+    $utils.route2theUrl('pages/info-detail', { id: item.id })
   },
   loadMore() {
     this.$emit('loadMore')
@@ -70,17 +68,16 @@ export default {
   .list-image {
     width: 100%;
     height: 100%;
-    display: flex;
-    justify-content: flex-start;
-    border-radius: 6px;
-    .list-img {
-      margin: 0px 20px;
+    border-radius: 10px;
+    .img{
+       width: 100%;
+       height: 100%;
     }
   }
 }
 .item-no-image {
   .list-title {
-    padding-bottom: 50px;
+    padding-bottom: 10px;
   }
 }
 </style>

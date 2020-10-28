@@ -2,133 +2,195 @@
 <template>
   <div class="page-wrapper">
     <div class="ad-btn" @click="dialog">
-      <image class="ad-img" src="../../assets/images/ad-img1.png"></image>
+      <image class="ad-img" src="{{adData.picture}}"></image>
     </div>
     <div>
-      <text class="title">{{ title }}</text>
+      <text class="title">{{ articleData.title }}</text>
     </div>
     <div class="content">
-      <richtext type="html" class="rich-text">{{content}}</richtext>
+      <richtext type="html" class="rich-text">{{ articleData.content }}</richtext>
     </div>
-     <div class="return-btn" @click="getHome">
+    <div class="picture">
+      <image class="img" src="{{articleData.picture}}"></image>
+    </div>
+    <div class="return-btn" @click="getHome">
       <image class="re-img" src="../../assets/images/return-home.png"></image>
     </div>
-    <div class="test" if={{showContent}} >
+    <div class="test" if="{{showContent}}">
       <div class="maskBox" @click="close"></div>
       <div class="model translateYByEntry">
         <div class="btn" @click="copyUrl">
-           <image class="img" src="../../assets/images/copy.png"></image>
-           <text>复制链接</text>
+          <image class="img" src="../../assets/images/copy.png"></image>
+          <text>复制链接</text>
         </div>
-         <div class="btn" @click="getRefresh">
-           <image  class="img" src="../../assets/images/refresh.png"></image>
-           <text>刷新</text>
+        <div class="btn" @click="getRefresh">
+          <image class="img" src="../../assets/images/refresh.png"></image>
+          <text>刷新</text>
         </div>
-         <div class="btn" @click="getHome">
-           <image class="img" src="../../assets/images/r-home.png"></image>
-           <text>首页</text>
+        <div class="btn" @click="getHome">
+          <image class="img" src="../../assets/images/r-home.png"></image>
+          <text>首页</text>
         </div>
       </div>
-  </div>
-    <div class="adimg-box" if={{adDialog}} onclick="stopPropagation()">
+    </div>
+    <div class="adimg-box" if="{{adDialog}}" onclick="stopPropagation()">
       <div class="box">
-        <div class="adClose" @click="closeDialog"><image src="../../assets/images/dialong.png"></image></div>
-        <text class="adImg"><image src="../../assets/images/6.png"></image></text>
+        <div class="adClose" @click="closeDialog">
+          <image src="../../assets/images/dialong.png"></image>
+        </div>
+        <text  @click="openUrl" class="adImg"><image src="{{adData.picture}}"></image></text>
       </div>
-   </div>
+    </div>
   </div>
 </template>
 <script>
 import prompt from '@system.prompt'
-import clipboard from '@system.clipboard' 
+import clipboard from '@system.clipboard'
 export default {
   data: {
     showContent: false,
     adDialog: false,
-    articleId: "",
-    title: "美国特朗普14岁小儿子曾确诊感染新冠，现检测结果已转阴现检测结果已转阴...",
-    content: "<p>Lorem ipsum dolor sit amet, consemet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipismet, consectetur adipisctetur adipiscing elit.</p> Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. ",
+    id: "",
+    articleData: "",
+    category: 'float',
+    scene: 'search-result',
+    adData: '',
   },
   onInit() {
-    // 查询article
     this.queryActicle();
+    this.getAd();
     this.showContent = false;
   },
   queryActicle() {
-    // 根据路由传的articleId查询
-    console.log(this.articleId)
+    $apis.common.getArticleDetail(this.id).then((res) => {
+      let data = JSON.parse(res.data);
+      if (data.code == 0) {
+        this.articleData = data.article;
+      } else {
+        prompt.showToast({
+          message: data.message
+        });
+      }
+    })
   },
-  onMenuPress(){
+  onMenuPress() {
     this.showContent = true;
   },
-  getHome(){
+  getHome() {
     $utils.route2theUrl('pages/index')
   },
-  dialog(){
+  dialog() {
     this.adDialog = true;
   },
-  closeDialog(){
-   this.adDialog = false;
+  closeDialog() {
+    this.adDialog = false;
   },
   // 复制
-  copyUrl(){
+  copyUrl() {
     clipboard.set({
       text: window.location.href,
-      })
+    })
     prompt.showToast({
-          message: '复制成功'
-     });
-     this.close();
+      message: '复制成功'
+    });
+    this.close();
   },
-  close(){
-     this.showContent = false;
+  close() {
+    this.showContent = false;
   },
-  getRefresh(){
-     this.close();
+  getRefresh() {
+    this.close();
   },
-   stopPropagation(){
-  }
+  stopPropagation() {
+  },
+   // 获取广告
+  getAd(){
+    let para = new Object();
+    para.category = this.category;
+    para.scene = this.scene;
+    $apis.common.getAd(para).then((res) =>{
+      let data = JSON.parse(res.data);
+      if (data.code == 0) {
+           this.adData = data.ad;
+           this.getAllAd("open");
+      }else{
+         prompt.showToast({
+          message: data.message
+        })
+      }
+   })
+  },
+  // 广告跳转
+  openUrl(){
+  this.getAllAd("click");
+   location.href = this.adData.link;
+  },
+  // 广告点击，展示加载完请求的事件
+  getAllAd(val) {
+    let para = new Object();
+    para.id = this.adData.link;
+    if (val == "open") {
+      para.opt = 0;
+    } else if (val == "click") {
+      para.opt = 1;
+    }
+    $apis.common.getAdOpt(para).then((res) => {
+      let data = JSON.parse(res.data);
+      if (data.code != 0) {
+        prompt.showToast({
+          message: data.message
+        })
+      }
+    })
+  },
 }
 </script>
 
 <style lang="less">
 @import '../../assets/styles/index.less';
 .page-wrapper {
-   padding: 20px 30px;
+  font-size: 26px;
+  .img {
+    width: 100%;
+    height: 100%;
+    align-content: center;
+  }
+  padding: 20px 30px;
   background-color: #fff;
-  .ad-btn{
+  .ad-btn {
     width: 110px;
     height: 110px;
     position: fixed;
-    top:10px;
+    top: 10px;
     right: 30px;
     background-image: url('../../assets/images/circle.png');
     background-size: 100% 120%;
-    .ad-img{
+    .ad-img {
       width: 100px;
       height: 100px;
       align-content: center;
+      border-radius: 50%;
     }
   }
-  .return-btn{
+  .return-btn {
     width: 110px;
-    height: 110px;
     position: fixed;
-    bottom:100px;
+    bottom: 60px;
     right: 30px;
     align-items: center;
-    .re-img{
+    .re-img {
       width: 100%;
       height: 100%;
     }
   }
   .title {
-    font-size: 40px;
-    line-height: 60px;
+    font-size: 36px;
+    line-height: 50px;
+    margin-bottom: 20px;
   }
   .content {
-    font-size: 30px;
-    line-height: 40px;
+    font-size: 28px;
+    line-height: 20px;
     margin-bottom: 20px;
   }
 }
@@ -138,7 +200,7 @@ export default {
   padding: @gap-3 0 @gap-3 @gap-3;
   background-color: @white;
   .flex-box-mixins(row, flex-end, center);
-  .back{
+  .back {
     font-size: 40px;
     width: 60px;
     height: 70px;
@@ -157,97 +219,92 @@ export default {
   }
 }
 
- @keyframes translateYByEntry {
-    from {
-      transform: translateY(0px);
-    }
-    to {
-      transform: translateY(-700px);
-    }
+@keyframes translateYByEntry {
+  from {
+    transform: translateY(0px);
   }
-   @keyframes translateYByLeave {
-    from {
-      transform: translateY(-700px);
-    }
-    to {
-      transform: translateY(0);
-    }
+  to {
+    transform: translateY(-700px);
   }
-  .translateYByEntry {
-    animation-name: translateYByEntry;
-    animation-duration: 500ms;
-    animation-fill-mode: forwards;
+}
+@keyframes translateYByLeave {
+  from {
+    transform: translateY(-700px);
   }
-  .translateYByLeave {
-    animation-name: translateYByLeave;
-    animation-duration: 500ms;
-    animation-fill-mode: forwards;
+  to {
+    transform: translateY(0);
   }
-  .test {
+}
+.translateYByEntry {
+  animation-name: translateYByEntry;
+  animation-duration: 500ms;
+  animation-fill-mode: forwards;
+}
+.translateYByLeave {
+  animation-name: translateYByLeave;
+  animation-duration: 500ms;
+  animation-fill-mode: forwards;
+}
+.test {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding-bottom: 400px;
+  .model {
     width: 100%;
-    height: 100%;
+    height: 250px;
     position: fixed;
-    top: 0;
     left: 0;
-    background-color: rgba(0,0,0,.4);
-    padding-bottom: 400px;
-    .model {
-      width:100%;
-      height: 250px;
-      position: fixed;
-      left: 0;
-      bottom: -700px;
-      border-top-left-radius:50px;
-      border-top-right-radius:50px;
-      background-color:#ffffff;
-      z-index: 10;
-      padding-top: 50px;
-      padding: 0px 60px;
-      font-size: 30px;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
+    bottom: -700px;
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
+    background-color: #ffffff;
+    z-index: 10;
+    padding-top: 50px;
+    padding: 0px 60px;
+    font-size: 30px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    .btn {
+      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      .btn{
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        .img{
-          width: 80px;
-          height: 80px;
-        }
-        
+      .img {
+        width: 80px;
+        height: 80px;
       }
     }
   }
-  .maskBox{
-    width: 100%;
-    height: 100%;
-  }
-
-
-.adimg-box{
-  position:fixed; 
+}
+.maskBox {
+  width: 100%;
+  height: 100%;
+}
+.adimg-box {
+  position: fixed;
   margin: 0 auto;
-  background-color: rgba(0,0,0,.4);
+  background-color: rgba(0, 0, 0, 0.4);
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  .box{
+  .box {
     padding: 0px 60px;
     .flex-box-mixins(column, flex-end, flex-end);
-   .close{
-    width: 50px;
-    height: 50px;
-    margin-top: 20px;
+    .close {
+      width: 50px;
+      height: 50px;
+      margin-top: 20px;
+    }
+    .adImg {
+      width: 90%;
+      margin: 0 auto;
+    }
   }
-  .adImg{
-    
-    width: 90%;
-    margin: 0 auto;
-  }
-  }
-  
-  }
+}
 </style>

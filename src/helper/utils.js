@@ -99,6 +99,30 @@ function getStorage(key) {
     })
   })
 }
+ 
+function deleteStorage(key){
+  storage.delete({
+    key: key,
+    success: function(data) {
+    },
+    fail: function(data, code) {
+      console.log(`handling fail, code = ${code}`)
+    }
+  })
+}
+
+function clearStorage(){
+  storage.clear({
+    success: function(data) {
+      prompt.showToast({
+        message: '清除成功'
+      })
+    },
+    fail: function(data, code) {
+      console.log(`handling fail, code = ${code}`)
+    }
+  })
+}
 
 export default {
   showMenu,
@@ -106,6 +130,8 @@ export default {
   queryString,
   setStorage,
   getStorage,
+  deleteStorage,
+  clearStorage,
   showToast(message = '', duration = 0) {
     if (!message) return
     prompt.showToast({

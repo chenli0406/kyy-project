@@ -1,6 +1,6 @@
 <template>
   <div class="page-wrapper">
-    <search-input-bar onsearch="search"></search-input-bar>
+    <search-input-bar onsearch="search" ></search-input-bar>
     <div class="search-hot">
       <div class="hot-list">
         <text class="hot-item" for="hotList" @click="toSearch($item.title)">{{ $item.title | ellipsis}}</text>
@@ -12,7 +12,7 @@
       </div>
       <div class="adimg-box" if={{dialog}}>
         <div class="close" @click="closeDialog"><image src="../../assets/images/dialong.png"></image></div>
-        <text class="adImg"><image src="../../assets/images/6.png"></image></text>
+        <text @click="openUrl" class="adImg"><image src="{{adData.picture}}"></image></text>
       </div>
     </div>
   </div>
@@ -23,44 +23,84 @@
 export default {
   private: {
     searchText: '',
+    searchEngineId: '',
   },
   public: {
     dialog: true,
-    hotList: [
-      {
-        id: "1",
-        title: "花瓣网手绘图",
-      },
-      {
-        id: "1",
-        title: "http://lanhu.com",
-      },
-      {
-        id: "1",
-        title: "花瓣网手绘图",
-      }, {
-        id: "1",
-        title: "https://lanhuapp.com/web/#/item/project/product?5...",
-      }, {
-        id: "1",
-        title: "花瓣网手绘图",
-      },
-    ]
+    hotList: [],
+    category: 'default',
+    scene: 'search',
+    adData: '',
   },
-  onReady() {
+  onInit() {
+    // 获取搜索引擎id
+    $utils.getStorage('searchEngineId').then(value => {
+        this.searchEngineId = value;
+    }) 
+    this.getAd();
   },
- 
   search(info) {
     this.searchText = info.detail
-    // 根据返回的关键字，查询接口，返回articleList
-    //$utils.route2theUrl('pages/search-detail', {id: this.searchText})
+    // $utils.route2theUrl('pages/search-detail')
+    // let para = new Object();
+    // para.keyword = this.searchText;
+    // para.searchEngineId = this.searchEngineId;
+    //  $apis.common.getSearchLog(para).then((res) => {
+    //   let data = JSON.parse(res.data);
+    //   if (data.code == 0) {
+        
+    //   } else {
+    //   prompt.showToast({
+    //       message: data.message
+    //     })
+    //   }
+    // })
   },
   delHostList() {
 
   },
   toSearch(val) {
     $utils.route2theUrl('pages/search-detail', {id: val})
-
+  },
+  // 获取广告
+  getAd(){
+    let para = new Object();
+    para.category = this.category;
+    para.scene = this.scene;
+    $apis.common.getAd(para).then((res) =>{
+      let data = JSON.parse(res.data);
+      if (data.code == 0) {
+           this.adData = data.ad;
+           this.getAllAd("open");
+      }else{
+         prompt.showToast({
+          message: data.message
+        })
+      }
+   })
+  },
+  // 广告跳转
+  openUrl(){
+  this.getAllAd("click");
+   location.href = this.adData.link;
+  },
+  // 广告点击，展示加载完请求的事件
+  getAllAd(val) {
+    let para = new Object();
+    para.id = this.adData.link;
+    if (val == "open") {
+      para.opt = 0;
+    } else if (val == "click") {
+      para.opt = 1;
+    }
+    $apis.common.getAdOpt(para).then((res) => {
+      let data = JSON.parse(res.data);
+      if (data.code != 0) {
+        prompt.showToast({
+          message: data.message
+        })
+      }
+    })
   },
   // 关闭弹窗
   closeDialog(){

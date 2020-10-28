@@ -1,15 +1,22 @@
+<import name="my-load-more" src="apex-ui/components/load-more/index"></import>
 <template>
   <div class="page-wrapper">
-    <list class="list-box">
-      <list-item type="listItem"  for="{{list}}">
+    <list class="list-box list-container" onscrollbottom="loadMore">
+      <list-item type="listItem" for="{{list.data}}">
         <div class="item-container">
           <image class="img" src="../../assets/images/collect-item.png"></image>
           <div class="item-box" style="flex-direction: column; align-items: flex-start;">
-            <text class="item-t">{{$item.title | ellipsisA}}</text>
-            <text class="item">{{$item.url | ellipsis}}</text>
+            <text class="item-t">{{ $item.title | ellipsisA }}</text>
+            <text class="item">{{ $item.url | ellipsis }}</text>
           </div>
         </div>
         <div class="check-box" @click="del($item.id)"></div>
+      </list-item>
+      <list-item type="loadMore" class="load-status" if="{{list.load}}">
+        <my-load-more tip="加载更多"></my-load-more>
+      </list-item>
+      <list-item type="noMore" class="load-status" if="{{ !list.load }}">
+        <my-load-more tip="没有更多内容了" loading="{{ false }}"></my-load-more>
       </list-item>
     </list>
     <div class="btn-box" style="flex-direction: row;justify-content:center">
@@ -20,33 +27,24 @@
 </template>
 <script>
 import router from '@system.router'
+import prompt from '@system.prompt'
 export default {
   protected: {},
   private: {
-    list: [
-      {
-        id: "1",
-        title: "花瓣网-陪你做生活的设计师花瓣网",
-        url: "https://huaban.com/home/"
-      },
-      {
-        id: "2",
-        title: "花瓣网-陪你做生活的设计师",
-        url: "https://huaban.com/home/"
-      },
-      {
-        id: "3",
-        title: "花瓣网-陪你做生活的设计师",
-        url: "https://huaban.com/home/https://huaban.com/home/https://huaban.com/home/"
-      },
-    ],
+    list: {
+      data: [],
+      page: 1,
+      load: true,
+    },
     ids: [],
 
   },
-  onInit() { },
+  onInit() {
+  this.getList()
+  },
   del(val) {
     console.log(val);
-     this.ids.push(val);
+    this.ids.push(val);
     // for(let i = 0; i< this.ids.length; i++){
     //      if(this.ids[i] == val){
     //        this.ids.splice(i,1)
@@ -55,22 +53,38 @@ export default {
     //      }
     // }
     console.log(this.ids);
-     
+
   },
-  ellipsis (value) {
-      if (!value) return ''
-      if (value.length > 30) {
-        return value.slice(0,30) + '...'
+  // 获取列表
+  getList() {
+    $apis.common.getfavoriteList().then((res) => {
+      console.log(res);
+      let data = JSON.parse(res.data);
+      if (data.code == 0) {
+        this.list.data = data.favorites;
+        this.list.page = data.page;
+        this.list.load = data.hasMore;
+      } else {
+        prompt.showToast({
+          message: data.message
+        });
       }
-      return value
-    },
-  ellipsisA (value) {
-      if (!value) return ''
-      if (value.length > 14) {
-        return value.slice(0,14) + '...'
-      }
-      return value
+    })
+  },
+  ellipsis(value) {
+    if (!value) return ''
+    if (value.length > 30) {
+      return value.slice(0, 30) + '...'
     }
+    return value
+  },
+  ellipsisA(value) {
+    if (!value) return ''
+    if (value.length > 14) {
+      return value.slice(0, 14) + '...'
+    }
+    return value
+  }
 }
 </script>
 
@@ -87,8 +101,8 @@ export default {
       margin-bottom: 10px;
       border-bottom: 1px solid #eee;
       .item-container {
-        .item-box{
-           width: 80%;
+        .item-box {
+          width: 80%;
         }
         .item-t {
           height: 40px;
@@ -114,7 +128,7 @@ export default {
         }
       }
       .check-box {
-         margin-top: 10px;
+        margin-top: 10px;
         align-items: center;
         width: 40px;
         height: 40px;

@@ -2,7 +2,7 @@
 <template>
   <div class="page-wrapper">
     <div class="ad-btn" @click="dialog">
-      <image class="ad-img" src="../../assets/images/ad-img1.png"></image>
+      <image class="ad-img" src="{{ floatAd.picture}}"></image>
     </div>
     <div class="reportBox" @click="getReport">
       <text style="color: #fff;">举报</text>
@@ -64,7 +64,8 @@
               <img src="{{defaultAvatar}}" />
             </div>
             <div class="login-btn">
-              <text class="login-title" @click="login">点击登录</text>
+              <text class="login-title" if={{logined}}>已登录</text>
+              <text class="login-title" else  @click="login">点击登录</text>
               <text class="login-btn-title">欢迎使用XX浏览器</text>
             </div>
             <text class="btn">加入桌面</text>
@@ -90,7 +91,7 @@
               <image src="../../assets/images/index/set-btn.png"></image>
               <text>设置</text>
             </div>
-            <div class="menu-item">
+            <div class="menu-item" @click="refresh">
               <image src="../../assets/images/index/refresh.png"></image>
               <text>刷新</text>
             </div>
@@ -104,8 +105,8 @@
         <div class="adClose" @click="closeDialog">
           <image src="../../assets/images/close-index.png"></image>
         </div>
-        <text class="adImg">
-          <image src="../../assets/images/10.png"></image>
+        <text class="adImg" @click="gotoAd">
+          <image src="{{ floatAd.picture }}"></image>
         </text>
       </div>
     </div>
@@ -122,14 +123,17 @@ import router from '@system.router';
 import webview from '@system.webview'
 import barcode from '@system.barcode';
 import device from '@system.device';
-
+import prompt from '@system.prompt'
 export default {
-  private: {
+  protected: {
+    logined: false,
     showContent: false,
     adDialog: false,
     showDialog: false,
     feedbackDailog: false,
-    adverImg: require('../../assets/images/index/adverImg.png'),
+  },
+  private: {
+    floatAd: "",
     defaultAvatar: require('../../assets/images/index/default-avatar.png'),
     menuList: [],
     device: {
@@ -151,6 +155,10 @@ export default {
   },
   onInit() {
     this.showContent = false;
+    this.getLoad();
+  },
+  // 获取设备信息
+  getLoad() {
     let _this = this;
     //获取设备DeviceId
     device.getDeviceId({
@@ -183,18 +191,23 @@ export default {
         para.device = _this.device;
         para.packages = _this.packages;
         $apis.common.getLaunch(para).then((res) => {
-          let data = JSON.parse(res.data)
+          let data = JSON.parse(res.data);
           _this.menuList = data.flatAds;
+          _this.floatAd = data.floatAd;
+          _this.getAllAd("open");
         })
       }
     })
-
+    // 存储设备id
     $utils.getStorage('deviceId').then(value => {
       var deviceId = value;
     })
-    $apis.common.getPing().then((res) => { });
   },
   onReady() {
+    // 判断是否登录状态
+    $utils.getStorage('token').then(value => {
+      this.logined = true;
+    })
   },
   //弹出底部 
   getPopup() {
@@ -234,7 +247,7 @@ export default {
   },
   // 菜单跳转
   getRouter(type) {
-    console.log(type)
+    this.showContent = false;
     switch (type) {
       case 'dol':
         $utils.route2theUrl('pages/download');
@@ -246,13 +259,11 @@ export default {
         $utils.route2theUrl('pages/history')
         break;
       case 'set':
-        $utils.route2theUrl('pages/set')
+        $utils.route2theUrl('pages/set', { logined: this.logined });
         break;
       default:
         break;
     }
-    //$utils.route2theUrl(item.page, { title: item.title })
-
   },
   // 登录
   login() {
@@ -271,25 +282,34 @@ export default {
     console.info(`触发：onDestroy`);
   },
   addMenu() {
-    router.push({
-      uri: 'pages/addMenu'
-    })
+    if (this.logined == true) {
+       router.push({
+        uri: 'pages/addMenu'
+      })
+    }
+    else{
+      router.push({
+        uri: 'pages/login'
+      })
+    }
     this.showContent = false;
   },
+  // 跳转
   gotoUrl(val) {
-    webview.loadUrl({
-      url: val,
-      allowthirdpartycookies: true,
-    })
+    // webview.loadUrl({
+    //   url: val,
+    // })
+    location.href = val;
   },
-  stopPropagation() {
-  },
+  // 阻止冒泡
+  stopPropagation() { },
   dialog() {
     this.adDialog = true;
   },
   closeDialog() {
     this.adDialog = false;
   },
+  // 扫码
   toSaoma() {
     barcode.scan({
       success: function (data) {
@@ -299,6 +319,37 @@ export default {
         console.log(`handling fail, code = ${code}`)
       }
     })
+  },
+  // 广告跳转
+  gotoAd() {
+    this.getAllAd("click");
+    location.href = this.floatAd.link;
+  },
+  // 广告点击，展示加载完请求的事件
+  getAllAd(val) {
+    let para = new Object();
+    para.id = this.floatAd.id;
+    if (val == "open") {
+      para.opt = 0;
+    } else if (val == "click") {
+      para.opt = 1;
+    }
+    $apis.common.getAdOpt(para).then((res) => {
+      let data = JSON.parse(res.data);
+      if (data.code != 0) {
+        prompt.showToast({
+          message: data.message
+        })
+      }
+    })
+  },
+  // 刷新
+  refresh() {
+    this.getLoad();
+    prompt.showToast({
+      message: "刷新成功"
+    });
+    this.showContent = false;
   }
 }
 </script>
@@ -319,6 +370,7 @@ export default {
       width: 100px;
       height: 100px;
       align-content: center;
+      border-radius: 50%;
     }
   }
   .reportBox {
@@ -333,7 +385,7 @@ export default {
   }
   .title-bar {
     padding: 10px 30px;
-   border-bottom: 1px solid rgba(149, 149, 149, 0);
+    border-bottom: 1px solid rgba(149, 149, 149, 0);
     .search-box {
       width: 100%;
       .search {
@@ -398,17 +450,18 @@ export default {
     flex-direction: row;
     justify-content: space-between;
     .menuList {
-      width: 20%;
-      margin: 0 15px;
+      width: 19%;
+      margin: 0 20px;
       flex-direction: column;
       align-items: center;
       .img-menu {
         border-radius: 50%;
-        width: 180px;
-        height: 150px;
-        .img{
+        width: 170px;
+        height: 140px;
+        .img {
           width: 100%;
           height: 100%;
+          align-content: center;
         }
       }
     }

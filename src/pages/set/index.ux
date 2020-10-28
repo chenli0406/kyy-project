@@ -17,19 +17,19 @@
             <image class="img" src="../../assets/images/set-right.png"></image>
           </div>
         </div>
-        <div class="section-item" onclick="switchPage()">
+        <div class="section-item" onclick="getClear()">
           <text style="color:#000;font-size:36px;" class="section-item-text">清除数据</text>
           <div class="section-icon">
             <image class="img" src="../../assets/images/set-right.png"></image>
           </div>
         </div>
-        <div class="section-item" onclick="outLogin()">
+        <div class="section-item" onclick="outLogin()" if={{logined}}>
           <text style="color:#000;font-size:36px;" class="section-item-text">退出登录</text>
           <div class="section-icon">
             <image class="img" src="../../assets/images/set-right.png"></image>
           </div>
         </div>
-        <div class="section-item" onclick="out()">
+        <div class="section-item" onclick="out()" if={{logined}}>
           <text style="color:#000;font-size:36px;" class="section-item-text">永久注销账号</text>
           <div class="section-icon">
             <image class="img" src="../../assets/images/set-right.png"></image>
@@ -75,13 +75,13 @@
       </div>
     </div>
     <!-- 搜索引擎 -->
-    <div class="test" if={{showContent}}>
+    <div class="test" if={{show}} onclick="stopPropagation()">
       <div class="maskBox"></div>
       <div class="model translateYByEntry">
-        <text style="color:#000;font-size:40px;font-weight: 500;">选择搜索引擎</text>
+        <text style="color:#000;font-size:40px;font-weight: 500;margin-top:30px">选择搜索引擎</text>
          <div class="options"  for="options">
           <div class="optionsbox"  @click="getSelect($idx,$item)" style="{{ $idx === id ? 'background: #F7F8FB;' : ''}}">
-          <text style="{{ $idx === id ? 'color:#000' : ''}}">{{ $item.title }}</text>
+          <text style="{{ $idx === id ? 'color:#000' : ''}}">{{ $item.name }}</text>
         </div>
         </div>
         <text style="color:#fff;font-size:30px" class="mask-btn" @click="selectSubmit">确定</text>
@@ -98,8 +98,9 @@ export default {
     dialog: false,
     outDialog: false,
     adDialog: false,
-    showContent: false,
+    show: false,
     id: '',
+    searchId: '',
     selectName: '',
     serviceList: [
       {
@@ -115,23 +116,17 @@ export default {
         page: 'pages/aboutUs'
       },
     ],
-    options: [
-      {
-        title: '百度',
-      },
-      {
-        title: '360',
-      },
-      {
-        title: '神马',
-      }
-    ],
+    options: [],
     logined: false
   },
+  onInit() {
+    this.getSearchList();
+  },
   onReady() {
-    this.showContent = false;
-    $utils.getStorage('userLogined').then(value => {
-      this.logined = value === 'true'
+    this.show = false;
+     // 判断是否登录状态
+    $utils.getStorage('token').then(value => {
+        this.logined = true;
     })
   },
   /* -------------------SelfCustomEvent------------------ */
@@ -144,6 +139,7 @@ export default {
   },
   outLogin() {
     this.dialog = true;
+    
   },
   out() {
     this.outDialog = true;
@@ -155,20 +151,45 @@ export default {
 
   },
   submitOut() {
-
+    $utils.deleteStorage('token');
+    this.dialog = false;
+    this.logined= false;
+    $utils.route2theUrl('pages/index', {logined: this.logined})
   },
   cancelOut() {
     this.dialog = false;
   },
   setSearchResult() {
-    this.showContent = true;
+    this.show = true;
   },
   getSelect(id, val){
     this.id = id;
-    this.selectName = val.title;
+    this.selectName = val.name;
+    this.searchId = val.id;
   },
   selectSubmit(){
-    this.showContent = false;
+    this.show = false;
+    $utils.setStorage('searchEngineId', this.searchId);
+  },
+  getSearchList(){
+    $apis.common.getSearchEngines().then((res) => {
+      let data = JSON.parse(res.data);
+      if (data.code == 0) {
+          this.options = data.searchEngines;
+          this.selectName = this.options[0].name;
+          $utils.setStorage('searchEngineId', this.options[0].id);
+      } else {
+      prompt.showToast({
+          message: data.message
+        })
+      }
+    })
+  },
+  stopPropagation(){},
+  // 清除数据
+  getClear(){
+    $utils.clearStorage();
+    this.logined = false;
   }
 }
 </script>
@@ -307,13 +328,13 @@ export default {
     border-top-right-radius: 50px;
     background-color: #ffffff;
     z-index: 10;
-    padding-top: 50px;
     padding: 0px 60px;
     font-size: 30px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: space-between;
+    border: 1px solid #000000;
     .options {
       flex-direction: column;
       justify-content: center;
@@ -344,6 +365,7 @@ export default {
       background-color: #567aff;
       border-radius: 60px;
       text-align: center;
+      margin-bottom: 60px;
     }
   }
 }

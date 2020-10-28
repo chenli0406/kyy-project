@@ -3,6 +3,8 @@ import $utils from './utils'
 const prompt = require('@system.prompt')
 
 let deviceId = window.localStorage.deviceId;
+let token = window.localStorage.token;
+console.log(token);
 function requestHandle(params) {
   // eslint-disable-next-line no-undef
   return new Promise((resolve, reject) => {
@@ -12,7 +14,8 @@ function requestHandle(params) {
       data: JSON.stringify(params.data),
       header:{
         'Content-Type': 'application/json; charset=utf-8',
-        'DeviceId':  deviceId
+        'DeviceId':  deviceId,
+        'token':  token
       },
       success: data => {
         const serverResponse = data;

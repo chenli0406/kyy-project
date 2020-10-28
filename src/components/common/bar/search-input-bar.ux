@@ -8,6 +8,7 @@
         placeholder="请输入关键字"
         value="{{searchText}}"
         onchange="search"
+        enterkeyclick="enter"
       />
       <image class="img" src="../../../assets/images/saoma.png"></image>
       <text style="padding: 0px 10px;">|</text>
@@ -30,6 +31,9 @@ export default {
   search(e) {
     this.$emit('search', e.value)
   },
+  enter(e){
+    this.$emit('enter', e.value)
+  },
   goBack() {
     router.back()
   }
@@ -38,4 +42,7 @@ export default {
 
 <style lang="less">
 @import '../../../assets/styles/index.less';
+.title-bar{
+  padding: 20px 30px;
+}
 </style>

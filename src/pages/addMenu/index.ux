@@ -1,67 +1,101 @@
 <template>
-    <div class="page-wrapper">
-        <div class="title-bar">
-            <text class="back iconfont"   onclick="goBack">&#xe606;</text>
-            <text class="center-title"> 添加 </text>
-            <image onClick="submit" style="margin-right: 30px;width:40px;height:40px" src="../../assets/images/addSubmit.png"></image>
-        </div>
-        <div class="login-container">
-            <div class="login-item">
-                <image class="img" src="../../assets/images/add.png"></image>
-                <input type="text" maxlength="4" class="login-input" placeholder="请输入标题" value="{{title}}" onchange="changeTitle" />
-            </div>
-            <div class="login-item">
-                <image class="img" src="../../assets/images/urlimg.png"></image>
-                <input type="text" maxlength="30" class="login-input" placeholder="请输入网址" value="{{url}}" onchange="changeUrl" />
-            </div>
-        </div>
+  <div class="page-wrapper">
+    <div class="title-bar">
+      <text class="back iconfont" onclick="goBack">&#xe606;</text>
+      <text class="center-title"> 添加 </text>
+      <image
+        onClick="submit"
+        style="margin-right: 30px;width:40px;height:40px"
+        src="../../assets/images/addSubmit.png"
+      ></image>
     </div>
+    <div class="login-container">
+      <div class="login-item">
+        <image class="img" src="../../assets/images/add.png"></image>
+        <input
+          type="text"
+          maxlength="4"
+          class="login-input"
+          placeholder="请输入标题"
+          value="{{title}}"
+          onchange="changeTitle"
+        />
+      </div>
+      <div class="login-item">
+        <image class="img" src="../../assets/images/urlimg.png"></image>
+        <input
+          type="text"
+          maxlength="30"
+          class="login-input"
+          placeholder="请输入网址"
+          value="{{url}}"
+          onchange="changeUrl"
+        />
+      </div>
+    </div>
+  </div>
 </template>
 <script>
 import prompt from '@system.prompt'
 import router from '@system.router';
 export default {
-    data: {
-        title: '',
-        url: '',
-    },
-    onInit() { },
-    changeTitle(e) {
-        this.title = e.value
-    },
-    changeUrl(e) {
-        this.url = e.value
-    },
-    goBack() {
-        router.back()
-    },
-    submit() {
-        // if (this.title == '') {
-        //   prompt.showToast({
-        //     message: `标题不能为空`,
-        //   });
-        //   return false;
-        // }
-        // if (this.url == '') {
-        //   prompt.showToast({
-        //     message: `网址不能为空`
-        //   });
-        //   return false;
-        // }
-        // if(!/^[\u4E00-\u9FA5]{0,4}$/.test(this.title)){ 
-        //     prompt.showToast({
-        //     message: `只能输入最多4个汉字`
-        //    });  
-        //    return false;
-        // } 
-        //  if(!(/[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\.?/.test(this.url))){ 
-        //     prompt.showToast({
-        //     message: `请输入正确的网址`
-        //    });  
-        //    return false;
-        // } 
-        // $utils.route2theUrl('pages/index', { logined: true }, true)
+  data: {
+    title: '',
+    url: '',
+  },
+  onInit() { 
+  },
+  changeTitle(e) {
+    this.title = e.value
+  },
+  changeUrl(e) {
+    this.url = e.value
+  },
+  goBack() {
+    router.back()
+  },
+  submit() {
+    if (this.title == '') {
+      prompt.showToast({
+        message: `标题不能为空`,
+      });
+      return false;
     }
+    if (this.url == '') {
+      prompt.showToast({
+        message: `网址不能为空`
+      });
+      return false;
+    }
+    if(!/^[\u4E00-\u9FA5]{0,4}$/.test(this.title)){ 
+        prompt.showToast({
+        message: `只能输入最多4个汉字`
+       });  
+       return false;
+    } 
+     if(!(/[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\.?/.test(this.url))){ 
+        prompt.showToast({
+        message: `请输入正确的网址`
+       });  
+       return false;
+    } 
+    let para = new Object();
+    para.title = this.title;
+    para.url = this.url;
+    $apis.common.addFavorite(para).then((res) => {
+      let data = JSON.parse(res.data);
+      if (data.code == 0) {
+        prompt.showToast({
+          message: '添加成功'
+        });
+        $utils.route2theUrl('pages/index')
+      } else {
+        prompt.showToast({
+          message: data.message
+        })
+      }
+    })
+  }
 }
 </script>
 
