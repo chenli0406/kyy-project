@@ -91,7 +91,7 @@ export default {
        if(data.code == 0){
          this.hot.pageNo = data.page;
          this.hot.load = data.hasMore;
-         this.hot.list.concat(data.articles);
+        //  this.hot.list.concat(data.articles);
          for(let key of data.articles){
              this.hot.list.push(key)
          }

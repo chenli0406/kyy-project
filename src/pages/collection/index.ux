@@ -10,17 +10,18 @@
             <text class="item">{{ $item.url | ellipsis }}</text>
           </div>
         </div>
-        <div class="check-box" @click="del($item.id)"></div>
+        <div class="{{ $item.check == false? 'check-box' : 'check-active'}}" @click="checkedOne($idx,$item.id)"></div>
+        <!-- <input type='checkbox'  name='checkboxinput' class='check-box' @click='checkedOne($idx,$item.id)'> -->
       </list-item>
       <list-item type="loadMore" class="load-status" if="{{list.load}}">
         <my-load-more tip="加载更多"></my-load-more>
       </list-item>
-      <list-item type="noMore" class="load-status" if="{{ !list.load }}">
+      <list-item style="border-bottom: 0px;" type="noMore" class="load-status" if="{{ !list.load }}">
         <my-load-more tip="没有更多内容了" loading="{{ false }}"></my-load-more>
       </list-item>
     </list>
     <div class="btn-box" style="flex-direction: row;justify-content:center">
-      <text class="{{ ids.length > 0 ? 'btn': 'btn-1' }}">删除</text>
+      <text @click="del" class="{{ ids.length > 0 ? 'btn': 'btn-1' }}">删除</text>
       <text class="btn">完成</text>
     </div>
   </div>
@@ -37,39 +38,67 @@ export default {
       load: true,
     },
     ids: [],
-
+    flag: false,
+    idList:[],
   },
   onInit() {
   this.getList()
   },
-  del(val) {
-    console.log(val);
-    this.ids.push(val);
-    // for(let i = 0; i< this.ids.length; i++){
-    //      if(this.ids[i] == val){
-    //        this.ids.splice(i,1)
-    //      }else{
-    //           this.ids.push(val);
-    //      }
-    // }
-    console.log(this.ids);
-
+  del() {
+    let para = new Object();
+    para.ids = this.ids;
+    $apis.common.delFavorite(para).then((res) =>{
+      let data = JSON.parse(res.data);
+      if(data.code == 0){
+         prompt.showToast({
+          message: '删除成功'
+        });
+        this.getList();
+      }else {
+         prompt.showToast({
+          message: data.message
+        });
+      }
+    })
   },
   // 获取列表
   getList() {
-    $apis.common.getfavoriteList().then((res) => {
-      console.log(res);
+    $apis.common.getfavoriteList({page:this.list.page}).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code == 0) {
-        this.list.data = data.favorites;
+        // this.list.data = data.favorites;
         this.list.page = data.page;
         this.list.load = data.hasMore;
+        data.favorites.map((item,index)=>{
+           this.list.data.push((Object.assign({},item,{check: false})))
+        })
       } else {
         prompt.showToast({
           message: data.message
         });
       }
     })
+  },
+  // 加载更多
+  loadMore(){
+     this.list.page++;
+      $apis.common.getfavoriteList({page:this.list.page}).then((res) => {
+      let data = JSON.parse(res.data);
+      if (data.code == 0) {
+        // this.list.data = data.favorites;
+           this.list.page = data.page;
+        this.list.load = data.hasMore;
+        // for(let key of data.favorites){
+        //   this.list.data.push(key);
+        // }
+        data.favorites.map((item,index)=>{
+           this.list.data.push((Object.assign({},item,{check: false})))
+        })
+      } 
+    })
+  },
+  showChangePrompt(e){
+    console.log(e.checked)
   },
   ellipsis(value) {
     if (!value) return ''
@@ -84,9 +113,21 @@ export default {
       return value.slice(0, 14) + '...'
     }
     return value
-  }
+  },
+  checkedOne (index,val) {
+    var checkId = this.list.data[index].check;
+    this.list.data[index].check = !checkId;
+      if(this.list.data[index].check == true){
+           this.ids.push(this.list.data[index].id) 
+        }else if( this.list.data[index].check == false){
+            var idIndex = this.ids.indexOf(val);
+            if(idIndex > -1){
+              this.ids.splice(idIndex,1)
+            }
+    }
+  },
 }
-</script>
+</script> 
 
 <style lang="less">
 @import '../../assets/styles/index.less';
@@ -138,6 +179,7 @@ export default {
       .check-active {
         width: 40px;
         height: 40px;
+        margin-top: 10px;
         background-image: url('../../assets/images/check.png');
         background-position: center;
       }

@@ -236,11 +236,18 @@ export default {
   },
   getClose() {
     this.showDialog = false;
-  },
+  },  
   getRouterCollect() {
-    router.push({
-      uri: 'pages/collection'
-    })
+    if(this.logined == true){
+        router.push({
+        uri: 'pages/collection'
+      })
+    }else{
+       router.push({
+        uri: 'pages/login'
+      })
+    }
+    
   },
   toSearch() {
     $utils.route2theUrl('pages/search', {})
@@ -253,7 +260,11 @@ export default {
         $utils.route2theUrl('pages/download');
         break;
       case 'collection':
-        $utils.route2theUrl('pages/collection')
+           if(this.logined == true){
+               $utils.route2theUrl('pages/collection')
+           }else{
+             $utils.route2theUrl('pages/login')
+           }
         break;
       case 'history':
         $utils.route2theUrl('pages/history')
