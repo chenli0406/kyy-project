@@ -1,11 +1,12 @@
 
 <template>
   <div class="page-wrapper">
+  <title-bar title="{{title}}" show-back="{{true}}" icon="{{icon}}" onget-click="getClick"></title-bar>
     <div class="ad-btn" @click="dialog">
       <image class="ad-img" src="{{adData.picture}}"></image>
     </div>
-    <div>
-      <text class="title">{{ articleData.title }}</text>
+    <div style="margin-top:140px">
+      <text style="color:#000" class="title">{{ articleData.title }}</text>
     </div>
     <div class="content">
       <richtext type="html" class="rich-text">{{ articleData.content }}</richtext>
@@ -36,13 +37,14 @@
     <div class="adimg-box" if="{{adDialog}}" onclick="stopPropagation()">
       <div class="box">
         <div class="adClose" @click="closeDialog">
-          <image src="../../assets/images/dialong.png"></image>
+          <image  src="../../assets/images/dialong.png"></image>
         </div>
         <text  @click="openUrl" class="adImg"><image src="{{adData.picture}}"></image></text>
       </div>
     </div>
   </div>
 </template>
+<import name="title-bar" src="../../components/common/bar/title-bar"></import>
 <script>
 import prompt from '@system.prompt'
 import clipboard from '@system.clipboard'
@@ -55,6 +57,8 @@ export default {
     category: 'float',
     scene: 'search-result',
     adData: '',
+    title: '资讯详情',
+    icon: require('../../assets/images/more.png')
   },
   onInit() {
     this.queryActicle();
@@ -72,9 +76,6 @@ export default {
         });
       }
     })
-  },
-  onMenuPress() {
-    this.showContent = true;
   },
   getHome() {
     $utils.route2theUrl('pages/index')
@@ -128,7 +129,7 @@ export default {
   // 广告点击，展示加载完请求的事件
   getAllAd(val) {
     let para = new Object();
-    para.id = this.adData.link;
+    para.id = this.adData.id;
     if (val == "open") {
       para.opt = 0;
     } else if (val == "click") {
@@ -143,6 +144,9 @@ export default {
       }
     })
   },
+  getClick(){
+  this.showContent = true;
+  }
 }
 </script>
 
@@ -161,7 +165,7 @@ export default {
     width: 110px;
     height: 110px;
     position: fixed;
-    top: 10px;
+    top: 140px;
     right: 30px;
     background-image: url('../../assets/images/circle.png');
     background-size: 100% 120%;
@@ -187,35 +191,12 @@ export default {
     font-size: 36px;
     line-height: 50px;
     margin-bottom: 20px;
+    
   }
   .content {
     font-size: 28px;
     line-height: 20px;
     margin-bottom: 20px;
-  }
-}
-.title-bar {
-  height: 130px;
-  width: 100%;
-  padding: @gap-3 0 @gap-3 @gap-3;
-  background-color: @white;
-  .flex-box-mixins(row, flex-end, center);
-  .back {
-    font-size: 40px;
-    width: 60px;
-    height: 70px;
-  }
-  .menu {
-    font-size: 40px;
-    width: 100px;
-    height: 70px;
-    text-align: center;
-  }
-  .cancel {
-    font-size: 30px;
-    width: 110px;
-    height: 70px;
-    text-align: center;
   }
 }
 

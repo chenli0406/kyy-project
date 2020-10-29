@@ -110,8 +110,6 @@
         </text>
       </div>
     </div>
-    <!-- 举报 -->
-    <dialog if={{showDialog}} @close="getClose"></dialog>
     <!-- 反馈 -->
     <feedback if={{feedbackDailog}} @close="closeFeedback"></feedback>
   </div>
@@ -129,7 +127,6 @@ export default {
     logined: false,
     showContent: false,
     adDialog: false,
-    showDialog: false,
     feedbackDailog: false,
   },
   private: {
@@ -226,7 +223,7 @@ export default {
     this.feedbackDailog = true;
   },
   getReport() {
-    this.showDialog = true;
+   this.feedbackDailog = true;
   },
   // 资讯跳转路由
   getRouterinfo() {
@@ -234,9 +231,6 @@ export default {
       uri: 'pages/information'
     })
   },
-  getClose() {
-    this.showDialog = false;
-  },  
   getRouterCollect() {
     if(this.logined == true){
         router.push({
@@ -247,7 +241,6 @@ export default {
         uri: 'pages/login'
       })
     }
-    
   },
   toSearch() {
     $utils.route2theUrl('pages/search', {})
@@ -324,7 +317,10 @@ export default {
   toSaoma() {
     barcode.scan({
       success: function (data) {
-        console.log(`handling success: ${data.result}`)
+         webview.loadUrl({
+          url: data.result,
+          allowthirdpartycookies: true
+        })
       },
       fail: function (data, code) {
         console.log(`handling fail, code = ${code}`)
@@ -581,7 +577,8 @@ export default {
   top: 0;
   left: 0;
   background-color: rgba(0, 0, 0, 0.4);
-  padding-bottom: 700px;
+  border: 1px solid #000000;
+  padding-bottom: 600px;
   .model {
     width: 100%;
     height: 600px;

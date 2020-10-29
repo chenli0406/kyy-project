@@ -8,9 +8,10 @@
         placeholder="请输入关键字"
         value="{{searchText}}"
         onchange="search"
-        enterkeyclick="enter"
+        onEnterkeyclick="enter"
+        maxlength="200"
       />
-      <image class="img" src="../../../assets/images/saoma.png"></image>
+      <image onclick="toSaoma" style="margin:0px 10px" src="../../../assets/images/saoma.png"></image>
       <text style="padding: 0px 10px;">|</text>
       <text class="cancel" onclick="goBack">取消</text>
     </div>
@@ -19,10 +20,20 @@
 </template>
 
 <script>
-import router from '@system.router'
+import router from '@system.router';
+import barcode from '@system.barcode';
+import webview from '@system.webview' ;
 export default {
   data: {
-    searchText: ''
+    searchText: '',
+    searchEngineId: '',
+    searchHistory:[],
+  },
+  onInit() {
+    // 获取搜索引擎id
+    $utils.getStorage('searchEngineId').then(value => {
+        this.searchEngineId = value;
+    }) 
   },
   onReady() {
     this.$element('search-input').focus({ focus: true })
@@ -32,10 +43,39 @@ export default {
     this.$emit('search', e.value)
   },
   enter(e){
-    this.$emit('enter', e.value)
+    let para = new Object();
+    para.keyword = e.value;
+    para.searchEngineId = this.searchEngineId;
+    this.searchHistory.push(e.value);
+    $apis.common.getSearchLog(para).then((res) => {
+      let data = JSON.parse(res.data);
+      console.log(data);
+      if (data.code == 0) {
+        $utils.setStorage('searchHistory', this.searchHistory);
+        $utils.route2theUrl('pages/search-detail',{item: data.data, searchText: e.value});
+      } else {
+      prompt.showToast({
+          message: data.message
+        })
+      }
+    })
   },
   goBack() {
     router.back()
+  },
+  toSaoma() {
+    barcode.scan({
+      success: function (data) {
+        console.log(`handling success: ${data.result}`)
+        webview.loadUrl({
+          url: data.result,
+          allowthirdpartycookies: true
+        })
+      },
+      fail: function (data, code) {
+        console.log(`handling fail, code = ${code}`)
+      }
+    })
   }
 }
 </script>
@@ -43,6 +83,6 @@ export default {
 <style lang="less">
 @import '../../../assets/styles/index.less';
 .title-bar{
-  padding: 20px 30px;
+  padding: 20px 20px;
 }
 </style>

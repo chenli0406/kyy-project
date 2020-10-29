@@ -29,7 +29,8 @@
               <img src="{{defaultAvatar}}" />
             </div>
             <div class="login-btn">
-              <text class="login-title" @click="login">点击登录</text>
+              <text class="login-title" if={{logined}}>已登录</text>
+              <text class="login-title" else  @click="login">点击登录</text>
               <text class="login-btn-title">欢迎使用XX浏览器</text>
             </div>
             <text class="btn">加入桌面</text>
@@ -55,7 +56,7 @@
               <image src="../../assets/images/index/set-btn.png"></image>
               <text>设置</text>
             </div>
-            <div class="menu-item">
+            <div class="menu-item" @click="refresh">
               <image src="../../assets/images/index/refresh.png"></image>
               <text>刷新</text>
             </div>
@@ -70,9 +71,10 @@
 <import  name="feedback" src="../../components/feedback/index"></import>
 <script>
 import router from '@system.router'
-
+import prompt from '@system.prompt'
 export default {
   data: {
+    logined: false,
     translateY: '',
     showContent: false,
     feedbackDailog: false,
@@ -80,6 +82,12 @@ export default {
   },
   onInit() {
     this.showContent = false;
+  },
+  onReady() {
+    // 判断是否登录状态
+    $utils.getStorage('token').then(value => {
+      this.logined = true;
+    })
   },
   //弹出底部 
   getPopup() {
@@ -89,7 +97,7 @@ export default {
   closeBox() {
     this.showContent = false;
   },
-    closeFeedback(){
+  closeFeedback(){
      this.feedbackDailog = false;
   },
   openDialog(){
@@ -103,38 +111,44 @@ export default {
     })
     this.showContent = false;
   },
-  // 跳转收藏
-  getRouterCollect() {
-    router.push({
-      uri: 'pages/collection'
-    });
-    this.showContent = false;
-  },
   onCancel() { },
   testin() {
     return false;
   },
+  getRouterCollect() {
+    if(this.logined == true){
+        router.push({
+        uri: 'pages/collection'
+      })
+    }else{
+       router.push({
+        uri: 'pages/login'
+      })
+    }
+  },
   // 菜单跳转
   getRouter(type) {
-    console.log(type)
+    this.showContent = false;
     switch (type) {
       case 'dol':
         $utils.route2theUrl('pages/download');
         break;
       case 'collection':
-        $utils.route2theUrl('pages/collection')
+           if(this.logined == true){
+               $utils.route2theUrl('pages/collection')
+           }else{
+             $utils.route2theUrl('pages/login')
+           }
         break;
       case 'history':
         $utils.route2theUrl('pages/history')
         break;
       case 'set':
-        $utils.route2theUrl('pages/set')
+        $utils.route2theUrl('pages/set', { logined: this.logined })
         break;
       default:
         break;
     }
-    //$utils.route2theUrl(item.page, { title: item.title })
-
   },
   // 登录
   login() {
@@ -146,6 +160,13 @@ export default {
   // 阻止事件冒泡
   stopPropagation() {
   },
+  // 刷新
+  refresh() {
+    prompt.showToast({
+      message: "刷新成功"
+    });
+    this.showContent = false;
+  }
 
 }
 </script>

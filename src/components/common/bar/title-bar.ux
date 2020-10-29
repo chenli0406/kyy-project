@@ -2,7 +2,7 @@
   <div class="title-bar">
     <text class="back iconfont" if="showBack" onclick="goBack">&#xe606;</text>
     <text class="center-title">{{ title }}</text>
-    <image onClick="del" style="padding:0px 30px" src="../../../assets/images/del.png"></image>
+    <image class="img-box"  onClick="getClick" style="" src="{{icon}}"></image>
   </div>
 </template>
 
@@ -14,13 +14,14 @@ export default {
     showBack: {
       default: false
     },
-    title: {}
+    title: {},
+    icon:{}
   },
   goBack() {
     router.back()
   },
-  del(){
-     this.$emit('del')
+  getClick(){
+    this.$emit('getClick')
   }
 }
 </script>
@@ -31,5 +32,12 @@ export default {
   flex: 1;
   .text-black;
   text-align: center;
+}
+.title-bar{
+  padding: 20px 30px;
+  color: #000;
+  font-weight: 500;
+  position: fixed;
+  top:0px
 }
 </style>

@@ -3,7 +3,7 @@
     <search-input-bar onsearch="search" ></search-input-bar>
     <div class="search-hot">
       <div class="hot-list">
-        <text class="hot-item" for="hotList" @click="toSearch($item.title)">{{ $item.title | ellipsis}}</text>
+        <text class="hot-item" for="hotList" @click="toSearch($item)">{{ $item | ellipsis}}</text>
       </div>
        <div class="search-title" if={{hotList.length}}>
         <text class="search-refresh" @click="delHostList">
@@ -37,30 +37,33 @@ export default {
     $utils.getStorage('searchEngineId').then(value => {
         this.searchEngineId = value;
     }) 
+    // 获取搜索历史
+    $utils.getStorage('searchHistory').then(value => {
+      this.hotList = JSON.parse(value);
+      console.log(this.hotList);
+    })
     this.getAd();
   },
   search(info) {
     this.searchText = info.detail
-    // $utils.route2theUrl('pages/search-detail')
-    // let para = new Object();
-    // para.keyword = this.searchText;
-    // para.searchEngineId = this.searchEngineId;
-    //  $apis.common.getSearchLog(para).then((res) => {
-    //   let data = JSON.parse(res.data);
-    //   if (data.code == 0) {
-        
-    //   } else {
-    //   prompt.showToast({
-    //       message: data.message
-    //     })
-    //   }
-    // })
   },
   delHostList() {
 
   },
   toSearch(val) {
-    $utils.route2theUrl('pages/search-detail', {id: val})
+    let para = new Object();
+    para.keyword = val;
+    para.searchEngineId = this.searchEngineId;
+    $apis.common.getSearchLog(para).then((res) => {
+      let data = JSON.parse(res.data);
+      if (data.code == 0) {
+        $utils.route2theUrl('pages/search-detail',{item: data.data, searchText: val});
+      } else {
+      prompt.showToast({
+          message: data.message
+        })
+      }
+    })
   },
   // 获取广告
   getAd(){
@@ -87,7 +90,7 @@ export default {
   // 广告点击，展示加载完请求的事件
   getAllAd(val) {
     let para = new Object();
-    para.id = this.adData.link;
+    para.id = this.adData.id;
     if (val == "open") {
       para.opt = 0;
     } else if (val == "click") {
@@ -145,7 +148,7 @@ export default {
     border-radius: 44px;
     font-size: 26px;
     color: #000;
-    padding: 0px 15px;
+    padding: 0px 20px;
     text-align: center;
     border-radius: 30px;
     margin: 10px 40px 10px 0;

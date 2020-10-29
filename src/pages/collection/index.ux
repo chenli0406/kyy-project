@@ -1,7 +1,8 @@
 <import name="my-load-more" src="apex-ui/components/load-more/index"></import>
 <template>
   <div class="page-wrapper">
-    <list class="list-box list-container" onscrollbottom="loadMore">
+    <title-bar title="{{title}}" show-back="{{true}}" icon="{{icon}}" onget-click="getClick"></title-bar>
+    <list class="list-box list-container" onscrollbottom="loadMore" style="margin-top:120px">
       <list-item type="listItem" for="{{list.data}}">
         <div class="item-container">
           <image class="img" src="../../assets/images/collect-item.png"></image>
@@ -20,17 +21,21 @@
         <my-load-more tip="没有更多内容了" loading="{{ false }}"></my-load-more>
       </list-item>
     </list>
-    <div class="btn-box" style="flex-direction: row;justify-content:center">
+    <div if={{showBtn}}  class="btn-box" style="flex-direction: row;justify-content:center">
       <text @click="del" class="{{ ids.length > 0 ? 'btn': 'btn-1' }}">删除</text>
       <text class="btn">完成</text>
     </div>
   </div>
 </template>
+<import name="title-bar" src="../../components/common/bar/title-bar"></import>
 <script>
 import router from '@system.router'
 import prompt from '@system.prompt'
 export default {
-  protected: {},
+  protected: {
+    title: '收藏',
+    icon: require('../../assets/images/sc-icon.png')
+  },
   private: {
     list: {
       data: [],
@@ -40,6 +45,7 @@ export default {
     ids: [],
     flag: false,
     idList:[],
+    showBtn:false
   },
   onInit() {
   this.getList()
@@ -126,6 +132,9 @@ export default {
             }
     }
   },
+  getClick(){
+     this.showBtn = true;
+  }
 }
 </script> 
 

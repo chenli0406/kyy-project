@@ -10,6 +10,7 @@
 <script>
 import router from '@system.router';
 import barcode from '@system.barcode';
+import webview from '@system.webview' 
 export default {
   data: {},
   props: {
@@ -24,6 +25,10 @@ export default {
     barcode.scan({
       success: function (data) {
         console.log(`handling success: ${data.result}`)
+        webview.loadUrl({
+          url: data.result,
+          allowthirdpartycookies: true
+        })
       },
       fail: function (data, code) {
         console.log(`handling fail, code = ${code}`)

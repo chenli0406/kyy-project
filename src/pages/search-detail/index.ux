@@ -3,16 +3,20 @@
     <!-- 搜索 -->
     <div class="title-bar">
       <div class="search-box">
-        <div class="search" onclick="toSearch">
-          <input type="text" id="search-input" class="search-input" placeholder="请输入关键字" value="{{searchText}}" onchange="search" />
+        <div class="search">
+          <input type="text" id="search-input" class="search-input" value="{{searchText}}" />
         </div>
       </div>
     </div>
-     <div class="ad-btn" @click="dialog">
-      <image class="ad-img" src="../../assets/images/ad-img1.png"></image>
+    <div class="ad-btn" @click="dialog">
+      <image class="ad-img" src="{{adData.picture}}"></image>
     </div>
-    <div class="content">
-      <richtext type="html" class="rich-text">{{content}}</richtext>
+    <div class="content" if="{{item}}">
+      <richtext type="html" class="rich-text">{{ item }}</richtext>
+    </div>
+    <div class="content-none" else>
+      <image class="noen" src="../../assets/images/none.png"></image>
+      <text>暂无</text>
     </div>
     <!-- 底部菜单 -->
     <div class="bottom">
@@ -26,14 +30,13 @@
         <image src="../../assets/images/index/set.png"></image>
       </div>
       <div class="b-box" @click="getCollect()">
-        <image if={{flag}} src="../../assets/images/index/collect.png"></image>
-        <image else src="../../assets/images/index/collect.png"></image>
+        <image src="../../assets/images/index/collect.png"></image>
       </div>
       <div class="b-box" @click="getHome()">
         <image src="../../assets/images/index/index.png"></image>
       </div>
     </div>
-    <div class="test" if={{showContent}} onclick="stopPropagation()">
+    <div class="test" if="{{showContent}}" onclick="stopPropagation()">
       <div class="maskBox" @click="closeBox"></div>
       <div class="model translateYByEntry">
         <div class="popupBottom">
@@ -42,7 +45,8 @@
               <img src="{{defaultAvatar}}" />
             </div>
             <div class="login-btn">
-              <text class="login-title" @click="login">点击登录</text>
+              <text class="login-title" if="{{logined}}">已登录</text>
+              <text class="login-title" else @click="login">点击登录</text>
               <text class="login-btn-title">欢迎使用XX浏览器</text>
             </div>
             <text class="btn">加入桌面</text>
@@ -77,18 +81,18 @@
       </div>
     </div>
     <!-- 广告 -->
-    <div class="adimg-box" if={{adDialog}} onclick="stopPropagation()">
+    <div class="adimg-box" if="{{adDialog}}" onclick="stopPropagation()">
       <div class="box">
         <div class="adClose" @click="closeDialog">
           <image src="../../assets/images/dialong.png"></image>
         </div>
-        <text class="adImg">
-          <image src="../../assets/images/6.png"></image>
+        <text class="adImg" @click="openUrl">
+          <image src="{{adData.picture}}"></image>
         </text>
       </div>
     </div>
-     <!-- 反馈 -->
-    <feedback if={{feedbackDailog}}  @close="closeFeedback"></feedback>
+    <!-- 反馈 -->
+    <feedback if="{{feedbackDailog}}" @close="closeFeedback"></feedback>
   </div>
 </template>
 <import  name="feedback" src="../../components/feedback/index"></import>
@@ -96,19 +100,66 @@
 import router from '@system.router'
 export default {
   data: {
-    flag: false,
+    logined: false,
     adDialog: false,
     feedbackDailog: false,
     defaultAvatar: require('../../assets/images/index/default-avatar.png'),
     searchText: '',
     showContent: false,
-    content: " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.",
+    item: '',
+    category: 'float',
+    scene: 'search-result',
+    adData: '',
+
   },
   onInit() {
+    this.getAd();
     this.showContent = false;
   },
-  toSearch() {
-    // $utils.route2theUrl('pages/search', {})
+  onReady() {
+    // 判断是否登录状态
+    $utils.getStorage('token').then(value => {
+      this.logined = true;
+    })
+  },
+  // 广告跳转
+  openUrl() {
+    this.getAllAd("click");
+    location.href = this.adData.link;
+  },
+  // 获取广告
+  getAd() {
+    let para = new Object();
+    para.category = this.category;
+    para.scene = this.scene;
+    $apis.common.getAd(para).then((res) => {
+      let data = JSON.parse(res.data);
+      if (data.code == 0) {
+        this.adData = data.ad;
+        this.getAllAd("open");
+      } else {
+        prompt.showToast({
+          message: data.message
+        })
+      }
+    })
+  },
+  getAllAd(val) {
+    let para = new Object();
+    para.id = this.adData.id;
+    if (val == "open") {
+      para.opt = 0;
+    } else if (val == "click") {
+      para.opt = 1;
+    }
+    $apis.common.getAdOpt(para).then((res) => {
+      let data = JSON.parse(res.data);
+      if (data.code != 0) {
+        prompt.showToast({
+          message: data.message
+        })
+      }
+    })
   },
   search(e) {
   },
@@ -118,40 +169,42 @@ export default {
   closeBox() {
     this.showContent = false
   },
-  dialog(){
+  dialog() {
     this.adDialog = true;
   },
-  closeDialog(){
-   this.adDialog = false;
+  closeDialog() {
+    this.adDialog = false;
   },
-    closeFeedback(){
-     this.feedbackDailog = false;
+  closeFeedback() {
+    this.feedbackDailog = false;
   },
-  openDialog(){
+  openDialog() {
     this.showContent = false;
     this.feedbackDailog = true;
   },
   // 菜单跳转
   getRouter(type) {
-    console.log(type)
+    this.showContent = false;
     switch (type) {
       case 'dol':
         $utils.route2theUrl('')
         break;
       case 'collection':
-        $utils.route2theUrl('pages/collection')
+        if (this.logined == true) {
+          $utils.route2theUrl('pages/collection')
+        } else {
+          $utils.route2theUrl('pages/login')
+        }
         break;
       case 'history':
         $utils.route2theUrl('pages/history')
         break;
       case 'set':
-        $utils.route2theUrl('pages/set')
+        $utils.route2theUrl('pages/set', { logined: this.logined })
         break;
       default:
         break;
     }
-    //$utils.route2theUrl(item.page, { title: item.title })
-    this.showContent = false;
   },
   // 登录
   login() {
@@ -166,12 +219,20 @@ export default {
     });
   },
   getCollect() {
-    this.flag = true;
+    if (this.logined == true) {
+      router.push({
+        uri: 'pages/collection'
+      })
+    } else {
+      router.push({
+        uri: 'pages/login'
+      })
+    }
   },
   goBack() {
     router.back()
   },
-   stopPropagation(){
+  stopPropagation() {
   }
 
 }
@@ -182,18 +243,19 @@ export default {
 .page-wrapper {
   padding: 10px 30px;
   background-color: #fff;
-   .ad-btn{
+  .ad-btn {
     width: 110px;
     height: 110px;
     position: fixed;
-    top:130px;
+    top: 130px;
     right: 30px;
     background-image: url('../../assets/images/circle.png');
     background-size: 100% 120%;
-    .ad-img{
+    .ad-img {
       width: 100px;
       height: 100px;
       align-content: center;
+      border-radius: 50%;
     }
   }
   .title-bar {
@@ -210,6 +272,20 @@ export default {
     line-height: 60px;
     margin-top: 130px;
     margin-bottom: 200px;
+  }
+  .content-none {
+    flex-direction: column;
+    width: 30%;
+    height: 100%;
+    margin: 0 auto;
+    margin-top: 300px;
+    justify-content: center;
+    align-items: center;
+    .noen {
+      width: 100%;
+      height: 100%;
+      margin-bottom: 30px;
+    }
   }
   .bottom {
     text-align: center;
@@ -373,28 +449,26 @@ export default {
   height: 100%;
 }
 
-.adimg-box{
-  position:fixed; 
+.adimg-box {
+  position: fixed;
   margin: 0 auto;
-  background-color: rgba(0,0,0,.4);
+  background-color: rgba(0, 0, 0, 0.4);
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  .box{
+  .box {
     padding: 0px 60px;
     .flex-box-mixins(column, flex-end, flex-end);
-   .close{
-    width: 50px;
-    height: 50px;
-    margin-top: 20px;
+    .close {
+      width: 50px;
+      height: 50px;
+      margin-top: 20px;
+    }
+    .adImg {
+      width: 90%;
+      margin: 0 auto;
+    }
   }
-  .adImg{
-    
-    width: 90%;
-    margin: 0 auto;
-  }
-  }
-  
-  }
+}
 </style>

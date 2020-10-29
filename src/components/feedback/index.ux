@@ -1,70 +1,161 @@
 
 <template>
-    <!-- 举报 -->
-    <div class="adimg-box" onclick="stopPropagation()">
-        <div class="box">
-            <text class="box-title">投诉反馈</text>
-            <div class="list-select">
-                <select class="list-option" onchange="onSelectBanks">
-                    <option class="option" value="0">举报类型1</option>
-                    <option class="option" value="{{$item.id}}" for="options" selected="{{$item.id==id}}">{{$item.name}}</option>
-                </select>
-            </div>
-            <textarea maxlength="100" class="textarea" placeholder="请详细描述您遇到的问题或您的建议" onchange="change">{{ content }}</textarea>
-            <input class="input" type="text" maxlength="11" placeholder="请留下您的联系方式" value="{{phone}}" onchange="changePhone" />
-            <text class="btn" @click="submit">确认</text>
+  <!-- 举报 -->
+  <div class="adimg-box" onclick="stopPropagation()">
+    <div class="box">
+      <text class="box-title">投诉反馈</text>
+      <!-- <div class="list-select">
+        <select
+          class="{{ fromRequired.categoryR == true? 'required':'' }} list-option"
+          onchange="onSelect"
+        >
+          <option selected class="option" value="其他">其他</option>
+          <option class="option" value="非自愿打开浏览器">非自愿打开浏览器</option>
+          <option class="option" value="页面包含黄色信息">页面包含黄色信息</option>
+          <option class="option" value="官方客服">官方客服</option> -->
+          <!-- <option class="option" value="{{$item.id}}" for="options" selected="{{$item.id==id}}">{{$item.name}}</option> -->
+        <!-- </select>
+      </div> -->
+      <div class="divInput">
+        <div class="input" @click="openValue">
+          <text>{{ from.category }}</text>
+          <!-- <text value="" type="text" placeholder="其他"> -->
+          <image src="../../assets/images/right.png"></image>
         </div>
-        <text class="adClose" @click="close">
-            <image src="../../assets/images/close-index.png"></image>
-        </text>
+        <div class="list" show="{{show}}">
+          <!-- <ul>
+            <li @click="getvalue(index,item)" for="(item,index) in options">{{ item.name }}</li>
+          </ul> -->
+          <text class="item"  for="{{options}}" @click="getvalue($idx,$item.name)">{{$item.name}}</text>
+        </div>
+      </div>
+      <textarea
+        maxlength="100"
+        class="{{ fromRequired.descriptionR == true? 'required':'' }}  textarea"
+        placeholder="请详细描述您遇到的问题或您的建议"
+        onchange="change"
+        >{{ from.description }}</textarea
+      >
+      <input
+        class="{{ fromRequired.contactR == true? 'required':'' }} input"
+        type="text"
+        maxlength="11"
+        placeholder="请留下您的联系方式"
+        value="{{from.contact}}"
+        onchange="changePhone"
+      />
+      <text class="btn" @click="submit">确认</text>
     </div>
-
+    <text class="adClose" @click="close">
+      <image src="../../assets/images/close-index.png"></image>
+    </text>
+  </div>
 </template>
 <script>
 import prompt from '@system.prompt'
 export default {
-    props: ['propShow'],
-    data: {
-        content: "",
-        phone: "",
-        selectedVal: "",
-        options: [
-            {
-                id: "1",
-                name: "举报类型1"
-            },
-            {
-                id: "2",
-                name: "举报类型2"
-            },
-            {
-                id: "3",
-                name: "举报类型3"
-            },
-            {
-                id: "4",
-                name: "举报类型4"
-            },
-
-        ]
+  props: ['propShow'],
+  data: {
+    content: "",
+    phone: "",
+    selectedVal: "",
+    from: {
+      category: "其他",
+      description: "",
+      contact: "",
     },
-    stopPropagation() {
+    fromRequired: {
+      categoryR: false,
+      descriptionR: false,
+      contactR: false,
     },
-    close() {
-        this.$emit('close', false)
-    },
-    changePhone(e) {
-        this.phone = e.value
-
-    },
-    change(e) {
-        this.content = e.value;
-    },
-    submit() {
-    },
-    onSelectBanks(e) {
-        this.selectedVal = e.newValue;
+    show:false,
+    options:[
+      {
+        name:"其他"
+      },
+      {
+        name:"非自愿打开浏览器"
+      },
+      {
+        name:"页面包含黄色信息"
+      },
+      {
+        name:"官方客服"
+      },
+    ]
+  },
+  stopPropagation() {
+  },
+  onReady() {
+    this.from = {
+      category: "其他",
+      description: "",
+      contact: "",
     }
+  },
+  close() {
+    this.$emit('close', false)
+  },
+  changePhone(e) {
+    this.from.contact = e.value;
+    this.fromRequired.contactR = false;
+
+  },
+  change(e) {
+    this.from.description = e.value;
+    this.fromRequired.descriptionR = false;
+  },
+  submit() {
+    if (this.from.category == '') {
+      this.fromRequired.categoryR = true;
+      return false;
+    }
+    if (this.from.description == '') {
+      this.fromRequired.descriptionR = true;
+      return false;
+    }
+    if (this.from.contact == '') {
+      this.fromRequired.contactR = true;
+      return false;
+    }
+    $apis.common.getFeedBack(this.from).then((res) => {
+      let data = JSON.parse(res.data);
+      if (data.code == 0) {
+        prompt.showToast({
+          message: '成功'
+        });
+        this.$emit('close', false);
+        this.from = {
+          category: "其他",
+          description: "",
+          contact: "",
+        }
+      } else {
+        prompt.showToast({
+          message: data.message
+        })
+        this.$emit('close', false);
+        this.from = {
+          category: "其他",
+          description: "",
+          contact: "",
+        }
+      }
+    })
+  },
+  onSelect(e) {
+    this.from.category = e.newValue;
+    this.fromRequired.categoryR = false;
+  },
+  openValue(){
+        this.show=!this.show;
+  },
+  getvalue(index,item){
+    console.log(item);
+        this.from.category=item;
+        this.show=false;
+  },
 }
 </script>
 
@@ -116,6 +207,9 @@ export default {
       outline: none;
       margin-bottom: 30px;
     }
+    .required {
+      border: 1px solid red;
+    }
     .input {
       width: 100%;
       background-color: #f7f8fb;
@@ -148,5 +242,38 @@ export default {
     margin-top: 20px;
   }
 }
+  .divInput{
+    flex-direction: column;
+    
+  }
+  .input{
+    height: 40px;
+    line-height: 40px;
+    padding-left: 10px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    
+    
+  }
+  .list{
+    width: 100%;
+    border-top-right-radius: 60px;
+    border-top-left-radius: 60px;
+    position: fixed;
+    bottom: 0;
+    color: #000;
+    flex-direction: column;
+    z-index:9999;
+    background-color: #fff;
+    .item{
+      padding: 20px 30px;
+      margin: 10px;
+      text-align: center;
+    }
+    .item:active{
+      background-color: #f0f8ff;
+    }
+  }
 
 </style>

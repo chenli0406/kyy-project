@@ -1,14 +1,15 @@
 <template>
   <div class="page-wrapper">
+     <title-bar title="{{title}}" show-back="{{true}}"></title-bar>
     <!-- <div if="{{!result.length}}" class="no-data">
       <image class="no-data-img" src="/assets/images/no-data.png"></image>
       <text class="text-remark-big">暂无数据</text>
     </div> -->
-    <list class="list-box">
+    <list class="list-box" style="margin-top:120px">
       <list-item type="listItem" for="{{list}}">
         <text class="date">2020020</text>
         <div class="item-container">
-          <image class="img" src="../../assets/images/collect-item.png"></image>
+          <image class="img" src="../../assets/images/download.png"></image>
           <div class="item-box" style="flex-direction: column; align-items: flex-start;">
             <text class="item-t">{{$item.title | ellipsisA}}</text>
           </div>
@@ -18,9 +19,13 @@
     </list>
   </div>
 </template>
+<import name="title-bar" src="../../components/common/bar/title-bar"></import>
 <script>
 import router from '@system.router'
 export default {
+   protected: {
+    title: '下载管理',
+  },
   private: {
     list: [
       {

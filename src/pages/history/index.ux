@@ -1,11 +1,11 @@
 <template>
   <div class="page-wrapper">
-    <title-bar title="{{title}}" show-back="{{true}}"></title-bar>
+    <title-bar title="{{title}}" show-back="{{true}}" icon="{{icon}}" onget-click="getClick"></title-bar>
     <!-- <div if="{{!result.length}}" class="no-data">
       <image class="no-data-img" src="/assets/images/no-data.png"></image>
       <text class="text-remark-big">暂无数据</text>
     </div> -->
-    <list class="list-box">
+    <list class="list-box" style="margin-top:120px">
       <list-item type="listItem" for="{{list}}">
         <text class="date">2020020</text>
         <div class="item-container">
@@ -26,7 +26,8 @@
 import router from '@system.router'
 export default {
   protected: {
-    title: '历史记录'
+    title: '历史记录',
+    icon: require('../../assets/images/del-history.png')
   },
   private: {
     list: [
@@ -61,9 +62,8 @@ export default {
     }
     return value
   },
-  del(){
-    console.log("111");
-    
+  getClick(){
+    console.log("11");
   }
 }
 </script>

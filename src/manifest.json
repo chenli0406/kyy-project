@@ -92,60 +92,42 @@
   },
   "display": {
     "titleBar": false,
-    "titleBarBackgroundColor": "#f2f2f2",
+    "titleBarBackgroundColor": "#ffffff",
     "titleBarTextColor": "#333333",
     "menu": false,
+    "windowSoftInputMode": "adjustResize",
+    "statusBarImmersive": true,
+    "textSizeAdjust": "auto",
+    "menuBarData": {
+      "menuBar" : false
+    },
     "pages": {
       "pages/index": {
         "titleBarText": "",
         "menu": true
       },
       "pages/search": {
-        "titleBarText": "",
-        "menu": true
+        "titleBarText": ""
       },
       "pages/info-detail": {
-        "fullScreen": false,
-        "titleBarText": "资讯详情",
-        "titleBar": true,
-        "titleBarBackgroundColor": "#f2f2f2",
-        "titleBarTextColor": "#333333",
-        "menu": true
+        "titleBarText": ""
       },
       "pages/download": {
-        "fullScreen": false,
-        "titleBarText": "下载管理",
-        "titleBar": true,
-        "titleBarBackgroundColor": "#f2f2f2",
-        "titleBarTextColor": "#333333",
-        "menu": true
+        "titleBarText": ""
       },
       "pages/set": {
-        "fullScreen": false,
-        "titleBarText": "设置",
-        "titleBar": true,
-        "titleBarBackgroundColor": "#f2f2f2",
-        "titleBarTextColor": "#333333",
-        "menu": false
+        "titleBarText": ""
+    
       },
       "pages/aboutUs": {
-        "fullScreen": false,
-        "titleBarText": "关于我们",
-        "titleBar": true,
-        "titleBarBackgroundColor": "#f2f2f2",
-        "titleBarTextColor": "#333333",
-        "menu": false
+        "titleBarText": ""
+
       },
       "pages/history": {
         "titleBarText": ""
       },
       "pages/collection": {
-        "fullScreen": false,
-        "titleBarText": "收藏",
-        "titleBar": true,
-        "titleBarBackgroundColor": "#f2f2f2",
-        "titleBarTextColor": "#333333",
-        "menu": false
+        "titleBarText": ""
       },
       "pages/login": {
         "titleBarText": ""
