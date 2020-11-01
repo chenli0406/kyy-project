@@ -171,7 +171,7 @@ export default {
   getSelect(id, val){
     this.id = id;
     this.selectName = val.name;
-    this.searchId = val.id;
+    this.searchId = val;
   },
   selectSubmit(){
     this.show = false;
@@ -183,7 +183,7 @@ export default {
       if (data.code == 0) {
           this.options = data.searchEngines;
           this.selectName = this.options[0].name;
-          $utils.setStorage('searchEngineId', this.options[0].id);
+          // $utils.setStorage('searchEngineId', this.options[0].id);
       } else {
       prompt.showToast({
           message: data.message

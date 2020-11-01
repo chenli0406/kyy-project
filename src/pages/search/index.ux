@@ -3,11 +3,11 @@
     <search-input-bar onsearch="search" ></search-input-bar>
     <div class="search-hot">
       <div class="hot-list">
-        <text class="hot-item" for="hotList" @click="toSearch($item)">{{ $item | ellipsis}}</text>
+        <text class="hot-item" for="hotList" @click="toSearch($item)">{{ $item.title | ellipsis}}</text>
       </div>
        <div class="search-title" if={{hotList.length}}>
         <text class="search-refresh" @click="delHostList">
-          <image class="img" src="../../assets/images/del.png"></image>
+          <image class="img" src="../../assets/images/del-history.png"></image>
         </text>
       </div>
       <div class="adimg-box" if={{dialog}}>
@@ -35,35 +35,42 @@ export default {
   onInit() {
     // 获取搜索引擎id
     $utils.getStorage('searchEngineId').then(value => {
-        this.searchEngineId = value;
+        this.searchEngineId = JSON.parse(value);
+        
     }) 
-    // 获取搜索历史
+    this.getSearchHistory()
+    this.getAd();
+  },
+  getSearchHistory(){
+     // 获取搜索历史
     $utils.getStorage('searchHistory').then(value => {
       this.hotList = JSON.parse(value);
       console.log(this.hotList);
     })
-    this.getAd();
   },
   search(info) {
     this.searchText = info.detail
   },
   delHostList() {
-
+   $utils.deleteStorage('searchHistory');
+   this.hotList = [];
   },
   toSearch(val) {
-    let para = new Object();
-    para.keyword = val;
-    para.searchEngineId = this.searchEngineId;
-    $apis.common.getSearchLog(para).then((res) => {
-      let data = JSON.parse(res.data);
-      if (data.code == 0) {
-        $utils.route2theUrl('pages/search-detail',{item: data.data, searchText: val});
-      } else {
-      prompt.showToast({
-          message: data.message
-        })
-      }
-    })
+    $utils.route2theUrl('pages/search-detail',{searchText: val.url});
+    // let para = new Object();
+    // para.keyword = val;
+    // console.log(this.searchEngineId);
+    // para.searchEngineId = this.searchEngineId[0].id;
+    // $apis.common.getSearchLog(para).then((res) => {
+    //   let data = JSON.parse(res.data);
+    //   if (data.code == 0) {
+    //     $utils.route2theUrl('pages/search-detail',{item: data.data, searchText: val});
+    //   } else {
+    //   prompt.showToast({
+    //       message: data.message
+    //     })
+    //   }
+    // })
   },
   // 获取广告
   getAd(){

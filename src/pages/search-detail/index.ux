@@ -11,12 +11,8 @@
     <div class="ad-btn" @click="dialog">
       <image class="ad-img" src="{{adData.picture}}"></image>
     </div>
-    <div class="content" if="{{item}}">
-      <richtext type="html" class="rich-text">{{ item }}</richtext>
-    </div>
-    <div class="content-none" else>
-      <image class="noen" src="../../assets/images/none.png"></image>
-      <text>暂无</text>
+    <div class="content">
+      <web class="web-comp" src="{{websrc}}" allowthirdpartycookies="{{allow}}" onpagestart="onPageStart" onpagefinish="onPageFinish"  ontitlereceive="onTitleReceive" onerror="onError" id="web"></web>
     </div>
     <!-- 底部菜单 -->
     <div class="bottom">
@@ -110,11 +106,16 @@ export default {
     category: 'float',
     scene: 'search-result',
     adData: '',
-
+    websrc: '',
+    allow: false
   },
   onInit() {
     this.getAd();
     this.showContent = false;
+    this.websrc = this.searchText;
+    this.allow = this.allowthirdpartycookies === 'true';
+    this.$on('arrowLeft', this.arrowLeftIcon)
+    this.$on('arrowRight', this.arrowRightIcon)
   },
   onReady() {
     // 判断是否登录状态
@@ -233,7 +234,33 @@ export default {
     router.back()
   },
   stopPropagation() {
-  }
+  },
+     arrowLeftIcon () {
+      this.isCanBack()
+    },
+    arrowRightIcon () {
+      this.isCanForward()
+    },
+    isCanForward () {
+      this.$element('web').canForward({
+        callback: function(e){
+          if(e){
+            this.$element('web').forward()
+          }
+        }.bind(this)
+      })
+    },
+    isCanBack () {
+      this.$element('web').canBack({
+        callback: function(e){
+          if (e) {
+            this.$element('web').back()
+          } else {
+            router.back()
+          }
+        }.bind(this)
+      })
+    }
 
 }
 </script>
@@ -307,9 +334,9 @@ export default {
       justify-content: center;
     }
     image {
-      width: 40px;
-      height: 40px;
-      margin: 0px 60px;
+      width: 44px;
+      height: 44px;
+      margin: 0px 50px;
     }
   }
 }
@@ -323,7 +350,7 @@ export default {
     justify-content: space-between;
     align-items: center;
     flex-direction: row;
-    padding: 40px 0 20px 0;
+     padding: 40px 40px 20px 0;
     margin: 0px 30px;
     .avatar-img {
       width: 120px;

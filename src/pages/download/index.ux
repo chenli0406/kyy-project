@@ -1,10 +1,10 @@
 <template>
   <div class="page-wrapper">
      <title-bar title="{{title}}" show-back="{{true}}"></title-bar>
-    <!-- <div if="{{!result.length}}" class="no-data">
-      <image class="no-data-img" src="/assets/images/no-data.png"></image>
-      <text class="text-remark-big">暂无数据</text>
-    </div> -->
+     <div if="{{!list.length}}" class="no-data">
+      <image class="no-data-img" src="../../assets/images/none.png"></image>
+      <text style="margin-top:20px">暂无下载记录</text>
+    </div>
     <list class="list-box" style="margin-top:120px">
       <list-item type="listItem" for="{{list}}">
         <text class="date">2020020</text>
@@ -22,27 +22,13 @@
 <import name="title-bar" src="../../components/common/bar/title-bar"></import>
 <script>
 import router from '@system.router'
+import request from '@system.request'
 export default {
    protected: {
     title: '下载管理',
   },
   private: {
-    list: [
-      {
-        id: "1",
-        title: "花瓣网-陪你做生活的设计师花瓣网",
-      },
-      {
-        id: "2",
-        title: "花瓣网-陪你做生活的设计师",
-      
-      },
-      {
-        id: "3",
-        title: "花瓣网-陪你做生活的设计师",
-     
-      },
-    ]
+    list: []
   },
   ellipsisA(value) {
     if (!value) return ''
@@ -60,7 +46,7 @@ export default {
   background-color: #fff;
 }
 .no-data {
-  flex: 1;
+  margin-top: 200px;
   .flex-box-mixins(column, center, center);
 }
 .no-data-img {

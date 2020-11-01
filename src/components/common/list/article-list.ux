@@ -36,8 +36,8 @@ export default {
   },
   detail(item) {
     // 根据id查询详情
-    console.log(item.id)
-    $utils.route2theUrl('pages/info-detail', { id: item.id })
+    $utils.route2theUrl('pages/info-detail', { id: item.id });
+    
   },
   loadMore() {
     this.$emit('loadMore')

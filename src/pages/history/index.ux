@@ -1,14 +1,14 @@
 <template>
   <div class="page-wrapper">
     <title-bar title="{{title}}" show-back="{{true}}" icon="{{icon}}" onget-click="getClick"></title-bar>
-    <!-- <div if="{{!result.length}}" class="no-data">
-      <image class="no-data-img" src="/assets/images/no-data.png"></image>
-      <text class="text-remark-big">暂无数据</text>
-    </div> -->
+    <div if="{{!historyList.length}}" class="no-data">
+      <image class="no-data-img" src="../../assets/images/none.png"></image>
+      <text style="margin-top:20px">暂无历史记录</text>
+    </div>
     <list class="list-box" style="margin-top:120px">
-      <list-item type="listItem" for="{{list}}">
-        <text class="date">2020020</text>
-        <div class="item-container">
+      <list-item type="listItem" for="{{historyList}}">
+        <text class="date">{{ $item.time}}</text>
+        <div class="item-container" for="{{ $item.list }}">
           <image class="img" src="../../assets/images/collect-item.png"></image>
           <div class="item-box" style="flex-direction: column; align-items: flex-start;">
             <text class="item-t">{{$item.title | ellipsisA}}</text>
@@ -24,46 +24,53 @@
 <import name="title-bar" src="../../components/common/bar/title-bar"></import>
 <script>
 import router from '@system.router'
+import prompt from '@system.prompt'
 export default {
-  protected: {
+  data: {
     title: '历史记录',
-    icon: require('../../assets/images/del-history.png')
+    icon: require('../../assets/images/del-history.png'),
+    historyList: [],
+    list: []
   },
-  private: {
-    list: [
-      {
-        id: "1",
-        title: "花瓣网-陪你做生活的设计师花瓣网",
-        url: "https://huaban.com/home/"
-      },
-      {
-        id: "2",
-        title: "花瓣网-陪你做生活的设计师",
-        url: "https://huaban.com/home/"
-      },
-      {
-        id: "3",
-        title: "花瓣网-陪你做生活的设计师",
-        url: "https://huaban.com/home/https://huaban.com/home/https://huaban.com/home/"
-      },
-    ]
+  onInit() {
+    // 获取搜索历史
+    $utils.getStorage('historyData').then(value => {
+       let data = JSON.parse(value);
+       let res = [];
+       let newArr= [];
+       for(let i = 0; i< data.length; i++){
+         let n = res.indexOf(data[i].time);
+         if(n == -1){
+           res.push(data[i].time);
+           newArr.push({"time":data[i].time,list:[data[i].list]})
+         }else{
+           newArr[n].list.push(data[i].list)
+         }
+       }
+      this.historyList = newArr; 
+    })
+   
   },
   ellipsis(value) {
     if (!value) return ''
-    if (value.length > 30) {
-      return value.slice(0, 30) + '...'
+    if (value.length > 40) {
+      return value.slice(0, 40) + '...'
     }
     return value
   },
   ellipsisA(value) {
     if (!value) return ''
-    if (value.length > 14) {
-      return value.slice(0, 14) + '...'
+    if (value.length > 20) {
+      return value.slice(0, 20) + '...'
     }
     return value
   },
-  getClick(){
-    console.log("11");
+  getClick() {
+    $utils.deleteStorage('historyData');
+    this.historyList = [];
+    prompt.showToast({
+          message: '清除成功'
+    })
   }
 }
 </script>
@@ -74,7 +81,7 @@ export default {
   background-color: #fff;
 }
 .no-data {
-  flex: 1;
+  margin-top: 200px;
   .flex-box-mixins(column, center, center);
 }
 .no-data-img {
@@ -89,16 +96,18 @@ export default {
     border-bottom: 1px solid #eee;
     flex-direction: column;
     .date {
-    width: 250px;
-    height: 68px;
-    background-color: #f7f8fb;
-    border-radius: 44px;
-    text-align: center;
-    margin: 20px 0;
-  }
+      width: 250px;
+      height: 68px;
+      background-color: #f7f8fb;
+      border-radius: 44px;
+      text-align: center;
+      margin: 20px 0;
+    }
     .item-container {
+      margin: 20px 0px;
       .item-box {
-        width: 80%;
+        width: 85%;
+        height: 80px;
       }
       .item-t {
         height: 40px;
@@ -110,10 +119,11 @@ export default {
       }
       .item {
         height: 28px;
-        width: 80%;
+        line-height: 28px;
+        width: 100%;
         font-size: 26px;
         color: #666666;
-        margin-top: 10px;
+       
       }
       .img {
         width: 60px;

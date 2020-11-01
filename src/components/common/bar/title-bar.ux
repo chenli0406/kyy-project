@@ -1,6 +1,7 @@
 <template>
   <div class="title-bar">
-    <text class="back iconfont" if="showBack" onclick="goBack">&#xe606;</text>
+    <image src="../../../assets/images/left.png" class="back iconfont" if="showBack" onclick="goBack"></image>
+    <!-- <text >&#xe606;</text> -->
     <text class="center-title">{{ title }}</text>
     <image class="img-box"  onClick="getClick" style="" src="{{icon}}"></image>
   </div>
@@ -38,6 +39,15 @@ export default {
   color: #000;
   font-weight: 500;
   position: fixed;
-  top:0px
+  top:0px;
+  .iconfont{
+     margin-top: 5px;
+     width: 40px;
+     height: 40px;
+  }
+  .img-box{
+    /* width: 30px;
+    height: 30px; */
+  }
 }
 </style>

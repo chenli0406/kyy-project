@@ -1,7 +1,7 @@
 
 <template>
   <div class="page-wrapper">
-  <title-bar title="{{title}}" show-back="{{true}}" icon="{{icon}}" onget-click="getClick"></title-bar>
+    <title-bar title="{{title}}" show-back="{{true}}" icon="{{icon}}" onget-click="getClick"></title-bar>
     <div class="ad-btn" @click="dialog">
       <image class="ad-img" src="{{adData.picture}}"></image>
     </div>
@@ -37,9 +37,11 @@
     <div class="adimg-box" if="{{adDialog}}" onclick="stopPropagation()">
       <div class="box">
         <div class="adClose" @click="closeDialog">
-          <image  src="../../assets/images/dialong.png"></image>
+          <image src="../../assets/images/dialong.png"></image>
         </div>
-        <text  @click="openUrl" class="adImg"><image src="{{adData.picture}}"></image></text>
+        <text @click="openUrl" class="adImg">
+          <image src="{{adData.picture}}"></image>
+        </text>
       </div>
     </div>
   </div>
@@ -58,18 +60,43 @@ export default {
     scene: 'search-result',
     adData: '',
     title: '资讯详情',
-    icon: require('../../assets/images/more.png')
+    icon: require('../../assets/images/more.png'),
+    historyData: []
   },
   onInit() {
+    this.getHistoy();
     this.queryActicle();
     this.getAd();
     this.showContent = false;
+  },
+  addHistoryData() {
+    var now = new Date();
+    var year = now.getFullYear(); //得到年份
+    var month = now.getMonth() + 1;//得到月份
+    var date = now.getDate();//得到日期
+    let nowDate = year + "-" + month + "-" + date;
+    if (this.historyData.length > 20) {
+      this.historyData.pop();
+      this.historyData.unshift({ time: nowDate, list: { title: this.articleData.title, url: window.location.href + this.id } });
+      $utils.setStorage('historyData', this.historyData);
+    } else {
+      this.historyData.unshift({ time: nowDate, list: { title: this.articleData.title, url: window.location.href + this.id } });
+      $utils.setStorage('historyData', this.historyData);
+    }
+    console.log(this.historyData);
+  },
+  getHistoy(){
+     // 获取搜索历史
+       $utils.getStorage('historyData').then(value => {
+        this.historyData = JSON.parse(value);
+    })   
   },
   queryActicle() {
     $apis.common.getArticleDetail(this.id).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code == 0) {
         this.articleData = data.article;
+        this.addHistoryData();
       } else {
         prompt.showToast({
           message: data.message
@@ -104,27 +131,27 @@ export default {
   },
   stopPropagation() {
   },
-   // 获取广告
-  getAd(){
+  // 获取广告
+  getAd() {
     let para = new Object();
     para.category = this.category;
     para.scene = this.scene;
-    $apis.common.getAd(para).then((res) =>{
+    $apis.common.getAd(para).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code == 0) {
-           this.adData = data.ad;
-           this.getAllAd("open");
-      }else{
-         prompt.showToast({
+        this.adData = data.ad;
+        this.getAllAd("open");
+      } else {
+        prompt.showToast({
           message: data.message
         })
       }
-   })
+    })
   },
   // 广告跳转
-  openUrl(){
-  this.getAllAd("click");
-   location.href = this.adData.link;
+  openUrl() {
+    this.getAllAd("click");
+    location.href = this.adData.link;
   },
   // 广告点击，展示加载完请求的事件
   getAllAd(val) {
@@ -144,8 +171,8 @@ export default {
       }
     })
   },
-  getClick(){
-  this.showContent = true;
+  getClick() {
+    this.showContent = true;
   }
 }
 </script>
@@ -191,7 +218,6 @@ export default {
     font-size: 36px;
     line-height: 50px;
     margin-bottom: 20px;
-    
   }
   .content {
     font-size: 28px;

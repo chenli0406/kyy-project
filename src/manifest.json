@@ -38,6 +38,9 @@
     },
     {
       "name": "system.device"
+    },
+    {
+      "name": "system.request"
     }
   ],
   "permissions": [
@@ -95,11 +98,10 @@
     "titleBarBackgroundColor": "#ffffff",
     "titleBarTextColor": "#333333",
     "menu": false,
-    "windowSoftInputMode": "adjustResize",
     "statusBarImmersive": true,
     "textSizeAdjust": "auto",
     "menuBarData": {
-      "menuBar" : false
+      "menuBar": false
     },
     "pages": {
       "pages/index": {
@@ -117,11 +119,9 @@
       },
       "pages/set": {
         "titleBarText": ""
-    
       },
       "pages/aboutUs": {
         "titleBarText": ""
-
       },
       "pages/history": {
         "titleBarText": ""

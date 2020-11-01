@@ -2,8 +2,7 @@ import $fetch from '@system.fetch'
 import $utils from './utils'
 const prompt = require('@system.prompt')
 
-let deviceId = window.localStorage.deviceId;
-let token = window.localStorage.token;
+
 function requestHandle(params) {
   // eslint-disable-next-line no-undef
   return new Promise((resolve, reject) => {
@@ -13,8 +12,8 @@ function requestHandle(params) {
       data: JSON.stringify(params.data),
       header:{
         'Content-Type': 'application/json; charset=utf-8',
-        'DeviceId':  window.localStorage.deviceId,
-        'token':  window.localStorage.token
+        'DeviceId': localStorage.deviceId,
+        'token':  localStorage.token
       },
       success: data => {
         const serverResponse = data;

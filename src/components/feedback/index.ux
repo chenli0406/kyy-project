@@ -13,11 +13,11 @@
           <option class="option" value="非自愿打开浏览器">非自愿打开浏览器</option>
           <option class="option" value="页面包含黄色信息">页面包含黄色信息</option>
           <option class="option" value="官方客服">官方客服</option> -->
-          <!-- <option class="option" value="{{$item.id}}" for="options" selected="{{$item.id==id}}">{{$item.name}}</option> -->
-        <!-- </select>
+      <!-- <option class="option" value="{{$item.id}}" for="options" selected="{{$item.id==id}}">{{$item.name}}</option> -->
+      <!-- </select>
       </div> -->
       <div class="divInput">
-        <div class="input" @click="openValue">
+        <div class="select-box" @click="openValue">
           <text>{{ from.category }}</text>
           <!-- <text value="" type="text" placeholder="其他"> -->
           <image src="../../assets/images/right.png"></image>
@@ -26,29 +26,16 @@
           <!-- <ul>
             <li @click="getvalue(index,item)" for="(item,index) in options">{{ item.name }}</li>
           </ul> -->
-          <text class="item"  for="{{options}}" @click="getvalue($idx,$item.name)">{{$item.name}}</text>
+          <text class="item" for="{{options}}" @click="getvalue($idx,$item.name)">{{$item.name}}</text>
         </div>
       </div>
-      <textarea
-        maxlength="100"
-        class="{{ fromRequired.descriptionR == true? 'required':'' }}  textarea"
-        placeholder="请详细描述您遇到的问题或您的建议"
-        onchange="change"
-        >{{ from.description }}</textarea
-      >
-      <input
-        class="{{ fromRequired.contactR == true? 'required':'' }} input"
-        type="text"
-        maxlength="11"
-        placeholder="请留下您的联系方式"
-        value="{{from.contact}}"
-        onchange="changePhone"
-      />
+      <textarea maxlength="100" class="{{ fromRequired.descriptionR == true? 'required':'' }}  textarea" placeholder="请详细描述您遇到的问题或您的建议" onchange="change">{{ from.description }}</textarea>
+      <input class="{{ fromRequired.contactR == true? 'required':'' }} input" type="text" maxlength="11" placeholder="请留下您的联系方式" value="{{from.contact}}" onchange="changePhone" />
       <text class="btn" @click="submit">确认</text>
     </div>
-    <text class="adClose" @click="close">
-      <image src="../../assets/images/close-index.png"></image>
-    </text>
+    <div class="adClose" @click="close">
+      <image class="img" src="../../assets/images/close-index.png"></image>
+    </div>
   </div>
 </template>
 <script>
@@ -69,19 +56,19 @@ export default {
       descriptionR: false,
       contactR: false,
     },
-    show:false,
-    options:[
+    show: false,
+    options: [
       {
-        name:"其他"
+        name: "其他"
       },
       {
-        name:"非自愿打开浏览器"
+        name: "非自愿打开浏览器"
       },
       {
-        name:"页面包含黄色信息"
+        name: "页面包含黄色信息"
       },
       {
-        name:"官方客服"
+        name: "官方客服"
       },
     ]
   },
@@ -148,13 +135,13 @@ export default {
     this.from.category = e.newValue;
     this.fromRequired.categoryR = false;
   },
-  openValue(){
-        this.show=!this.show;
+  openValue() {
+    this.show = !this.show;
   },
-  getvalue(index,item){
+  getvalue(index, item) {
     console.log(item);
-        this.from.category=item;
-        this.show=false;
+    this.from.category = item;
+    this.show = false;
   },
 }
 </script>
@@ -213,18 +200,21 @@ export default {
     .input {
       width: 100%;
       background-color: #f7f8fb;
-      padding: 30px;
+      padding: 10px 30px;
       border-radius: 55px;
       font-size: 26px;
       margin-bottom: 30px;
+      height: 70px;
     }
     .list-select {
       width: 100%;
-      padding: 30px;
+      width: 400px;
+      height: 70px;
       background-color: #f7f8fb;
       border-radius: 55px;
       color: #000;
       margin-bottom: 30px;
+      padding: 10px 30px;
     }
     .list-option {
       width: 100%;
@@ -240,40 +230,47 @@ export default {
     width: 60px;
     height: 60px;
     margin-top: 20px;
+    justify-content: center;
+    .img {
+      width: 100%;
+      height: 100%;
+      z-index: 999;
+    }
   }
 }
-  .divInput{
-    flex-direction: column;
-    
+.divInput {
+  width: 100%;
+  flex-direction: column;
+}
+.select-box {
+  padding-left: 10px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f7f8fb;
+  padding: 10px 30px;
+  border-radius: 55px;
+  font-size: 26px;
+  margin-bottom: 30px;
+  height: 70px;
+}
+.list {
+  width: 100%;
+  border-top-right-radius: 60px;
+  border-top-left-radius: 60px;
+  position: fixed;
+  bottom: 0;
+  color: #000;
+  flex-direction: column;
+  z-index: 9999;
+  background-color: #fff;
+  .item {
+    padding: 20px 30px;
+    margin: 10px;
+    text-align: center;
   }
-  .input{
-    height: 40px;
-    line-height: 40px;
-    padding-left: 10px;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    
-    
+  .item:active {
+    background-color: #f0f8ff;
   }
-  .list{
-    width: 100%;
-    border-top-right-radius: 60px;
-    border-top-left-radius: 60px;
-    position: fixed;
-    bottom: 0;
-    color: #000;
-    flex-direction: column;
-    z-index:9999;
-    background-color: #fff;
-    .item{
-      padding: 20px 30px;
-      margin: 10px;
-      text-align: center;
-    }
-    .item:active{
-      background-color: #f0f8ff;
-    }
-  }
-
+}
 </style>
