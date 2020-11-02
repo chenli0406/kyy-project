@@ -31,6 +31,10 @@ export default {
     category: 'default',
     scene: 'search',
     adData: '',
+    header: {
+      deviceId: "",
+      token: "",
+    }
   },
   onInit() {
     // 获取搜索引擎id
@@ -38,8 +42,19 @@ export default {
         this.searchEngineId = JSON.parse(value);
         
     }) 
+     // 获取设备id
+    $utils.getStorage('deviceId').then(value => {
+      this.header.deviceId = value;
+    })
+    // 判断是否登录状态
+    $utils.getStorage('token').then(value => {
+      this.header.token = value;
+    })
     this.getSearchHistory()
-    this.getAd();
+   
+  },
+  onReady() {
+      this.getAd();
   },
   getSearchHistory(){
      // 获取搜索历史
@@ -77,7 +92,7 @@ export default {
     let para = new Object();
     para.category = this.category;
     para.scene = this.scene;
-    $apis.common.getAd(para).then((res) =>{
+    $apis.common.getAd(para, this.header).then((res) =>{
       let data = JSON.parse(res.data);
       if (data.code == 0) {
            this.adData = data.ad;
@@ -103,7 +118,7 @@ export default {
     } else if (val == "click") {
       para.opt = 1;
     }
-    $apis.common.getAdOpt(para).then((res) => {
+    $apis.common.getAdOpt(para ,this.header).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code != 0) {
         prompt.showToast({

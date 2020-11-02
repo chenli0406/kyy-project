@@ -12,7 +12,16 @@
       <image class="ad-img" src="{{adData.picture}}"></image>
     </div>
     <div class="content">
-      <web class="web-comp" src="{{websrc}}" allowthirdpartycookies="{{allow}}" onpagestart="onPageStart" onpagefinish="onPageFinish"  ontitlereceive="onTitleReceive" onerror="onError" id="web"></web>
+      <web
+        class="web-comp"
+        src="{{websrc}}"
+        allowthirdpartycookies="{{allow}}"
+        onpagestart="onPageStart"
+        onpagefinish="onPageFinish"
+        ontitlereceive="onTitleReceive"
+        onerror="onError"
+        id="web"
+      ></web>
     </div>
     <!-- 底部菜单 -->
     <div class="bottom">
@@ -107,10 +116,22 @@ export default {
     scene: 'search-result',
     adData: '',
     websrc: '',
-    allow: false
+    allow: false,
+    header: {
+      deviceId: "",
+      token: "",
+    }
   },
   onInit() {
-    this.getAd();
+    // 获取设备id
+    $utils.getStorage('deviceId').then(value => {
+      this.header.deviceId = value;
+    })
+    // 判断是否登录状态
+    $utils.getStorage('token').then(value => {
+      this.header.token = value;
+      this.logined = true;
+    })
     this.showContent = false;
     this.websrc = this.searchText;
     this.allow = this.allowthirdpartycookies === 'true';
@@ -118,10 +139,7 @@ export default {
     this.$on('arrowRight', this.arrowRightIcon)
   },
   onReady() {
-    // 判断是否登录状态
-    $utils.getStorage('token').then(value => {
-      this.logined = true;
-    })
+    this.getAd();
   },
   // 广告跳转
   openUrl() {
@@ -133,7 +151,7 @@ export default {
     let para = new Object();
     para.category = this.category;
     para.scene = this.scene;
-    $apis.common.getAd(para).then((res) => {
+    $apis.common.getAd(para,this.header).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code == 0) {
         this.adData = data.ad;
@@ -153,7 +171,7 @@ export default {
     } else if (val == "click") {
       para.opt = 1;
     }
-    $apis.common.getAdOpt(para).then((res) => {
+    $apis.common.getAdOpt(para, this.header).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code != 0) {
         prompt.showToast({
@@ -235,32 +253,32 @@ export default {
   },
   stopPropagation() {
   },
-     arrowLeftIcon () {
-      this.isCanBack()
-    },
-    arrowRightIcon () {
-      this.isCanForward()
-    },
-    isCanForward () {
-      this.$element('web').canForward({
-        callback: function(e){
-          if(e){
-            this.$element('web').forward()
-          }
-        }.bind(this)
-      })
-    },
-    isCanBack () {
-      this.$element('web').canBack({
-        callback: function(e){
-          if (e) {
-            this.$element('web').back()
-          } else {
-            router.back()
-          }
-        }.bind(this)
-      })
-    }
+  arrowLeftIcon() {
+    this.isCanBack()
+  },
+  arrowRightIcon() {
+    this.isCanForward()
+  },
+  isCanForward() {
+    this.$element('web').canForward({
+      callback: function (e) {
+        if (e) {
+          this.$element('web').forward()
+        }
+      }.bind(this)
+    })
+  },
+  isCanBack() {
+    this.$element('web').canBack({
+      callback: function (e) {
+        if (e) {
+          this.$element('web').back()
+        } else {
+          router.back()
+        }
+      }.bind(this)
+    })
+  }
 
 }
 </script>
@@ -350,7 +368,7 @@ export default {
     justify-content: space-between;
     align-items: center;
     flex-direction: row;
-     padding: 40px 40px 20px 0;
+    padding: 40px 40px 20px 0;
     margin: 0px 30px;
     .avatar-img {
       width: 120px;

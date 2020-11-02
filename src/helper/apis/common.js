@@ -7,55 +7,55 @@ export default {
     return $ajax.get(BaseUrl + '/api/ping', data)
   },
   // 启动
-  getLaunch(data) {
-    return $ajax.post(BaseUrl + '/api/launch', data)
+  getLaunch(data ,op) {
+    return $ajax.post(BaseUrl + '/api/launch', data,op)
   },
   // 登录
-  login(data) {
-    return $ajax.post(BaseUrl + '/api/sign-in', data)
+  login(data, op) {
+    return $ajax.post(BaseUrl + '/api/sign-in', data ,op)
   },
   // 搜索引擎列表
-  getSearchEngines(data) {
-    return $ajax.get(BaseUrl + '/api/search-engines', data)
+  getSearchEngines(data, op) {
+    return $ajax.get(BaseUrl + '/api/search-engines', data, op)
   },
   // 搜索Log
-  getSearchLog(data) {
-    return $ajax.post(BaseUrl + '/api/search-log', data)
+  getSearchLog(data, op) {
+    return $ajax.post(BaseUrl + '/api/search-log', data, op)
   },
   // 广告获取
-  getAd(data) {
-    return $ajax.post(BaseUrl + '/api/ad-get', data)
+  getAd(data ,op) {
+    return $ajax.post(BaseUrl + '/api/ad-get', data ,op)
   },
   // 广告展示/点击
-  getAdOpt(data) {
-    return $ajax.post(BaseUrl + '/api/ad-opt', data)
+  getAdOpt(data ,op) {
+    return $ajax.post(BaseUrl + '/api/ad-opt', data ,op)
   },
   // 投诉反馈
-  getFeedBack(data) {
-    return $ajax.post(BaseUrl + '/api/feedback', data)
+  getFeedBack(data, op) {
+    return $ajax.post(BaseUrl + '/api/feedback', data, op)
   },
   // 资讯分类
-  getArticleType(data) {
-    return $ajax.get(BaseUrl + '/api/article-categories', data)
+  getArticleType(data, op) {
+    return $ajax.get(BaseUrl + '/api/article-categories', data ,op)
   },
   // 资讯列表
-  getArticlesList(data) {
-    return $ajax.get(BaseUrl + '/api/articles', data)
+  getArticlesList(data, op) {
+    return $ajax.get(BaseUrl + '/api/articles', data, op)
   },
   // 资讯详情
-  getArticleDetail(data) {
-    return $ajax.get(BaseUrl + `/api/articles/${data}`)
+  getArticleDetail(data, op) {
+    return $ajax.get(BaseUrl + `/api/articles/${data}` , {}, op)
   },
   // 收藏列表
-  getfavoriteList(data) {
-    return $ajax.get(BaseUrl + '/api/favorite-list', data)
+  getfavoriteList(data, op) {
+    return $ajax.get(BaseUrl + '/api/favorite-list', data ,op)
   },
   // 加入收藏
-  addFavorite(data) {
-    return $ajax.post(BaseUrl + '/api/favorite-add', data)
+  addFavorite(data, op) {
+    return $ajax.post(BaseUrl + '/api/favorite-add', data ,op)
   },
   // 删除收藏
-  delFavorite(data) {
-    return $ajax.post(BaseUrl + '/api/favorite-del', data)
+  delFavorite(data ,op) {
+    return $ajax.post(BaseUrl + '/api/favorite-del', data ,op)
   },
 }

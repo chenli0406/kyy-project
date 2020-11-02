@@ -28,7 +28,11 @@ export default {
     searchText: '',
     searchEngineId: '',
     searchHistory:[],
-    historyData: []
+    historyData: [],
+    header: {
+      deviceId: "",
+      token: "",
+    }
   },
   onInit() {
     // 获取搜索引擎id
@@ -43,6 +47,14 @@ export default {
        $utils.getStorage('historyData').then(value => {
         this.historyData = JSON.parse(value);
     })  
+     // 获取设备id
+    $utils.getStorage('deviceId').then(value => {
+      this.header.deviceId = value;
+    })
+    // 判断是否登录状态
+    $utils.getStorage('token').then(value => {
+      this.header.token = value;
+    })
   },
   onReady() {
     this.$element('search-input').focus({ focus: true })
@@ -65,20 +77,17 @@ export default {
         this.searchHistory.unshift({title:e.value, url: url});
         $utils.setStorage('searchHistory', this.searchHistory);
     }
-    this.addHistoryData(e.value, url );
-     $utils.route2theUrl('pages/search-detail',{searchText: url});
-    // $apis.common.getSearchLog(para).then((res) => {
-    //   let data = JSON.parse(res.data);
-    //   console.log(data);
-    //   if (data.code == 0) {
-    //     $utils.setStorage('searchHistory', this.searchHistory);
-    //     $utils.route2theUrl('pages/search-detail',{item: data.data, searchText: e.value});
-    //   } else {
-    //   prompt.showToast({
-    //       message: data.message
-    //     })
-    //   }
-    // })
+    $apis.common.getSearchLog(para, this.header).then((res) => {
+      let data = JSON.parse(res.data);;
+      if (data.code == 0) {
+        this.addHistoryData(e.value, url );
+        $utils.route2theUrl('pages/search-detail',{searchText: url});
+      } else {
+      prompt.showToast({
+          message: data.message
+        })
+      }
+    })
   },
   addHistoryData(title, url) {
     var now = new Date();

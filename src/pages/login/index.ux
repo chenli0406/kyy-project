@@ -19,9 +19,9 @@
       <text class="login-btn" onclick="login">登录/注册</text>
     </div>
     <div class="bottom">
-      <text style="color:#567AFF">《隐私政策》</text>
+      <text style="color:#567AFF" @click="getPrivacy">《隐私政策》</text>
       <text style="color:#000">和</text>
-      <text style="color:#567AFF">《用户协议》</text>
+      <text style="color:#567AFF" @click="getAgreement">《用户协议》</text>
     </div>
   </div>
 </template>
@@ -30,9 +30,22 @@ import prompt from '@system.prompt'
 export default {
   data: {
     name: '',
-    password: ''
+    password: '',
+    header: {
+      deviceId: "",
+      token: "",
+    }
   },
-  onInit() { },
+  onInit() { 
+     // 获取设备id
+    $utils.getStorage('deviceId').then(value => {
+      this.header.deviceId = value;
+    })
+    // 判断是否登录状态
+    $utils.getStorage('token').then(value => {
+      this.header.token = value;
+    })
+  },
   changePhone(e) {
     this.name = e.value
   },
@@ -72,7 +85,7 @@ export default {
     let para = new Object();
     para.name = this.name;
     para.password = this.password;
-    $apis.common.login(para).then((res) => {
+    $apis.common.login(para, this.header).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code == 0) {
         prompt.showToast({
@@ -86,6 +99,12 @@ export default {
         })
       }
     })
+  },
+  getPrivacy(){
+    $utils.route2theUrl('pages/aboutUs', { item: {title: '隐私政策',url: "http://qa.kimiz.top/privacy.html"} })
+  },
+  getAgreement(){
+    $utils.route2theUrl('pages/aboutUs', { item: {title: '用户协议', url: "http://qa.kimiz.top/agreement.html"} })
   }
 }
 </script>

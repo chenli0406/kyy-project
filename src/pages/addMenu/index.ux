@@ -42,8 +42,20 @@ export default {
   data: {
     title: '',
     url: '',
+    header: {
+      deviceId: "",
+      token: "",
+    }
   },
   onInit() { 
+    // 获取设备id
+    $utils.getStorage('deviceId').then(value => {
+      this.header.deviceId = value;
+    })
+    // 判断是否登录状态
+    $utils.getStorage('token').then(value => {
+      this.header.token = value;
+    })
   },
   changeTitle(e) {
     this.title = e.value
@@ -82,7 +94,7 @@ export default {
     let para = new Object();
     para.title = this.title;
     para.url = this.url;
-    $apis.common.addFavorite(para).then((res) => {
+    $apis.common.addFavorite(para, this.header).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code == 0) {
         prompt.showToast({

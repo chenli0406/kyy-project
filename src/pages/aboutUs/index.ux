@@ -1,19 +1,63 @@
 
+<import name="title-bar" src="../../components/common/bar/title-bar"></import>
 <template>
-    <div class="page-wrapper">
-        <div class="content">
-            <richtext type="html" class="rich-text">{{content}}</richtext>
-        </div>
+  <div class="page-wrapper">
+    <title-bar title="{{title}}" show-back="{{true}}"></title-bar>
+    <div class="content">
+      <web
+        class="web-comp"
+        src="{{websrc}}"
+        allowthirdpartycookies="{{allow}}"
+        onpagestart="onPageStart"
+        onpagefinish="onPageFinish"
+        ontitlereceive="onTitleReceive"
+        onerror="onError"
+        id="web"
+      ></web>
     </div>
+  </div>
 </template>
 <script>
 import prompt from '@system.prompt'
 import clipboard from '@system.clipboard'
 export default {
     data: {
-        content: " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.",
+        title: '',
+        websrc: '',
+        allow: false,
+        item: ''
     },
     onInit() {
+      let data = JSON.parse(this.item)
+      this.title = data.title;
+      this.websrc = data.url;
+      this.allow = this.allowthirdpartycookies === 'true';
+    },
+    arrowLeftIcon() {
+        this.isCanBack()
+    },
+    arrowRightIcon() {
+        this.isCanForward()
+    },
+    isCanForward() {
+        this.$element('web').canForward({
+            callback: function (e) {
+                if (e) {
+                    this.$element('web').forward()
+                }
+            }.bind(this)
+        })
+    },
+    isCanBack() {
+        this.$element('web').canBack({
+            callback: function (e) {
+                if (e) {
+                    this.$element('web').back()
+                } else {
+                    router.back()
+                }
+            }.bind(this)
+        })
     }
 }
 </script>
@@ -21,12 +65,11 @@ export default {
 <style lang="less">
 @import '../../assets/styles/index.less';
 .page-wrapper {
-  color: #000;  
-  padding: 20px 30px;
+  color: #000;
+  padding: 20px 10px;
   background-color: #fff;
   .content {
-    font-size: 30px;
-    line-height: 60px;
+    margin-top: 30px;
   }
 }
 </style>

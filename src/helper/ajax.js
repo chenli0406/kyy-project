@@ -4,6 +4,9 @@ const prompt = require('@system.prompt')
 
 
 function requestHandle(params) {
+  let headerData = Object.assign({},params.op)
+  var deviceId =headerData.deviceId;
+  var token = headerData.token;
   // eslint-disable-next-line no-undef
   return new Promise((resolve, reject) => {
     $fetch.fetch({
@@ -12,8 +15,8 @@ function requestHandle(params) {
       data: JSON.stringify(params.data),
       header:{
         'Content-Type': 'application/json; charset=utf-8',
-        'DeviceId': localStorage.deviceId,
-        'token':  localStorage.token
+        'DeviceId': deviceId,
+        'token':  token
       },
       success: data => {
         const serverResponse = data;
@@ -39,13 +42,15 @@ export default {
     return requestHandle({
       method: 'post',
       url: url,
-      data: params
+      data: params,
+      op: op
     })
   },
   get: function(url, params, op) {
     return requestHandle({
       method: 'get',
-      url: $utils.queryString(url, params)
+      url: $utils.queryString(url, params),
+      op: op
     })
   }
 }

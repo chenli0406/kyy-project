@@ -40,12 +40,25 @@ export default {
       pageSize: 10,
       total: null,
       load: true
+    },
+    header: {
+      deviceId: "",
+      token: "",
     }
   },
   onInit() {
-    this.getArticleType();
+     // 获取设备id
+    $utils.getStorage('deviceId').then(value => {
+      this.header.deviceId = value;
+    })
+    // 判断是否登录状态
+    $utils.getStorage('token').then(value => {
+      this.header.token = value;
+    })
+    
   },
   onReady() {
+    this.getArticleType();
   },
   changeTab(e) {
     let index = e.index || 0
@@ -86,7 +99,7 @@ export default {
          para.category = this.tabList[i];
        }
     }
-    $apis.common.getArticlesList(para).then((res) => {
+    $apis.common.getArticlesList(para, this.header).then((res) => {
        let data = JSON.parse(res.data);
        if(data.code == 0){
          this.hot.pageNo = data.page;
@@ -100,7 +113,7 @@ export default {
   },
   // 资讯分类
   getArticleType() {
-    $apis.common.getArticleType().then((res) => {
+    $apis.common.getArticleType({},this.header).then((res) => {
       let data = JSON.parse(res.data);
        this.tabList = data.data;
         this.getArticleList(this.tabList[0]);
@@ -111,7 +124,7 @@ export default {
     let para = new Object();
     para.page = this.hot.pageNo;
     para.category = val;
-    $apis.common.getArticlesList(para).then((res) => {
+    $apis.common.getArticlesList(para, this.header).then((res) => {
        let data = JSON.parse(res.data);
        if(data.code == 0){
          this.hot.pageNo = data.page;

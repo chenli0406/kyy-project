@@ -45,23 +45,35 @@ export default {
     ids: [],
     flag: false,
     idList: [],
-    showBtn: false
+    showBtn: false,
+    header: {
+      deviceId: "",
+      token: "",
+    }
   },
   onInit() {
-    this.getList()
+     // 获取设备id
+    $utils.getStorage('deviceId').then(value => {
+      this.header.deviceId = value;
+    })
+    // 判断是否登录状态
+    $utils.getStorage('token').then(value => {
+      this.header.token = value;
+      this.getList()
+    })
+  },
+  onReady() {
   },
   del() {
     let para = new Object();
     para.ids = this.ids;
-    console.log();
-    
-    $apis.common.delFavorite(para).then((res) => {
+    $apis.common.delFavorite(para, this.header).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code == 0) {
         prompt.showToast({
           message: '删除成功'
         });
-        $apis.common.getfavoriteList({ page: this.list.page }).then((res) => {
+        $apis.common.getfavoriteList({ page: this.list.page },this.header).then((res) => {
           let data = JSON.parse(res.data);
           if (data.code == 0) {
             this.list.page = data.page;
@@ -87,7 +99,7 @@ export default {
   },
   // 获取列表
   getList() {
-    $apis.common.getfavoriteList({ page: this.list.page }).then((res) => {
+    $apis.common.getfavoriteList({ page: this.list.page }, this.header).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code == 0) {
         // this.list.data = data.favorites;
@@ -106,7 +118,7 @@ export default {
   // 加载更多
   loadMore() {
     this.list.page++;
-    $apis.common.getfavoriteList({ page: this.list.page }).then((res) => {
+    $apis.common.getfavoriteList({ page: this.list.page }, this.header).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code == 0) {
         // this.list.data = data.favorites;

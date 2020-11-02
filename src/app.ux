@@ -8,10 +8,10 @@ import { $utils, $apis } from './helper'
 const hook2global = global.__proto__ || global
 hook2global.$apis = $apis
 hook2global.$utils = $utils
-
 export default {
   $apis: $apis,
   showMenu: $utils.showMenu,
-  createShortcut: $utils.createShortcut
+  createShortcut: $utils.createShortcut,
 }
+
 </script>

@@ -69,7 +69,9 @@
               <text class="login-title" else @click="login">点击登录</text>
               <text class="login-btn-title">欢迎使用XX浏览器</text>
             </div>
-            <text class="btn">加入桌面</text>
+            <text class="btn" if={{addFlag}}  @click="addShortCut">加入桌面</text>
+            <text class="btn" else >已加入桌面</text>
+            
           </div>
           <div class="menu">
             <div class="menu-item" @click="getRouter('dol')">
@@ -123,12 +125,14 @@ import webview from '@system.webview'
 import barcode from '@system.barcode';
 import device from '@system.device';
 import prompt from '@system.prompt'
+import shortcut from '@system.shortcut'
 export default {
   protected: {
     logined: false,
     showContent: false,
     adDialog: false,
     feedbackDailog: false,
+    addFlag: "",
   },
   private: {
     floatAd: "",
@@ -150,11 +154,24 @@ export default {
       screenHeight: 0
     },
     packages: [],
+    header: {
+      deviceId: "",
+      token: "",
+    }
   },
   onInit() {
+    // 获取设备id
+    $utils.getStorage('deviceId').then(value => {
+      this.header.deviceId = value;
+    })
+    // 判断是否登录状态
+    $utils.getStorage('token').then(value => {
+      this.header.token = value;
+      this.logined = true;
+    })
+     this.getShortCut();
     this.showContent = false;
-    this.getLoad();
-    this.getSearchList();
+
   },
   // 获取设备信息
   getLoad() {
@@ -163,6 +180,7 @@ export default {
     device.getDeviceId({
       success: function (data) {
         _this.device.id = data.deviceId;
+        _this.header.deviceId = data.deviceId;
         $utils.setStorage('deviceId', `${data.deviceId}`);
       },
       fail: function (data, code) {
@@ -182,13 +200,14 @@ export default {
         _this.device.region = ret.region;
         _this.device.screenWidth = ret.screenWidth;
         _this.device.screenHeight = ret.screenHeight;
-
         let para = new Object();
+        var device = require('@system.device')
         var host = device.host;
-        _this.packages.push(host.package)
+        _this.packages.push(host.package);
         para.device = _this.device;
         para.packages = _this.packages;
-        $apis.common.getLaunch(para).then((res) => {
+
+        $apis.common.getLaunch(para, _this.header).then((res) => {
           let data = JSON.parse(res.data);
           _this.menuList = data.flatAds;
           _this.floatAd = data.floatAd;
@@ -196,17 +215,22 @@ export default {
         })
       }
     })
-    // 存储设备id
-    $utils.getStorage('deviceId').then(value => {
-      var deviceId = value;
+
+
+  },
+  // 判断是否加入桌面图标
+  getShortCut() {
+    shortcut.hasInstalled({
+      success: function (data) {
+        $utils.setStorage('addFlag', data);
+        this.addFlag = data;
+
+      }
     })
   },
   onReady() {
-    // 判断是否登录状态
-    $utils.getStorage('token').then(value => {
-      this.logined = true;
-      var aa = value;
-    })
+    this.getLoad();
+    this.getSearchList();
   },
   //弹出底部 
   getPopup() {
@@ -229,9 +253,7 @@ export default {
   },
   // 资讯跳转路由
   getRouterinfo() {
-    router.push({
-      uri: 'pages/information'
-    })
+    $utils.route2theUrl('pages/information');
   },
   getRouterCollect() {
     if (this.logined == true) {
@@ -343,7 +365,7 @@ export default {
     } else if (val == "click") {
       para.opt = 1;
     }
-    $apis.common.getAdOpt(para).then((res) => {
+    $apis.common.getAdOpt(para, this.header).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code != 0) {
         prompt.showToast({
@@ -360,18 +382,34 @@ export default {
     });
     this.showContent = false;
   },
-  getSearchList(){
-    $apis.common.getSearchEngines().then((res) => {
+  // 设置默认的搜索引擎
+  getSearchList() {
+    $apis.common.getSearchEngines({}, this.header).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code == 0) {
-          $utils.setStorage('searchEngineId', data.searchEngines);
+        $utils.setStorage('searchEngineId', data.searchEngines);
       } else {
-      prompt.showToast({
+        prompt.showToast({
           message: data.message
         })
       }
     })
   },
+  // 加入桌面
+  addShortCut() {
+    shortcut.install({
+      success: function (data) {
+        this.addFlag = true;
+        $utils.setStorage('addFlag', data);
+        prompt.showToast({
+          message: '创建成功'
+        })
+      },
+      fail: function (errmsg, errcode) {
+        console.log('桌面图标创建失败\r\n错误信息: ' + errcode + '---' + errmsg);
+      }
+    })
+  }
 }
 </script>
 

@@ -66,8 +66,8 @@ export default {
     }
   }
   .list-image {
-    width: 100%;
-    height: 100%;
+    width:100%;
+    height: 300px;
     border-radius: 10px;
     .img{
        width: 100%;

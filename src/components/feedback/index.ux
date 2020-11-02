@@ -70,9 +70,23 @@ export default {
       {
         name: "官方客服"
       },
-    ]
+    ],
+    header: {
+      deviceId: "",
+      token: "",
+    }
   },
   stopPropagation() {
+  },
+  onInit() {
+     // 获取设备id
+    $utils.getStorage('deviceId').then(value => {
+      this.header.deviceId = value;
+    })
+    // 判断是否登录状态
+    $utils.getStorage('token').then(value => {
+      this.header.token = value;
+    })  
   },
   onReady() {
     this.from = {
@@ -106,7 +120,7 @@ export default {
       this.fromRequired.contactR = true;
       return false;
     }
-    $apis.common.getFeedBack(this.from).then((res) => {
+    $apis.common.getFeedBack(this.from ,this.header).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code == 0) {
         prompt.showToast({
@@ -190,8 +204,6 @@ export default {
       border-radius: 35px;
       padding: 30px;
       font-size: 26px;
-      border: none;
-      outline: none;
       margin-bottom: 30px;
     }
     .required {
@@ -222,8 +234,7 @@ export default {
       background-color: #f7f8fb;
       color: #000;
       padding: 10px;
-      .option {
-      }
+
     }
   }
   .adClose {
