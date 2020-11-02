@@ -6,9 +6,9 @@
         <text class="hot-item" for="hotList" @click="toSearch($item)">{{ $item.title | ellipsis}}</text>
       </div>
        <div class="search-title" if={{hotList.length}}>
-        <text class="search-refresh" @click="delHostList">
+        <div class="search-refresh" @click="delHostList">
           <image class="img" src="../../assets/images/del-history.png"></image>
-        </text>
+        </div>
       </div>
       <div class="adimg-box" if={{dialog}}>
         <div class="close" @click="closeDialog"><image src="../../assets/images/dialong.png"></image></div>

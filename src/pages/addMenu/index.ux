@@ -117,8 +117,8 @@ export default {
   background-color: #fff;
   height: 100%;
   .login-container {
-    flex: 1;
     flex-direction: column;
+    align-items: center;
     height: 100%;
     margin-top: 60px;
     .login-item {
@@ -130,6 +130,7 @@ export default {
       padding: 0px 20px;
       margin: 20px auto;
       align-items: center;
+      justify-content: center;
       flex-direction: row;
       .login-input {
         text-align: left;

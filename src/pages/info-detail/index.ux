@@ -208,8 +208,8 @@ export default {
     position: fixed;
     top: 140px;
     right: 30px;
-    background-image: url('../../assets/images/circle.png');
-    background-size: 100% 120%;
+    /* background-image: url('../../assets/images/circle.png');
+    background-size: 100% 120%; */
     .ad-img {
       width: 100px;
       height: 100px;
@@ -218,7 +218,8 @@ export default {
     }
   }
   .return-btn {
-    width: 110px;
+    width: 120px;
+    height: 140px;
     position: fixed;
     bottom: 60px;
     right: 30px;
