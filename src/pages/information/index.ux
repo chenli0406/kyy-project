@@ -1,4 +1,4 @@
-<import name="bottom-box" src="../../components/bottom/index"></import>
+
 <import name="home" src="../../components/home"></import>
 
 <template>
@@ -220,11 +220,11 @@ export default {
       height: 100%;
       align-items: center;
       justify-content: center;
-    }
-    image {
-     width: 44px;
-      height: 44px;
+      image {
+       /* width: 45px;
+       height: 100%; */
       margin: 0px 50px;
+    }
     }
   }
 }

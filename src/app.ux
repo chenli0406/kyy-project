@@ -12,6 +12,14 @@ export default {
   $apis: $apis,
   showMenu: $utils.showMenu,
   createShortcut: $utils.createShortcut,
+  appData:{
+    BaseUrl: 'http://qa.kimiz.top'
+  },
+  onHide() {
+  },
+  onDestroy() {
+    console.info('Application onDestroy')
+  },
 }
 
 </script>

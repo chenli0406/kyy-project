@@ -174,10 +174,13 @@ export default {
     }
   }
   .bottom {
-    flex-direction: row;
+    width: 100%;
     position: fixed;
     bottom: 60px;
+    margin: 0 auto;
     justify-content: center;
+    align-items: center;
+    text-align: center;
   }
 }
 </style>

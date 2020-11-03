@@ -1,7 +1,12 @@
 
 <template>
   <div class="page-wrapper">
-    <title-bar title="{{title}}" show-back="{{true}}" icon="{{icon}}" onget-click="getClick"></title-bar>
+    <title-bar
+      title="{{title}}"
+      show-back="{{true}}"
+      icon="{{icon}}"
+      onget-click="getClick"
+    ></title-bar>
     <div class="ad-btn" @click="dialog">
       <image class="ad-img" src="{{adData.picture}}"></image>
     </div>
@@ -20,12 +25,12 @@
     <div class="test" if="{{showContent}}">
       <div class="maskBox" @click="close"></div>
       <div class="model translateYByEntry">
-        <div class="btn" @click="copyUrl">
+        <div class="btn" @click="getCopyUrl">
           <image class="img" src="../../assets/images/copy.png"></image>
           <text>复制链接</text>
         </div>
         <div class="btn" @click="getRefresh">
-          <image class="img" src="../../assets/images/refresh.png"></image>
+          <image class="img" src="../../assets/images/index/refresh.png"></image>
           <text>刷新</text>
         </div>
         <div class="btn" @click="getHome">
@@ -37,11 +42,11 @@
     <div class="adimg-box" if="{{adDialog}}" onclick="stopPropagation()">
       <div class="box">
         <div class="adClose" @click="closeDialog">
-          <image src="../../assets/images/dialong.png"></image>
+          <image class="close" src="../../assets/images/dialong.png"></image>
         </div>
-        <text @click="openUrl" class="adImg">
-          <image src="{{adData.picture}}"></image>
-        </text>
+        <div @click="openUrl" class="adImg">
+          <image class="img" src="{{adData.picture}}"></image>
+        </div>
       </div>
     </div>
   </div>
@@ -50,6 +55,7 @@
 <script>
 import prompt from '@system.prompt'
 import clipboard from '@system.clipboard'
+import router from '@system.router'
 export default {
   data: {
     showContent: false,
@@ -65,11 +71,15 @@ export default {
     header: {
       deviceId: "",
       token: "",
-    }
+    },
+    href: "",
   },
   onInit() {
+    var page = router.getState()
+    this.href= this.$app.$def.appData.BaseUrl+page.path +'/'+ this.id;
+    console.log(this.href);
     this.getHistoy();
-      // 获取设备id
+    // 获取设备id
     $utils.getStorage('deviceId').then(value => {
       this.header.deviceId = value;
     })
@@ -77,11 +87,12 @@ export default {
     $utils.getStorage('token').then(value => {
       this.header.token = value;
     })
+    this.copyUrl()
   },
   onReady() {
     this.queryActicle();
     this.getAd();
-    this.showContent = false;  
+    this.showContent = false;
   },
   addHistoryData() {
     var now = new Date();
@@ -91,19 +102,19 @@ export default {
     let nowDate = year + "-" + month + "-" + date;
     if (this.historyData.length > 20) {
       this.historyData.pop();
-      this.historyData.unshift({ time: nowDate, list: { title: this.articleData.title, url: window.location.href + this.id } });
+      this.historyData.unshift({ time: nowDate, list: { title: this.articleData.title, url: this.href } });
       $utils.setStorage('historyData', this.historyData);
     } else {
-      this.historyData.unshift({ time: nowDate, list: { title: this.articleData.title, url: window.location.href + this.id } });
+      this.historyData.unshift({ time: nowDate, list: { title: this.articleData.title, url: this.href } });
       $utils.setStorage('historyData', this.historyData);
     }
     console.log(this.historyData);
   },
-  getHistoy(){
-     // 获取搜索历史
-       $utils.getStorage('historyData').then(value => {
-        this.historyData = JSON.parse(value);
-    })   
+  getHistoy() {
+    // 获取搜索历史
+    $utils.getStorage('historyData').then(value => {
+      this.historyData = JSON.parse(value);
+    })
   },
   queryActicle() {
     $apis.common.getArticleDetail(this.id, this.header).then((res) => {
@@ -127,10 +138,18 @@ export default {
   closeDialog() {
     this.adDialog = false;
   },
-  // 复制
+  // 设置复制
   copyUrl() {
     clipboard.set({
-      text: window.location.href,
+      text: this.href,
+    })
+    
+  },
+  // 获取复制
+  getCopyUrl() {
+    clipboard.get({
+      success: function (data) {
+      },
     })
     prompt.showToast({
       message: '复制成功'
@@ -150,7 +169,7 @@ export default {
     let para = new Object();
     para.category = this.category;
     para.scene = this.scene;
-    $apis.common.getAd(para , this.header).then((res) => {
+    $apis.common.getAd(para, this.header).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code == 0) {
         this.adData = data.ad;
@@ -165,7 +184,10 @@ export default {
   // 广告跳转
   openUrl() {
     this.getAllAd("click");
-    location.href = this.adData.link;
+     router.push({
+      uri:  this.adData.link
+    })
+    // location.href = this.adData.link;
   },
   // 广告点击，展示加载完请求的事件
   getAllAd(val) {
@@ -176,7 +198,7 @@ export default {
     } else if (val == "click") {
       para.opt = 1;
     }
-    $apis.common.getAdOpt(para , this.header).then((res) => {
+    $apis.common.getAdOpt(para, this.header).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code != 0) {
         prompt.showToast({
@@ -208,8 +230,6 @@ export default {
     position: fixed;
     top: 140px;
     right: 30px;
-    /* background-image: url('../../assets/images/circle.png');
-    background-size: 100% 120%; */
     .ad-img {
       width: 100px;
       height: 100px;
@@ -238,14 +258,14 @@ export default {
     font-size: 28px;
     line-height: 20px;
     margin-bottom: 20px;
-    .rich-text{
-      img{
+    .rich-text {
+      img {
         width: 100%;
         height: 400px;
       }
     }
   }
-  .picture{
+  .picture {
     width: 100%;
   }
 }
@@ -317,6 +337,7 @@ export default {
   height: 100%;
 }
 .adimg-box {
+   width: 100%;
   position: fixed;
   margin: 0 auto;
   background-color: rgba(0, 0, 0, 0.4);
@@ -325,16 +346,27 @@ export default {
   justify-content: center;
   align-items: center;
   .box {
+     width: 100%;
     padding: 0px 60px;
-    .flex-box-mixins(column, flex-end, flex-end);
-    .close {
-      width: 50px;
-      height: 50px;
+   .flex-box-mixins(column, center, center);
+    .adClose {
+      width: 100%;
       margin-top: 20px;
+      .flex-box-mixins(column, flex-end, flex-end);
+      .close {
+        width: 50px;
+        height: 50px;
+      }
     }
     .adImg {
-      width: 90%;
-      margin: 0 auto;
+     .flex-box-mixins(column, center, center);
+      width: 100%;
+      height: 260px;
+      margin-top: 20px;
+      .img{
+         width: 100%;
+         height: 100%;
+      }
     }
   }
 }

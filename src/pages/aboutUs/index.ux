@@ -7,12 +7,8 @@
       <web
         class="web-comp"
         src="{{websrc}}"
-        allowthirdpartycookies="{{allow}}"
-        onpagestart="onPageStart"
-        onpagefinish="onPageFinish"
-        ontitlereceive="onTitleReceive"
-        onerror="onError"
         id="web"
+        allowthirdpartycookies="true"
       ></web>
     </div>
   </div>
@@ -24,41 +20,13 @@ export default {
     data: {
         title: '',
         websrc: '',
-        allow: false,
         item: ''
     },
     onInit() {
       let data = JSON.parse(this.item)
       this.title = data.title;
       this.websrc = data.url;
-      this.allow = this.allowthirdpartycookies === 'true';
     },
-    arrowLeftIcon() {
-        this.isCanBack()
-    },
-    arrowRightIcon() {
-        this.isCanForward()
-    },
-    isCanForward() {
-        this.$element('web').canForward({
-            callback: function (e) {
-                if (e) {
-                    this.$element('web').forward()
-                }
-            }.bind(this)
-        })
-    },
-    isCanBack() {
-        this.$element('web').canBack({
-            callback: function (e) {
-                if (e) {
-                    this.$element('web').back()
-                } else {
-                    router.back()
-                }
-            }.bind(this)
-        })
-    }
 }
 </script>
 
@@ -69,6 +37,7 @@ export default {
   padding: 20px 10px;
   background-color: #fff;
   .content {
+    flex:1;
     margin-top: 30px;
   }
 }

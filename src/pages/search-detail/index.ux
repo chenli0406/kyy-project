@@ -15,12 +15,8 @@
       <web
         class="web-comp"
         src="{{websrc}}"
-        allowthirdpartycookies="{{allow}}"
-        onpagestart="onPageStart"
-        onpagefinish="onPageFinish"
-        ontitlereceive="onTitleReceive"
-        onerror="onError"
         id="web"
+        allowthirdpartycookies="true"
       ></web>
     </div>
     <!-- 底部菜单 -->
@@ -90,11 +86,11 @@
     <div class="adimg-box" if="{{adDialog}}" onclick="stopPropagation()">
       <div class="box">
         <div class="adClose" @click="closeDialog">
-          <image src="../../assets/images/dialong.png"></image>
+          <image class="c-img" src="../../assets/images/dialong.png"></image>
         </div>
-        <text class="adImg" @click="openUrl">
-          <image src="{{adData.picture}}"></image>
-        </text>
+        <div class="adImg" @click="openUrl">
+          <image class="img" src="{{adData.picture}}"></image>
+        </div>
       </div>
     </div>
     <!-- 反馈 -->
@@ -119,7 +115,6 @@ export default {
     scene: 'search-result',
     adData: '',
     websrc: '',
-    allow: false,
     addFlag: false,
     header: {
       deviceId: "",
@@ -147,7 +142,6 @@ export default {
     })
     this.showContent = false;
     this.websrc = this.searchText;
-    this.allow = this.allowthirdpartycookies === 'true';
     this.$on('arrowLeft', this.arrowLeftIcon)
     this.$on('arrowRight', this.arrowRightIcon)
   },
@@ -157,7 +151,10 @@ export default {
   // 广告跳转
   openUrl() {
     this.getAllAd("click");
-    location.href = this.adData.link;
+     router.push({
+      uri:  this.adData.link
+    })
+    // location.href = this.adData.link;
   },
   // 获取广告
   getAd() {
@@ -322,8 +319,6 @@ export default {
     position: fixed;
     top: 130px;
     right: 30px;
-    background-image: url('../../assets/images/circle.png');
-    background-size: 100% 120%;
     .ad-img {
       width: 100px;
       height: 100px;
@@ -341,10 +336,8 @@ export default {
     }
   }
   .content {
-    font-size: 30px;
-    line-height: 60px;
     margin-top: 130px;
-    margin-bottom: 200px;
+    flex:1;
   }
   .content-none {
     flex-direction: column;
@@ -378,6 +371,11 @@ export default {
       height: 100%;
       align-items: center;
       justify-content: center;
+      image {
+       /* width: 45px;
+       height: 100%; */
+      margin: 0px 50px;
+    }
     }
     image {
       width: 44px;
@@ -523,6 +521,7 @@ export default {
 }
 
 .adimg-box {
+  width: 100%;
   position: fixed;
   margin: 0 auto;
   background-color: rgba(0, 0, 0, 0.4);
@@ -531,16 +530,27 @@ export default {
   justify-content: center;
   align-items: center;
   .box {
+    width: 100%;
     padding: 0px 60px;
-    .flex-box-mixins(column, flex-end, flex-end);
-    .close {
-      width: 50px;
-      height: 50px;
+    .flex-box-mixins(column, center, center);
+    .adClose {
+      width: 100%;
       margin-top: 20px;
+      .flex-box-mixins(column, flex-end, flex-end);
+      .c-img {
+        width: 50px;
+        height: 50px;
+      }
     }
     .adImg {
-      width: 90%;
-      margin: 0 auto;
+    .flex-box-mixins(column, center, center);
+      width: 100%;
+      height: 260px;
+      margin-top: 20px;
+      .img{
+         width: 100%;
+         height: 100%;
+      }
     }
   }
 }

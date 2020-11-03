@@ -1,18 +1,24 @@
 <template>
   <div class="page-wrapper">
-    <search-input-bar onsearch="search" ></search-input-bar>
+    <search-input-bar onsearch="search"></search-input-bar>
     <div class="search-hot">
       <div class="hot-list">
-        <text class="hot-item" for="hotList" @click="toSearch($item)">{{ $item.title | ellipsis}}</text>
+        <text class="hot-item" for="hotList" @click="toSearch($item)">{{
+          $item.title | ellipsis
+        }}</text>
       </div>
-       <div class="search-title" if={{hotList.length}}>
+      <div class="search-title" if="{{hotList.length}}">
         <div class="search-refresh" @click="delHostList">
           <image class="img" src="../../assets/images/del-history.png"></image>
         </div>
       </div>
-      <div class="adimg-box" if={{dialog}}>
-        <div class="close" @click="closeDialog"><image src="../../assets/images/dialong.png"></image></div>
-        <text @click="openUrl" class="adImg"><image src="{{adData.picture}}"></image></text>
+      <div class="adimg-box" if="{{dialog}}">
+        <div class="close" @click="closeDialog">
+          <image class="c-img" src="../../assets/images/dialong.png"></image>
+        </div>
+        <div @click="openUrl" class="adImg">
+          <image class="img" src="{{adData.picture}}"></image>
+        </div>
       </div>
     </div>
   </div>
@@ -20,6 +26,7 @@
 
 <import name="search-input-bar" src="../../components/common/bar/search-input-bar"></import>
 <script>
+import router from '@system.router'
 export default {
   private: {
     searchText: '',
@@ -39,10 +46,10 @@ export default {
   onInit() {
     // 获取搜索引擎id
     $utils.getStorage('searchEngineId').then(value => {
-        this.searchEngineId = JSON.parse(value);
-        
-    }) 
-     // 获取设备id
+      this.searchEngineId = JSON.parse(value);
+
+    })
+    // 获取设备id
     $utils.getStorage('deviceId').then(value => {
       this.header.deviceId = value;
     })
@@ -51,13 +58,13 @@ export default {
       this.header.token = value;
     })
     this.getSearchHistory()
-   
+
   },
   onReady() {
-      this.getAd();
+    this.getAd();
   },
-  getSearchHistory(){
-     // 获取搜索历史
+  getSearchHistory() {
+    // 获取搜索历史
     $utils.getStorage('searchHistory').then(value => {
       this.hotList = JSON.parse(value);
       console.log(this.hotList);
@@ -67,11 +74,11 @@ export default {
     this.searchText = info.detail
   },
   delHostList() {
-   $utils.deleteStorage('searchHistory');
-   this.hotList = [];
+    $utils.deleteStorage('searchHistory');
+    this.hotList = [];
   },
   toSearch(val) {
-    $utils.route2theUrl('pages/search-detail',{searchText: val.url});
+    $utils.route2theUrl('pages/search-detail', { searchText: val.url });
     // let para = new Object();
     // para.keyword = val;
     // console.log(this.searchEngineId);
@@ -88,26 +95,29 @@ export default {
     // })
   },
   // 获取广告
-  getAd(){
+  getAd() {
     let para = new Object();
     para.category = this.category;
     para.scene = this.scene;
-    $apis.common.getAd(para, this.header).then((res) =>{
+    $apis.common.getAd(para, this.header).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code == 0) {
-           this.adData = data.ad;
-           this.getAllAd("open");
-      }else{
-         prompt.showToast({
+        this.adData = data.ad;
+        this.getAllAd("open");
+      } else {
+        prompt.showToast({
           message: data.message
         })
       }
-   })
+    })
   },
   // 广告跳转
-  openUrl(){
-  this.getAllAd("click");
-   location.href = this.adData.link;
+  openUrl() {
+    this.getAllAd("click");
+    router.push({
+      uri:  this.adData.link
+    })
+    // location.href = this.adData.link;
   },
   // 广告点击，展示加载完请求的事件
   getAllAd(val) {
@@ -118,7 +128,7 @@ export default {
     } else if (val == "click") {
       para.opt = 1;
     }
-    $apis.common.getAdOpt(para ,this.header).then((res) => {
+    $apis.common.getAdOpt(para, this.header).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code != 0) {
         prompt.showToast({
@@ -128,16 +138,16 @@ export default {
     })
   },
   // 关闭弹窗
-  closeDialog(){
-      this.dialog = false;
+  closeDialog() {
+    this.dialog = false;
   },
-  ellipsis (value) {
-      if (!value) return ''
-      if (value.length > 40) {
-        return value.slice(0,40) + '...'
-      }
-      return value
+  ellipsis(value) {
+    if (!value) return ''
+    if (value.length > 40) {
+      return value.slice(0, 40) + '...'
     }
+    return value
+  }
 }
 </script>
 
@@ -154,9 +164,9 @@ export default {
     width: 100%;
     margin-bottom: 30px;
     justify-content: flex-end;
-    .img{
-        width: 40px;
-        height: 40px;
+    .img {
+      width: 40px;
+      height: 40px;
     }
   }
   .hot-list {
@@ -166,7 +176,7 @@ export default {
   .hot-item {
     height: 70px;
     align-items: center;
-    background-color: #F7F8FB;
+    background-color: #f7f8fb;
     border-radius: 44px;
     font-size: 26px;
     color: #000;
@@ -175,22 +185,29 @@ export default {
     border-radius: 30px;
     margin: 10px 40px 10px 0;
   }
- .adimg-box{
-  padding: 0px 60px;
-   position: fixed;
-   bottom: 100px;
-  .flex-box-mixins(column, flex-end, flex-end);
-   .close{
-    width: 50px;
-    height: 50px;
-    margin-top: 20px;
+  .adimg-box {
+    width: 100%;
+    padding: 0px 60px;
+    position: fixed;
+    bottom: 100px;
+    .flex-box-mixins(column, center, center);
+    .close {
+      width: 90%;
+      margin-top: 20px;
+      .flex-box-mixins(column, flex-end, flex-end);
+      .c-img {
+        width: 50px;
+        height: 50px;
+      }
+    }
+    .adImg {
+     .flex-box-mixins(column, center, center);
+      width:100%;
+      .img {
+        width: 400px;
+        height: 400px;
+      }
+    }
   }
-  .adImg{
-    width: 90%;
-    margin: 0 auto;
-  }
-  }
-  
 }
-
 </style>
