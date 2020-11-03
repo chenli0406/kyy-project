@@ -217,7 +217,7 @@ export default {
         width: 40px;
         height: 40px;
         border: 2px solid #ccc;
-        border-radius: 50%;
+        border-radius: 20px;
       }
       .check-active {
         width: 40px;

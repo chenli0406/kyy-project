@@ -38,7 +38,6 @@
       <div class="menuList">
       </div>
     </div>
-    <div style="height:500px"></div>
     <!-- 底部菜单 -->
     <div class="bottom">
       <div class="b-box">
@@ -156,26 +155,23 @@ export default {
     header: {
       deviceId: "",
       token: "",
-    }
+    },
+    flag: false,
   },
   onInit() {
+    let _this = this;
     // 获取设备id
-    $utils.getStorage('deviceId').then(value => {
-      this.header.deviceId = value;
+    $utils.getStorage('searchEngineId').then(value => {
+         this.flag = true;
     })
     // 判断是否登录状态
     $utils.getStorage('token').then(value => {
-      this.header.token = value;
-      this.logined = true;
+      _this.header.token = value;
+      _this.logined = true;
     })
-    this.getShortCut();
-    this.showContent = false;
-
-  },
-  // 获取设备信息
-  getLoad() {
-    let _this = this;
-    //获取设备DeviceId
+    _this.getShortCut();
+    _this.showContent = false;
+     //获取设备DeviceId
     device.getDeviceId({
       success: function (data) {
         _this.device.id = data.deviceId;
@@ -185,6 +181,10 @@ export default {
       fail: function (data, code) {
       }
     })
+  },
+  // 获取设备信息
+  getLoad() {
+    let _this = this;
     // 获取设备信息
     device.getInfo({
       success: function (ret) {
@@ -202,7 +202,7 @@ export default {
         let para = new Object();
         var device = require('@system.device')
         var host = device.host;
-        if (host.package) {
+        if (host) {
           _this.packages.push(host.package);
         }
         para.device = _this.device;
@@ -216,8 +216,6 @@ export default {
         })
       }
     })
-
-
   },
   // 判断是否加入桌面图标
   getShortCut() {
@@ -225,7 +223,6 @@ export default {
       success: function (data) {
         $utils.setStorage('addFlag', data);
         this.addFlag = data;
-
       }
     })
   },
@@ -434,7 +431,7 @@ export default {
       width: 100px;
       height: 100px;
       align-content: center;
-      border-radius: 50%;
+      border-radius: 50px;
     }
   }
   .reportBox {
@@ -523,11 +520,12 @@ export default {
       .img-menu {
         width: 140px;
         height: 140px;
-        border-radius: 50%;
         .img {
           width: 100%;
           height: 100%;
           align-content: center;
+          border-radius: 70px;
+          border: 1px solid rgba(#eee, .1);
         }
       }
     }

@@ -38,6 +38,8 @@ export default {
     // 获取搜索引擎id
     $utils.getStorage('searchEngineId').then(value => {
         this.searchEngineId = JSON.parse(value);
+        console.log( this.searchEngineId);
+        
     }) 
     // 获取搜索历史
       $utils.getStorage('searchHistory').then(value => {

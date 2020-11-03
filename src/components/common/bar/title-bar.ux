@@ -3,7 +3,9 @@
     <image src="../../../assets/images/left.png" class="back iconfont" if="showBack" onclick="goBack"></image>
     <!-- <text >&#xe606;</text> -->
     <text class="center-title">{{ title }}</text>
-    <image class="img-box"  onClick="getClick" style="" src="{{icon}}"></image>
+     <div class="img-box"  onClick="getClick">
+         <image  src="{{icon}}"></image>
+     </div>
   </div>
 </template>
 
@@ -46,8 +48,14 @@ export default {
      height: 40px;
   }
   .img-box{
-    /* width: 30px;
-    height: 30px; */
+    margin: 10px;
+    width: 30px;
+    height: 30px;
+    justify-content: center;
+    align-items: center;
+    image{
+      width: 100%;
+    }
   }
 }
 </style>

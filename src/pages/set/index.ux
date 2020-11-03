@@ -26,13 +26,13 @@
             <image class="img" src="../../assets/images/set-right.png"></image>
           </div>
         </div>
-        <div class="section-item" onclick="outLogin()" if="{{logined}}">
+        <div class="section-item" onclick="outLogin()" show="{{logined}}">
           <text style="color:#000;font-size:36px;" class="section-item-text">退出登录</text>
           <div class="section-icon">
             <image class="img" src="../../assets/images/set-right.png"></image>
           </div>
         </div>
-        <div class="section-item" onclick="out()" if="{{logined}}">
+        <div class="section-item" onclick="out()" show="{{logined}}">
           <text style="color:#000;font-size:36px;" class="section-item-text">永久注销账号</text>
           <div class="section-icon">
             <image class="img" src="../../assets/images/set-right.png"></image>
@@ -113,7 +113,7 @@ export default {
     adDialog: false,
     show: false,
     id: '',
-    searchId: '',
+    searchId: [],
     selectName: '',
     serviceList: [
       {
@@ -175,7 +175,10 @@ export default {
     this.outDialog = false;
   },
   submit() {
-
+    $utils.deleteStorage('token');
+    this.dialog = false;
+    this.logined = false;
+    $utils.route2theUrl('pages/index', { logined: this.logined })
   },
   submitOut() {
     $utils.deleteStorage('token');
@@ -192,7 +195,8 @@ export default {
   getSelect(id, val) {
     this.id = id;
     this.selectName = val.name;
-    this.searchId = val;
+
+    this.searchId.push(val);
   },
   selectSubmit() {
     this.show = false;
@@ -215,8 +219,10 @@ export default {
   stopPropagation() { },
   // 清除数据
   getClear() {
+    $utils.deleteStorage('token');
     $utils.clearStorage();
     this.logined = false;
+    $utils.route2theUrl('pages/index', { logined: this.logined })
   },
 }
 </script>
