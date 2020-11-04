@@ -38,7 +38,6 @@ export default {
     // 获取搜索引擎id
     $utils.getStorage('searchEngineId').then(value => {
         this.searchEngineId = JSON.parse(value);
-        console.log( this.searchEngineId);
         
     }) 
     // 获取搜索历史
@@ -112,14 +111,12 @@ export default {
   toSaoma() {
     barcode.scan({
       success: function (data) {
-        console.log(`handling success: ${data.result}`)
         webview.loadUrl({
           url: data.result,
           allowthirdpartycookies: true
         })
       },
       fail: function (data, code) {
-        console.log(`handling fail, code = ${code}`)
       }
     })
   }

@@ -33,8 +33,8 @@
               <text class="login-title" else  @click="login">点击登录</text>
               <text class="login-btn-title">欢迎使用XX浏览器</text>
             </div>
-            <text class="btn" if={{addFlag}}  @click="addShortCut">加入桌面</text>
-            <text class="btn" else >已加入桌面</text>
+            <text class="btn" if={{addFlag}} >已加入桌面</text>
+            <text class="btn" else   @click="addShortCut">加入桌面</text>
           </div>
           <div class="menu">
             <div class="menu-item" @click="getRouter('dol')">
@@ -181,16 +181,16 @@ export default {
   },
   // 加入桌面
   addShortCut() {
+    let _this = this;
     shortcut.install({
       success: function (data) {
-        this.addFlag = true;
-        $utils.setStorage('addFlag', data);
+        _this.addFlag = true;
+        $utils.setStorage('addFlag', true);
         prompt.showToast({
           message: '创建成功'
         })
       },
       fail: function (errmsg, errcode) {
-        console.log('桌面图标创建失败\r\n错误信息: ' + errcode + '---' + errmsg);
       }
     })
   }

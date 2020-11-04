@@ -24,14 +24,12 @@ export default {
   toSaoma() {
     barcode.scan({
       success: function (data) {
-        console.log(`handling success: ${data.result}`)
         webview.loadUrl({
           url: data.result,
           allowthirdpartycookies: true
         })
       },
       fail: function (data, code) {
-        console.log(`handling fail, code = ${code}`)
       }
     })
   }

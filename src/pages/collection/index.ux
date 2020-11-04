@@ -79,7 +79,6 @@ export default {
           if (data.code == 0) {
             this.list.page = data.page;
             this.list.load = data.hasMore;
-            console.log(data);
             if (data.favorites.length == 0) {
               this.list.data = []
             } else {
@@ -135,7 +134,6 @@ export default {
     })
   },
   showChangePrompt(e) {
-    console.log(e.checked)
   },
   ellipsis(value) {
     if (!value) return ''

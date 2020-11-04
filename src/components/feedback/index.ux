@@ -153,7 +153,6 @@ export default {
     this.show = !this.show;
   },
   getvalue(index, item) {
-    console.log(item);
     this.from.category = item;
     this.show = false;
   },

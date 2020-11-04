@@ -145,6 +145,7 @@ export default {
     // 获取设备id
     $utils.getStorage('deviceId').then(value => {
       this.header.deviceId = value;
+      this.getSearchList();
     })
     // 判断是否登录状态
     $utils.getStorage('token').then(value => {
@@ -154,7 +155,7 @@ export default {
 
   },
   onReady() {
-    this.getSearchList();
+    // this.getSearchList();
   },
   /* -------------------SelfCustomEvent------------------ */
   switchPage(item) {
@@ -280,10 +281,12 @@ export default {
   margin: 0 auto;
   background-color: rgba(0, 0, 0, 0.4);
   height: 100%;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   .box {
+    width: 100%;
     padding: 60px;
     .flex-box-mixins(column, center, center);
     width: 80%;

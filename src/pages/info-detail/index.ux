@@ -1,4 +1,4 @@
-
+<import name="my-avatar" src="apex-ui/components/avatar/index"></import>
 <template>
   <div class="page-wrapper">
     <title-bar
@@ -8,7 +8,8 @@
       onget-click="getClick"
     ></title-bar>
     <div class="ad-btn" @click="dialog">
-      <image class="ad-img" src="{{adData.picture}}"></image>
+        <my-avatar src="{{adData.picture}}" size="default"></my-avatar>
+      <!-- <image class="ad-img" src="{{adData.picture}}"></image> -->
     </div>
     <div style="margin-top:140px">
       <text style="color:#000" class="title">{{ articleData.title }}</text>
@@ -77,11 +78,12 @@ export default {
   onInit() {
     var page = router.getState()
     this.href= this.$app.$def.appData.BaseUrl+page.path +'/'+ this.id;
-    console.log(this.href);
     this.getHistoy();
     // 获取设备id
     $utils.getStorage('deviceId').then(value => {
       this.header.deviceId = value;
+       this.queryActicle();
+       this.getAd();
     })
     // 判断是否登录状态
     $utils.getStorage('token').then(value => {
@@ -90,8 +92,6 @@ export default {
     this.copyUrl()
   },
   onReady() {
-    this.queryActicle();
-    this.getAd();
     this.showContent = false;
   },
   addHistoryData() {
@@ -108,7 +108,6 @@ export default {
       this.historyData.unshift({ time: nowDate, list: { title: this.articleData.title, url: this.href } });
       $utils.setStorage('historyData', this.historyData);
     }
-    console.log(this.historyData);
   },
   getHistoy() {
     // 获取搜索历史

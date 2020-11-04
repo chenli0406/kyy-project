@@ -67,7 +67,6 @@ export default {
     // 获取搜索历史
     $utils.getStorage('searchHistory').then(value => {
       this.hotList = JSON.parse(value);
-      console.log(this.hotList);
     })
   },
   search(info) {
@@ -81,7 +80,6 @@ export default {
     $utils.route2theUrl('pages/search-detail', { searchText: val.url });
     // let para = new Object();
     // para.keyword = val;
-    // console.log(this.searchEngineId);
     // para.searchEngineId = this.searchEngineId[0].id;
     // $apis.common.getSearchLog(para).then((res) => {
     //   let data = JSON.parse(res.data);
