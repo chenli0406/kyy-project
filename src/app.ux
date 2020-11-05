@@ -5,6 +5,7 @@
  */
 import { $utils, $apis } from './helper'
 import shortcut from '@system.shortcut'
+import device from '@system.device';
 /* @desc: 注入方法至全局 global,以便页面调用 */
 const hook2global = global.__proto__ || global
 hook2global.regeneratorRuntime = require('@babel/runtime/regenerator')
@@ -14,11 +15,19 @@ export default {
   $apis: $apis,
   showMenu: $utils.showMenu,
   createShortcut: $utils.createShortcut,
-  appData:{
-    BaseUrl: 'http://qa.kimiz.top'
+  appData: {
+    BaseUrl: 'http://qa.kimiz.top',
   },
-  onCreate(){
+  onCreate() {
     shortcut.systemPromptEnabled = false;
+    //获取设备DeviceId
+    device.getDeviceId({
+      success: function (data) {
+        $utils.setStorage('deviceId', `${data.deviceId}`);
+      },
+      fail: function (data, code) {
+      }
+    })
   },
   onHide() {
   },

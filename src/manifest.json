@@ -108,7 +108,8 @@
         "titleBarText": ""
       },
       "pages/search": {
-        "titleBarText": ""
+        "titleBarText": "",
+        "launchMode": "singleTask"
       },
       "pages/info-detail": {
         "titleBarText": ""
@@ -117,7 +118,8 @@
         "titleBarText": ""
       },
       "pages/set": {
-        "titleBarText": ""
+        "titleBarText": "",
+        "launchMode": "singleTask"
       },
       "pages/aboutUs": {
         "titleBarText": ""
@@ -132,10 +134,12 @@
         "titleBarText": ""
       },
       "pages/information": {
-        "titleBarText": ""
+        "titleBarText": "",
+        "launchMode": "singleTask"
       },
       "pages/search-detail": {
-        "titleBarText": ""
+        "titleBarText": "",
+        "launchMode": "singleTask"
       },
       "pages/addMenu": {
         "titleBarText": ""

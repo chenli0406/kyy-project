@@ -116,6 +116,21 @@
         </div>
       </div>
     </div>
+    <!-- 退出广告 -->
+     <div class="adimg-box" if="{{outAdDialog}}" onclick="stopPropagation()">
+      <div class="box" style="background-color: #ffffff;width: 80%; border-radius: 40px; padding: 40px;">
+        <div style="margin-bottom:20px;">
+          <text style="color:#000;font-size:34px;font-weight: 500;">您真的要退出吗</text>
+        </div>
+        <div class="imgbox" style="margin-bottom:40px;" @click="getOutAdUrl">
+          <image class="img-box" src="{{outAdData.picture}}"></image>
+        </div>
+        <div class="btn">
+          <text style="color:#000" class="submit" @click="getExit">确定</text>
+          <text style="color:#fff" class="cancel" @click="getLook">去看看</text>
+        </div>
+      </div>
+    </div>
     <!-- 反馈 -->
     <feedback if={{feedbackDailog}} @close="closeFeedback"></feedback>
   </div>
@@ -162,6 +177,10 @@ export default {
     },
     flag: false,
     addFlag: false,
+    category: 'default',
+    scene: 'signout',
+    outAdData: '',
+    outAdDialog: false,
   },
   onInit() {
     let _this = this;
@@ -216,6 +235,41 @@ export default {
       }
     })
   },
+  // 页面销毁
+  onDestroy() {
+    
+  },
+  // 获取退出的广告
+  getOutAd(){
+   let para = new Object();
+    para.category = this.category;
+    para.scene = this.scene;
+    $apis.common.getAd(para,this.header).then((res) => {
+      let data = JSON.parse(res.data);
+      if (data.code == 0) {
+        this.outAdData= data.ad;
+        this.getAllAd("outOpen");
+      } else {
+        prompt.showToast({
+          message: data.message
+        })
+      }
+    })
+  },
+  getLook(){
+    this.outAdDialog = false;
+  },
+  getExit(){
+   this.$app.exit();
+  },
+  getOutAdUrl(){
+    this.getAllAd("colose");
+    this.outAdDialog = false;
+    router.push({
+      uri: this.outAdData.link
+    })
+    
+  },
   // 判断是否加入桌面图标
  async getShortCut() {
    let _this = this;
@@ -234,7 +288,9 @@ export default {
     })
   },
   onReady() {
-    this.get()
+    this.outAdDialog = true;
+    this.get();
+    this.getOutAd()
 
   },
   async get() {
@@ -427,10 +483,8 @@ export default {
     shortcut.install({
       success: function (data) {
         _this.addFlag = true;
+        _this.showContent = false;
         $utils.setStorage('addFlag', true);
-        prompt.showToast({
-          message: '创建成功'
-        })
       },
       fail: function (errmsg, errcode) {
       }
@@ -692,6 +746,7 @@ export default {
     .adClose {
       width: 100%;
       margin-top: 20px;
+      
       .flex-box-mixins(column, flex-end, flex-end);
       .close {
         width: 50px;
@@ -708,6 +763,24 @@ export default {
         height: 100%;
       }
     }
+     .submit {
+    width: 45%;
+    height: 80px;
+    background-color: #f7f8fb;
+    border-radius: 50px;
+    padding: 0 30px;
+    margin: 0px 20px;
+    text-align: center;
+  }
+  .cancel {
+    width: 45%;
+    height: 80px;
+    margin: 0px 20px;
+    background-color: #567aff;
+    border-radius: 50px;
+    padding: 0 30px;
+    text-align: center;
+  }
   }
 }
 </style>

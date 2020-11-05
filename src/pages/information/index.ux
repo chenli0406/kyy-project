@@ -185,10 +185,8 @@ export default {
     shortcut.install({
       success: function (data) {
         _this.addFlag = true;
+        _this.showContent = false;
         $utils.setStorage('addFlag', true);
-        prompt.showToast({
-          message: '创建成功'
-        })
       },
       fail: function (errmsg, errcode) {
       }

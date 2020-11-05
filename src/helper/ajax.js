@@ -2,7 +2,6 @@ import $fetch from '@system.fetch'
 import $utils from './utils'
 const prompt = require('@system.prompt')
 
-
 function requestHandle(params) {
   let headerData = Object.assign({},params.op)
   var deviceId =headerData.deviceId;
