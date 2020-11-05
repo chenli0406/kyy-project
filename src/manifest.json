@@ -3,7 +3,7 @@
   "name": "xx浏览器",
   "versionName": "1.0.0",
   "versionCode": "3",
-  "minPlatformVersion": "1020",
+  "minPlatformVersion": "1060",
   "icon": "/assets/images/logo.png",
   "features": [
     {
@@ -41,7 +41,8 @@
     },
     {
       "name": "system.shortcut"
-    }
+    },
+    {"name":"service.ad"}
   ],
   "permissions": [
     {
@@ -98,7 +99,6 @@
     "titleBarBackgroundColor": "#ffffff",
     "titleBarTextColor": "#333333",
     "menu": false,
-    "statusBarImmersive": true,
     "textSizeAdjust": "auto",
     "menuBarData": {
       "menuBar": false
@@ -112,23 +112,28 @@
         "launchMode": "singleTask"
       },
       "pages/info-detail": {
-        "titleBarText": ""
+        "titleBarText": "",
+        "launchMode": "singleTask"
       },
       "pages/download": {
-        "titleBarText": ""
+        "titleBarText": "",
+        "launchMode": "singleTask"
       },
       "pages/set": {
         "titleBarText": "",
         "launchMode": "singleTask"
       },
       "pages/aboutUs": {
-        "titleBarText": ""
+        "titleBarText": "",
+        "launchMode": "singleTask"
       },
       "pages/history": {
-        "titleBarText": ""
+        "titleBarText": "",
+        "launchMode": "singleTask"
       },
       "pages/collection": {
-        "titleBarText": ""
+        "titleBarText": "",
+        "launchMode": "singleTask"
       },
       "pages/login": {
         "titleBarText": ""

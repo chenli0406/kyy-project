@@ -20,7 +20,7 @@
     <div class="picture">
       <image class="img" src="{{articleData.picture}}"></image>
     </div>
-    <div class="return-btn" @click="getHome">
+    <div class="return-btn" @click="goto">
       <image class="re-img" src="../../assets/images/return-home.png"></image>
     </div>
     <div class="test" if="{{showContent}}">
@@ -127,6 +127,9 @@ export default {
         });
       }
     })
+  },
+  goto(){
+     router.back()
   },
   getHome() {
     $utils.route2theUrl('pages/index')

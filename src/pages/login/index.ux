@@ -1,5 +1,6 @@
 <template>
   <div class="page-wrapper">
+     <image src="../../../assets/images/left.png" class="back iconfont"  onclick="goBack"></image>
     <div class="logo-box">
       <image class="logo" src="../../assets/images/logo.png"></image>
     </div>
@@ -27,6 +28,7 @@
 </template>
 <script>
 import prompt from '@system.prompt'
+import router from '@system.router'
 export default {
   data: {
     name: '',
@@ -105,7 +107,10 @@ export default {
   },
   getAgreement(){
     $utils.route2theUrl('pages/aboutUs', { item: {title: '用户协议', url: "http://qa.kimiz.top/agreement.html"} })
-  }
+  },
+  goBack() {
+    router.back()
+  },
 }
 </script>
 
@@ -183,4 +188,9 @@ export default {
     text-align: center;
   }
 }
+ .iconfont{
+     margin: 20px 30px;
+     width: 40px;
+     height: 40px;
+  }
 </style>

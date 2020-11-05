@@ -1,7 +1,7 @@
 <import name="my-avatar" src="apex-ui/components/avatar/index"></import>
 <template>
   <div class="page-wrapper">
-    <div class="ad-btn" @click="dialog">
+    <div class="ad-btn" @click="gotoAd">
        <my-avatar src="{{ floatAd.picture}}" size="default"></my-avatar>
       <!-- <image class="ad-img" src="{{ floatAd.picture}}"></image> -->
     </div>
@@ -14,7 +14,7 @@
     <div class="title-bar">
       <div class="search-box">
         <div class="search">
-          <text class="search-input" onclick="toSearch"></text>
+          <text class="search-input" onclick="toSearch">请输入您要搜索的关键字或网址</text>
           <image class="img" src="../../assets/images/saoma.png" onclick="toSaoma"></image>
         </div>
       </div>
@@ -22,18 +22,16 @@
     <div class="menuBox">
       <div for={{menuList}} class="menuList" @click="gotoUrl($item.link)">
         <div class="img-menu">
-          <my-avatar src={{$item.picture}} size="large"></my-avatar>
-          <!-- <image class="img" src={{$item.picture}}></image> -->
+          <my-avatar src={{$item.picture}} size="default"></my-avatar>
         </div>
         <text style="font-size:26px;text-align: center;padding:15px 0;color:#000">{{$item.title}}</text>
       </div>
-      <div class="menuList" @click="addMenu">
+      <!-- <div class="menuList" @click="addMenu">
         <div class="img-menu">
-           <my-avatar src="../../assets/images/index/menuAdd.png" size="large"></my-avatar>
-          <!-- <image class="img" src='../../assets/images/index/menuAdd.png'></image> -->
+           <my-avatar src="../../assets/images/index/menuAdd.png" size="default"></my-avatar>
         </div>
         <text style="text-align: center;padding: 0;color:#000"></text>
-      </div>
+      </div> -->
       <div class="menuList">
       </div>
       <div class="menuList">
@@ -105,17 +103,6 @@
         </div>
       </div>
     </div>
-    <!-- 广告 -->
-    <div class="adimg-box" if={{adDialog}} onclick="stopPropagation()">
-      <div class="box">
-        <div class="adClose" @click="closeDialog">
-          <image class="close" src="../../assets/images/close-index.png"></image>
-        </div>
-        <div class="adImg" @click="gotoAd">
-          <image class="img" src="{{ floatAd.picture }}"></image>
-        </div>
-      </div>
-    </div>
     <!-- 退出广告 -->
      <div class="adimg-box" if="{{outAdDialog}}" onclick="stopPropagation()">
       <div class="box" style="background-color: #ffffff;width: 80%; border-radius: 40px; padding: 40px;">
@@ -141,9 +128,10 @@ import router from '@system.router';
 import webview from '@system.webview'
 import barcode from '@system.barcode';
 import device from '@system.device';
-import prompt from '@system.prompt'
-import shortcut from '@system.shortcut'
-import storage from '@system.storage'
+import prompt from '@system.prompt';
+import shortcut from '@system.shortcut';
+import storage from '@system.storage';
+import ad from '@service.ad'
 export default {
   protected: {
     logined: false,
@@ -183,7 +171,10 @@ export default {
     outAdDialog: false,
   },
   onInit() {
+    
+    
     let _this = this;
+    console.log(_this.logined);
      _this.getToken();
     _this.getShortCut();
     _this.showContent = false;
@@ -237,7 +228,8 @@ export default {
   },
   // 页面销毁
   onDestroy() {
-    
+    this.outAdDialog = true;
+    this.getOutAd()
   },
   // 获取退出的广告
   getOutAd(){
@@ -288,10 +280,7 @@ export default {
     })
   },
   onReady() {
-    this.outAdDialog = true;
     this.get();
-    this.getOutAd()
-
   },
   async get() {
     let _this = this
@@ -335,9 +324,9 @@ export default {
         uri: 'pages/collection'
       })
     } else {
-      router.push({
-        uri: 'pages/login'
-      })
+      // router.push({
+      //   uri: 'pages/login'
+      // })
     }
   },
   toSearch() {
@@ -354,7 +343,7 @@ export default {
         if (this.logined == true) {
           $utils.route2theUrl('pages/collection')
         } else {
-          $utils.route2theUrl('pages/login')
+          // $utils.route2theUrl('pages/login')
         }
         break;
       case 'history':
@@ -438,11 +427,19 @@ export default {
   // 广告点击，展示加载完请求的事件
   getAllAd(val) {
     let para = new Object();
-    para.id = this.floatAd.id;
+    
     if (val == "open") {
       para.opt = 0;
+      para.id = this.floatAd.id;
     } else if (val == "click") {
       para.opt = 1;
+      para.id = this.floatAd.id;
+    }else if(val == "outOpen"){
+       para.opt =0;
+       para.id = this.outAdData.id;
+    }else if( val == "colose"){
+       para.opt =1;
+       para.id = this.outAdData.id;
     }
     $apis.common.getAdOpt(para, this.header).then((res) => {
       let data = JSON.parse(res.data);
@@ -539,7 +536,7 @@ export default {
   }
   .logo-box {
     width: 100%;
-    margin-top: 300px;
+    margin-top: 400px;
     margin-bottom: 50px;
     justify-content: center;
     .logo {
@@ -587,15 +584,11 @@ export default {
     flex-direction: row;
     justify-content: space-between;
     .menuList {
-      width: 150px;
-      height: 200px;
-      margin: 0 10px;
+      width: 120px;
+      height: 220px;
+      margin: 0 12px;
       flex-direction: column;
       align-items: center;
-      .img-menu {
-        width: 120px;
-        height: 120px;
-      }
     }
   }
 }

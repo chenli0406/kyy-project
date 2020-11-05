@@ -47,7 +47,7 @@ export default {
     phone: "",
     selectedVal: "",
     from: {
-      category: "其他",
+      category: "其它",
       description: "",
       contact: "",
     },
@@ -59,7 +59,7 @@ export default {
     show: false,
     options: [
       {
-        name: "其他"
+        name: "其它"
       },
       {
         name: "非自愿打开浏览器"
@@ -90,7 +90,7 @@ export default {
   },
   onReady() {
     this.from = {
-      category: "其他",
+      category: "其它",
       description: "",
       contact: "",
     }

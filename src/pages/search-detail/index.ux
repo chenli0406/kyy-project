@@ -220,7 +220,7 @@ export default {
         if (this.logined == true) {
           $utils.route2theUrl('pages/collection')
         } else {
-          $utils.route2theUrl('pages/login')
+          // $utils.route2theUrl('pages/login')
         }
         break;
       case 'history':
@@ -251,9 +251,9 @@ export default {
         uri: 'pages/collection'
       })
     } else {
-      router.push({
-        uri: 'pages/login'
-      })
+      // router.push({
+      //   uri: 'pages/login'
+      // })
     }
   },
   goBack() {

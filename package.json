@@ -39,5 +39,8 @@
   },
   "keywords": [
     "浏览器"
+  ],
+  "browserslist": [
+    "chrome 65"
   ]
 }

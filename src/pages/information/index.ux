@@ -87,10 +87,11 @@ export default {
     this.showContent = false;
   },
   onReady() {
+    this.getToken();
     // 判断是否登录状态
-    $utils.getStorage('token').then(value => {
-      this.logined = true;
-    })
+    // $utils.getStorage('token').then(value => {
+    //   this.logined = true;
+    // })
     // 是否加入桌面图标
     $utils.getStorage('addFlag').then(value => {
       if(JSON.parse(value) ==true ){
@@ -99,6 +100,12 @@ export default {
          this.addFlag = false;
       }
      
+    })
+  },
+   // 判断是否登录状态
+  async getToken(){ 
+   await $utils.getStorage('token').then(value => {
+      this.logined = true;
     })
   },
   //弹出底部 
@@ -133,9 +140,9 @@ export default {
         uri: 'pages/collection'
       })
     }else{
-       router.push({
-        uri: 'pages/login'
-      })
+      //  router.push({
+      //   uri: 'pages/login'
+      // })
     }
   },
   // 菜单跳转
@@ -149,7 +156,7 @@ export default {
            if(this.logined == true){
                $utils.route2theUrl('pages/collection')
            }else{
-             $utils.route2theUrl('pages/login')
+            //  $utils.route2theUrl('pages/login')
            }
         break;
       case 'history':
