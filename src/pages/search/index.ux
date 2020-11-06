@@ -27,6 +27,7 @@
 <import name="search-input-bar" src="../../components/common/bar/search-input-bar"></import>
 <script>
 import router from '@system.router'
+import ad from '@service.ad'
 export default {
   private: {
     searchText: '',
@@ -35,8 +36,8 @@ export default {
   public: {
     dialog: true,
     hotList: [],
-    category: 'default',
-    scene: 'search',
+    category: '插屏',
+    scene: '其它',
     adData: '',
     header: {
       deviceId: "",
@@ -52,6 +53,7 @@ export default {
     // 获取设备id
     $utils.getStorage('deviceId').then(value => {
       this.header.deviceId = value;
+      this.getAd();
     })
     // 判断是否登录状态
     $utils.getStorage('token').then(value => {
@@ -59,9 +61,6 @@ export default {
     })
     this.getSearchHistory()
 
-  },
-  onReady() {
-    this.getAd();
   },
   getSearchHistory() {
     // 获取搜索历史
@@ -100,8 +99,11 @@ export default {
     $apis.common.getAd(para, this.header).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code == 0) {
-        this.adData = data.ad;
-        this.getAllAd("open");
+        if (data.ad) {
+          this.adData = data.ad;
+          this.getAllAd("open");
+        }
+
       } else {
         prompt.showToast({
           message: data.message
@@ -113,7 +115,7 @@ export default {
   openUrl() {
     this.getAllAd("click");
     router.push({
-      uri:  this.adData.link
+      uri: this.adData.link
     })
     // location.href = this.adData.link;
   },
@@ -137,6 +139,12 @@ export default {
   },
   // 关闭弹窗
   closeDialog() {
+    if (this.adData.openOnClose == true) {
+      this.getAllAd("click");
+      router.push({
+        uri: this.adData.link
+      })
+    }
     this.dialog = false;
   },
   ellipsis(value) {
@@ -145,7 +153,8 @@ export default {
       return value.slice(0, 40) + '...'
     }
     return value
-  }
+  },
+
 }
 </script>
 
@@ -199,11 +208,12 @@ export default {
       }
     }
     .adImg {
-     .flex-box-mixins(column, center, center);
-      width:100%;
+       .flex-box-mixins(column, center, center);
+       width: 100%;
       .img {
-        width: 400px;
-        height: 400px;
+        display: inline-block;
+        height: auto;
+        max-width: 100%;
       }
     }
   }

@@ -1,0 +1,227 @@
+<template>
+  <div class="page-container">
+    <search-bar></search-bar>
+    <tabs onchange="changeTab">
+      <underline-tab-bar
+        tab-list="{{navs}}"
+        selected-tab="{{selectedTab}}"
+        mode="scrollable"
+      ></underline-tab-bar>
+      <tab-content class="tab-content">
+        <div for="{{tabList}}">
+          <div class="content" if="{{selectedTab === $idx}}">
+            <web class="web-comp" src="{{$item.url}}" id="web" allowthirdpartycookies="true"></web>
+          </div>
+        </div>
+      </tab-content>
+    </tabs>
+      <!-- 广告 -->
+    <div class="adimg-box" if="{{adDialog}}">
+      <div class="box">
+        <div class="adClose" @click="closeDialog">
+          <image class="c-img" src="../../assets/images/dialong.png"></image>
+        </div>
+        <div class="adImg" @click="openUrl">
+          <image class="img" src="{{adData.picture}}"></image>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<import name="search-bar" src="../common/bar/search-bar"></import>
+<import name="underline-tab-bar" src="../common/tab/underline-tab-bar"></import>
+<import name="article-list" src="../common/list/article-list"></import>
+
+<script>
+import device from '@system.device';
+import router from '@system.router'
+export default {
+  props: [],
+  data: {
+    tabList: [],
+    selectedTab: 0,
+    category: "",
+    hot: {
+      list: [],
+      pageNo: 1,
+      pageSize: 10,
+      total: null,
+      load: true
+    },
+    header: {
+      deviceId: "",
+      token: "",
+    },
+    device: {
+      id: "",
+      imei: "",
+      brand: "",
+      manufacturer: "",
+      model: "",
+      osType: "",
+      osVersionName: "",
+      osVersionCode: "",
+      platformVersionName: "",
+      platformVersionCode: "",
+      region: "",
+      screenWidth: 0,
+      screenHeight: 0
+    },
+    packages: [],
+    navs:[],
+    category: '插屏',
+    scene: '其它',
+    adData: '',
+    adDialog: false,
+  },
+  onInit() {
+    // 获取设备id
+    $utils.getStorage('deviceId').then(value => {
+      this.header.deviceId = value;
+      this.device.id = value;
+      this.getLoad();
+      this.getAd();
+    })
+    // 判断是否登录状态
+    $utils.getStorage('token').then(value => {
+      this.header.token = value;
+    })
+
+  },
+  getLoad() {
+    let _this = this;
+    // 获取设备信息
+    device.getInfo({
+      success: function (ret) {
+        _this.device.brand = ret.brand;
+        _this.device.manufacturer = ret.manufacturer;
+        _this.device.model = ret.model;
+        _this.device.osType = ret.osType;
+        _this.device.osVersionName = ret.osVersionName;
+        _this.device.osVersionCode = ret.osVersionCode;
+        _this.device.platformVersionName = ret.platformVersionName;
+        _this.device.platformVersionCode = ret.platformVersionCode;
+        _this.device.region = ret.region;
+        _this.device.screenWidth = ret.screenWidth;
+        _this.device.screenHeight = ret.screenHeight;
+        let para = new Object();
+        var device = require('@system.device')
+        var host = device.host;
+        if (host) {
+          _this.packages.push(host.package);
+        }
+        para.device = _this.device;
+        para.packages = _this.packages;
+
+        $apis.common.getLaunch(para, _this.header).then((res) => {
+          let data = JSON.parse(res.data);
+          _this.tabList = data.navs;
+          for(let key of _this.tabList){
+              _this.navs.push(key.title)
+          }
+        })
+      }
+    })
+  },
+  changeTab(e) {
+    let index = e.index || 0
+    this.selectedTab = index;
+  },
+   // 广告跳转
+  openUrl() {
+    this.getAllAd("click");
+    router.push({
+      uri: this.adData.link
+    })
+    // location.href = this.adData.link;
+  },
+   // 获取广告
+  getAd() {
+    let para = new Object();
+    para.category = this.category;
+    para.scene = this.scene;
+    $apis.common.getAd(para, this.header).then((res) => {
+      let data = JSON.parse(res.data);
+      if (data.code == 0) {
+        if (data.ad) {
+          this.adData = data.ad;
+          console.log(this.adData);
+          this.adDialog = true;
+          this.getAllAd("open");
+        }
+      } else {
+        prompt.showToast({
+          message: data.message
+        })
+      }
+    })
+  },
+  getAllAd(val) {
+    let para = new Object();
+    para.id = this.adData.id;
+    if (val == "open") {
+      para.opt = 0;
+    } else if (val == "click") {
+      para.opt = 1;
+    }
+    $apis.common.getAdOpt(para, this.header).then((res) => {
+      let data = JSON.parse(res.data);
+      if (data.code != 0) {
+        prompt.showToast({
+          message: data.message
+        })
+      }
+    })
+  },
+  closeDialog() {
+    if (this.adData.openOnClose == true) {
+      this.getAllAd("click");
+      router.push({
+        uri: this.adData.link
+      })
+    }
+    this.adDialog = false;
+  },
+}
+</script>
+
+<style lang="less">
+@import '../../assets/styles/index.less';
+
+.adimg-box {
+  /* width: 100%;
+  
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center; */
+  .box {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    padding: 0px 60px;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    .adClose {
+      width: 100%;
+      margin-top: 20px;
+      .flex-box-mixins(column, flex-end, flex-end);
+      .c-img {
+        width: 50px;
+        height: 50px;
+      }
+    }
+    .adImg {
+      .flex-box-mixins(column, center, center);
+      width: 100%;
+      .img {
+        display: inline-block;
+        max-height: 100%;
+        max-width: 100%;
+      }
+    }
+  }
+}
+</style>

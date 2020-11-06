@@ -1,10 +1,10 @@
 
-<import name="home" src="../../components/home"></import>
+<import name="homes" src="../../components/homes"></import>
 
 <template>
   <div class="page-wrapper">
     <!-- 底部菜单 -->
-    <home></home>
+    <homes></homes>
     <div class="bottom">
       <div class="b-box" @click="getRouterIndex()">
         <image src="../../assets/images/index/index.png"></image>
@@ -82,11 +82,13 @@ export default {
     feedbackDailog: false,
     addFlag: false,
     defaultAvatar: require('../../assets/images/index/default-avatar.png'),
+    navs:""
   },
   onInit() {
     this.showContent = false;
   },
   onReady() {
+    this.navs = this.nav;
     this.getToken();
     // 判断是否登录状态
     // $utils.getStorage('token').then(value => {

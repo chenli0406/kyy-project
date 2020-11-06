@@ -7,18 +7,19 @@
       icon="{{icon}}"
       onget-click="getClick"
     ></title-bar>
-    <div class="ad-btn" @click="dialog">
+    <!-- <div class="ad-btn" @click="dialog">
         <my-avatar src="{{adData.picture}}" size="default"></my-avatar>
-      <!-- <image class="ad-img" src="{{adData.picture}}"></image> -->
-    </div>
-    <div style="margin-top:140px">
-      <text style="color:#000" class="title">{{ articleData.title }}</text>
+    </div> -->
+    <div style="margin-top:100px">
+      <text style="color:#000" class="title"></text>
     </div>
     <div class="content">
-      <richtext type="html" class="rich-text">{{ articleData.content }}</richtext>
-    </div>
-    <div class="picture">
-      <image class="img" src="{{articleData.picture}}"></image>
+      <web
+        class="web-comp"
+        src="{{websrc}}"
+        id="web"
+        allowthirdpartycookies="true"
+      ></web>
     </div>
     <div class="return-btn" @click="goto">
       <image class="re-img" src="../../assets/images/return-home.png"></image>
@@ -63,8 +64,8 @@ export default {
     adDialog: false,
     id: "",
     articleData: "",
-    category: '插屏',
-    scene: '其它',
+    category: 'float',
+    scene: 'search-result',
     adData: '',
     title: '资讯详情',
     icon: require('../../assets/images/more.png'),
@@ -74,16 +75,20 @@ export default {
       token: "",
     },
     href: "",
+    
   },
   onInit() {
+    let url = JSON.parse(this.nav)
+    this.websrc = url[0].url;
+    console.log(this.nav);
     var page = router.getState()
     this.href= this.$app.$def.appData.BaseUrl+page.path +'/'+ this.id;
-    this.getHistoy();
+    // this.getHistoy();
     // 获取设备id
     $utils.getStorage('deviceId').then(value => {
       this.header.deviceId = value;
-       this.queryActicle();
-       this.getAd();
+      //  this.queryActicle();
+      //  this.getAd();
     })
     // 判断是否登录状态
     $utils.getStorage('token').then(value => {
@@ -143,7 +148,7 @@ export default {
   // 设置复制
   copyUrl() {
     clipboard.set({
-      text: this.href,
+      text: this.nav[0].url,
     })
     
   },
@@ -372,4 +377,7 @@ export default {
     }
   }
 }
+.content {
+    flex:1;
+  }
 </style>

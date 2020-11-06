@@ -9,15 +9,16 @@
         </div>
       </div>
     </div>
-    <div class="ad-btn" @click="dialog">
+    <!-- <div class="ad-btn" @click="dialog">
        <my-avatar src="{{adData.picture}}" size="default"></my-avatar>
-      <!-- <image class="ad-img" src="{{adData.picture}}"></image> -->
-    </div>
+    </div> -->
     <div class="content">
       <web
         class="web-comp"
         src="{{websrc}}"
         id="web"
+        canForward="true"
+        canBack="true"
         allowthirdpartycookies="true"
       ></web>
     </div>
@@ -52,8 +53,8 @@
               <text class="login-title" else @click="login">点击登录</text>
               <text class="login-btn-title">欢迎使用XX浏览器</text>
             </div>
-              <text class="btn" if={{addFlag}} >已加入桌面</text>
-              <text class="btn" else   @click="addShortCut">加入桌面</text>
+            <text class="btn" if="{{addFlag}}">已加入桌面</text>
+            <text class="btn" else @click="addShortCut">加入桌面</text>
           </div>
           <div class="menu">
             <div class="menu-item" @click="getRouter('dol')">
@@ -85,7 +86,7 @@
       </div>
     </div>
     <!-- 广告 -->
-    <div class="adimg-box" if="{{adDialog}}" onclick="stopPropagation()">
+    <div class="adimg-box" if="{{adDialog}}">
       <div class="box">
         <div class="adClose" @click="closeDialog">
           <image class="c-img" src="../../assets/images/dialong.png"></image>
@@ -104,17 +105,18 @@
 import router from '@system.router'
 import prompt from '@system.prompt'
 import shortcut from '@system.shortcut'
+import ad from '@service.ad'
 export default {
   data: {
     logined: false,
-    adDialog: false,
     feedbackDailog: false,
+    adDialog: false,
     defaultAvatar: require('../../assets/images/index/default-avatar.png'),
     searchText: '',
     showContent: false,
     item: '',
-    category: 'float',
-    scene: 'search-result',
+    category: '插屏',
+    scene: '其它',
     adData: '',
     websrc: '',
     addFlag: false,
@@ -134,14 +136,14 @@ export default {
       this.header.token = value;
       this.logined = true;
     })
-     // 是否加入桌面图标
+    // 是否加入桌面图标
     $utils.getStorage('addFlag').then(value => {
-      if(JSON.parse(value) ==true ){
-         this.addFlag = true;
-      }else{
-         this.addFlag = false;
+      if (JSON.parse(value) == true) {
+        this.addFlag = true;
+      } else {
+        this.addFlag = false;
       }
-     
+
     })
     this.showContent = false;
     this.websrc = this.searchText;
@@ -149,8 +151,8 @@ export default {
   // 广告跳转
   openUrl() {
     this.getAllAd("click");
-     router.push({
-      uri:  this.adData.link
+    router.push({
+      uri: this.adData.link
     })
     // location.href = this.adData.link;
   },
@@ -159,11 +161,15 @@ export default {
     let para = new Object();
     para.category = this.category;
     para.scene = this.scene;
-    $apis.common.getAd(para,this.header).then((res) => {
+    $apis.common.getAd(para, this.header).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code == 0) {
-        this.adData = data.ad;
-        this.getAllAd("open");
+        if (data.ad) {
+          this.adData = data.ad;
+          console.log(this.adData);
+          this.adDialog = true;
+          this.getAllAd("open");
+        }
       } else {
         prompt.showToast({
           message: data.message
@@ -196,10 +202,13 @@ export default {
   closeBox() {
     this.showContent = false
   },
-  dialog() {
-    this.adDialog = true;
-  },
   closeDialog() {
+    if (this.adData.openOnClose == true) {
+      this.getAllAd("click");
+      router.push({
+        uri: this.adData.link
+      })
+    }
     this.adDialog = false;
   },
   closeFeedback() {
@@ -261,7 +270,7 @@ export default {
   },
   stopPropagation() {
   },
-   // 加入桌面
+  // 加入桌面
   addShortCut() {
     let _this = this;
     shortcut.install({
@@ -274,9 +283,9 @@ export default {
       }
     })
   },
-  refresh(){
+  refresh() {
     this.getAd();
-     prompt.showToast({
+    prompt.showToast({
       message: "刷新成功"
     });
     this.showContent = false;
@@ -314,7 +323,7 @@ export default {
   }
   .content {
     margin-top: 130px;
-    flex:1;
+    flex: 1;
   }
   .content-none {
     flex-direction: column;
@@ -349,10 +358,10 @@ export default {
       align-items: center;
       justify-content: center;
       image {
-       /* width: 45px;
+        /* width: 45px;
        height: 100%; */
-      margin: 0px 50px;
-    }
+        margin: 0px 50px;
+      }
     }
     image {
       width: 44px;
@@ -498,18 +507,20 @@ export default {
 }
 
 .adimg-box {
-  width: 100%;
-  position: fixed;
-  margin: 0 auto;
-  background-color: rgba(0, 0, 0, 0.4);
+  /* width: 100%;
+  
   height: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; */
   .box {
+    position: fixed;
     width: 100%;
+    height: 100%;
     padding: 0px 60px;
-    .flex-box-mixins(column, center, center);
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
     .adClose {
       width: 100%;
       margin-top: 20px;
@@ -520,13 +531,12 @@ export default {
       }
     }
     .adImg {
-    .flex-box-mixins(column, center, center);
+      .flex-box-mixins(column, center, center);
       width: 100%;
-      height: 260px;
-      margin-top: 20px;
-      .img{
-         width: 100%;
-         height: 100%;
+      .img {
+        display: inline-block;
+        max-height: 100%;
+        max-width: 100%;
       }
     }
   }

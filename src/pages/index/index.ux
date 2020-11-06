@@ -169,12 +169,10 @@ export default {
     scene: 'signout',
     outAdData: '',
     outAdDialog: false,
+    navs: '',
   },
   onInit() {
-    
-    
     let _this = this;
-    console.log(_this.logined);
      _this.getToken();
     _this.getShortCut();
     _this.showContent = false;
@@ -221,6 +219,7 @@ export default {
           let data = JSON.parse(res.data);
           _this.menuList = data.flatAds;
           _this.floatAd = data.floatAd;
+          _this.navs = data.navs;
           _this.getAllAd("open");
         })
       }
@@ -231,6 +230,11 @@ export default {
     this.outAdDialog = true;
     this.getOutAd()
   },
+  onBackPress () {
+  // console.info(`触发：onBackPress`)
+  // true：表示自己处理；否则默认返回上一页
+  // return true
+},
   // 获取退出的广告
   getOutAd(){
    let para = new Object();
@@ -316,7 +320,12 @@ export default {
   },
   // 资讯跳转路由
   getRouterinfo() {
-    $utils.route2theUrl('pages/information');
+    if(this.navs.length == 1){
+       $utils.route2theUrl('pages/info-detail2', {nav: this.navs});
+    }else{
+        $utils.route2theUrl('pages/information' ,{nav: this.navs});
+    }
+    
   },
   getRouterCollect() {
     if (this.logined == true) {

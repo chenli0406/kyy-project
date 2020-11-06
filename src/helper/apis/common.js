@@ -58,4 +58,8 @@ export default {
   delFavorite(data ,op) {
     return $ajax.post(BaseUrl + '/api/favorite-del', data ,op)
   },
+  // 删除收藏
+  getHotWordList(data ,op) {
+    return $ajax.get(BaseUrl + '/api/hotword', data ,op)
+  },
 }

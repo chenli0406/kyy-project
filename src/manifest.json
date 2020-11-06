@@ -65,6 +65,9 @@
       "pages/info-detail": {
         "component": "index"
       },
+      "pages/info-detail2": {
+        "component": "index"
+      },
       "pages/history": {
         "component": "index"
       },
@@ -112,6 +115,10 @@
         "launchMode": "singleTask"
       },
       "pages/info-detail": {
+        "titleBarText": "",
+        "launchMode": "singleTask"
+      },
+      "pages/info-detail2": {
         "titleBarText": "",
         "launchMode": "singleTask"
       },
