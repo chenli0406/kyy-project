@@ -42,7 +42,8 @@
     {
       "name": "system.shortcut"
     },
-    {"name":"service.ad"}
+    {"name":"service.ad"},
+    { "name": "system.package" }
   ],
   "permissions": [
     {

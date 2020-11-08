@@ -339,9 +339,8 @@ export default {
   height: 100%;
 }
 .adimg-box {
-   width: 100%;
+  width: 100%;
   position: fixed;
-  margin: 0 auto;
   background-color: rgba(0, 0, 0, 0.4);
   height: 100%;
   display: flex;

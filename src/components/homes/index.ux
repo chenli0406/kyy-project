@@ -17,7 +17,7 @@
     </tabs>
       <!-- 广告 -->
     <div class="adimg-box" if="{{adDialog}}">
-      <div class="box">
+      <div class="box" @click="close">
         <div class="adClose" @click="closeDialog">
           <image class="c-img" src="../../assets/images/dialong.png"></image>
         </div>
@@ -36,6 +36,7 @@
 <script>
 import device from '@system.device';
 import router from '@system.router'
+import pkg from '@system.package'
 export default {
   props: [],
   data: {
@@ -130,11 +131,22 @@ export default {
   },
    // 广告跳转
   openUrl() {
-    this.getAllAd("click");
-    router.push({
-      uri: this.adData.link
+    let _this = this;
+    pkg.hasInstalled({
+      package: _this.adData.packageName,
+      success: function (data) {
+        if (data.result == true) {
+          router.push({
+            uri: _this.adData.link
+          })
+        }else{
+            router.push({
+            uri: _this.adData.fallbackLink
+          })
+        }
+         _this.getAllAd("click");
+      },
     })
-    // location.href = this.adData.link;
   },
    // 获取广告
   getAd() {
@@ -146,7 +158,6 @@ export default {
       if (data.code == 0) {
         if (data.ad) {
           this.adData = data.ad;
-          console.log(this.adData);
           this.adDialog = true;
           this.getAllAd("open");
         }
@@ -183,6 +194,9 @@ export default {
     }
     this.adDialog = false;
   },
+  close(){
+    this.adDialog = false;
+  }
 }
 </script>
 
@@ -190,20 +204,18 @@ export default {
 @import '../../assets/styles/index.less';
 
 .adimg-box {
-  /* width: 100%;
-  
+  width: 100%;
+  position: fixed;
+  margin: 0 auto;
+  background-color: rgba(0, 0, 0, 0.4);
   height: 100%;
   display: flex;
   justify-content: center;
-  align-items: center; */
+  align-items: center;
   .box {
-    position: fixed;
-    width: 100%;
-    height: 100%;
+     width: 100%;
     padding: 0px 60px;
-    flex-direction: column;
-    align-content: center;
-    justify-content: center;
+    .flex-box-mixins(column, center, center);
     .adClose {
       width: 100%;
       margin-top: 20px;
@@ -215,11 +227,10 @@ export default {
     }
     .adImg {
       .flex-box-mixins(column, center, center);
-      width: 100%;
+      width: 400px;
+      height: 400px;
       .img {
-        display: inline-block;
-        max-height: 100%;
-        max-width: 100%;
+        width: 100%;
       }
     }
   }

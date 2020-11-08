@@ -2,6 +2,11 @@
   <div class="page-wrapper">
     <search-input-bar onsearch="search"></search-input-bar>
     <div class="search-hot">
+      <div class="hot-wordlist" style="margin:10px 0"  if="{{hotWordList.length}}">
+        <text class="hotlist-item">热搜词:</text>
+        <text class="hotlist-item" for="hotWordList" @click="toHotWord($item)">{{$item}}</text>
+      </div>
+      <text if="{{hotList.length}}" style="margin:10px 0">搜索历史</text>
       <div class="hot-list">
         <text class="hot-item" for="hotList" @click="toSearch($item)">{{
           $item.title | ellipsis
@@ -28,13 +33,14 @@
 <script>
 import router from '@system.router'
 import ad from '@service.ad'
+import pkg from '@system.package'
 export default {
   private: {
     searchText: '',
     searchEngineId: '',
   },
   public: {
-    dialog: true,
+    dialog: false,
     hotList: [],
     category: '插屏',
     scene: '其它',
@@ -42,7 +48,8 @@ export default {
     header: {
       deviceId: "",
       token: "",
-    }
+    },
+    hotWordList: "",
   },
   onInit() {
     // 获取搜索引擎id
@@ -54,6 +61,7 @@ export default {
     $utils.getStorage('deviceId').then(value => {
       this.header.deviceId = value;
       this.getAd();
+      this.getHotWord();
     })
     // 判断是否登录状态
     $utils.getStorage('token').then(value => {
@@ -69,14 +77,21 @@ export default {
     })
   },
   search(info) {
-    this.searchText = info.detail
+    console.log(info.detail);
+    if(info.detail == "http://" || info.detail == "https://" ){
+        let searchUrl = this.searchEngineId[0].url;
+        $utils.route2theUrl('pages/search-detail', { searchText: searchUrl });
+    }else{
+       this.searchText = info.detail
+    }
+   
   },
   delHostList() {
     $utils.deleteStorage('searchHistory');
     this.hotList = [];
   },
   toSearch(val) {
-    $utils.route2theUrl('pages/search-detail', { searchText: val.url });
+     $utils.route2theUrl('pages/search-detail', { searchText: val.url });
     // let para = new Object();
     // para.keyword = val;
     // para.searchEngineId = this.searchEngineId[0].id;
@@ -91,6 +106,24 @@ export default {
     //   }
     // })
   },
+  toHotWord(val){
+    console.log(this.searchEngineId)
+    let searchUrl = this.searchEngineId[0].url;
+    let url = searchUrl.replace('%s',val);
+     $utils.route2theUrl('pages/search-detail', { searchText: url });
+  },
+  getHotWord(){
+    $apis.common.getHotWordList({}, this.header).then((res) => {
+      let data = JSON.parse(res.data);
+      if (data.code == 0) {
+         this.hotWordList = data.data;
+      } else {
+      prompt.showToast({
+          message: data.message
+        })
+      }
+    })
+  },
   // 获取广告
   getAd() {
     let para = new Object();
@@ -100,6 +133,7 @@ export default {
       let data = JSON.parse(res.data);
       if (data.code == 0) {
         if (data.ad) {
+          this.dialog = true;
           this.adData = data.ad;
           this.getAllAd("open");
         }
@@ -113,11 +147,22 @@ export default {
   },
   // 广告跳转
   openUrl() {
-    this.getAllAd("click");
-    router.push({
-      uri: this.adData.link
+    let _this = this;
+    pkg.hasInstalled({
+      package: _this.adData.packageName,
+      success: function (data) {
+        if (data.result == true) {
+          router.push({
+            uri: _this.adData.link
+          })
+        }else{
+            router.push({
+            uri: _this.adData.fallbackLink
+          })
+        }
+         _this.getAllAd("click");
+      },
     })
-    // location.href = this.adData.link;
   },
   // 广告点击，展示加载完请求的事件
   getAllAd(val) {
@@ -209,12 +254,20 @@ export default {
     }
     .adImg {
        .flex-box-mixins(column, center, center);
-       width: 100%;
+       width: 400px;
+       height: 400px;
+
       .img {
-        display: inline-block;
-        height: auto;
-        max-width: 100%;
+        width: 100%;
       }
+    }
+  }
+  .hot-wordlist{
+    width: 100%;
+    flex-wrap: wrap;
+    .hotlist-item{
+       height: 50px;
+       padding-right: 20px; 
     }
   }
 }

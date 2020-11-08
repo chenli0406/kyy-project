@@ -2,8 +2,7 @@
 <template>
   <div class="page-wrapper">
     <div class="ad-btn" @click="gotoAd">
-       <my-avatar src="{{ floatAd.picture}}" size="default"></my-avatar>
-      <!-- <image class="ad-img" src="{{ floatAd.picture}}"></image> -->
+      <my-avatar src="{{ floatAd.picture}}" size="default"></my-avatar>
     </div>
     <div class="reportBox" @click="getReport">
       <text style="color: #fff;">举报</text>
@@ -20,7 +19,7 @@
       </div>
     </div>
     <div class="menuBox">
-      <div for={{menuList}} class="menuList" @click="gotoUrl($item.link)">
+      <div for={{menuList}} class="menuList" @click="gotoUrl($item)">
         <div class="img-menu">
           <my-avatar src={{$item.picture}} size="default"></my-avatar>
         </div>
@@ -69,10 +68,9 @@
               <text class="login-title" else @click="login">点击登录</text>
               <text class="login-btn-title">欢迎使用XX浏览器</text>
             </div>
-            <text class="btn" if={{addFlag}} >已加入桌面</text>
-            <text class="btn" else   @click="addShortCut">加入桌面</text>
-            
-            
+            <text class="btn" if={{addFlag}}>已加入桌面</text>
+            <text class="btn" else @click="addShortCut">加入桌面</text>
+
           </div>
           <div class="menu">
             <div class="menu-item" @click="getRouter('dol')">
@@ -104,13 +102,13 @@
       </div>
     </div>
     <!-- 退出广告 -->
-     <div class="adimg-box" if="{{outAdDialog}}" onclick="stopPropagation()">
+    <div class="adimg-box" if="{{outAdDialog}}" onclick="stopPropagation()">
       <div class="box" style="background-color: #ffffff;width: 80%; border-radius: 40px; padding: 40px;">
         <div style="margin-bottom:20px;">
-          <text style="color:#000;font-size:34px;font-weight: 500;">您真的要退出吗</text>
+          <text style="color:#000;font-size:34px;font-weight: 500;">您真的要退出吗?</text>
         </div>
-        <div class="imgbox" style="margin-bottom:40px;" @click="getOutAdUrl">
-          <image class="img-box" src="{{outAdData.picture}}"></image>
+        <div class="imgbox" style="margin:30px 0px;" @click="getOutAdUrl">
+          <image style="width: 400px;" class="img-box" src="{{outAdData.picture}}"></image>
         </div>
         <div class="btn">
           <text style="color:#000" class="submit" @click="getExit">确定</text>
@@ -132,6 +130,7 @@ import prompt from '@system.prompt';
 import shortcut from '@system.shortcut';
 import storage from '@system.storage';
 import ad from '@service.ad'
+import pkg from '@system.package'
 export default {
   protected: {
     logined: false,
@@ -165,15 +164,15 @@ export default {
     },
     flag: false,
     addFlag: false,
-    category: 'default',
-    scene: 'signout',
+    category: '插屏',
+    scene: '其它',
     outAdData: '',
     outAdDialog: false,
     navs: '',
   },
   onInit() {
     let _this = this;
-     _this.getToken();
+    _this.getToken();
     _this.getShortCut();
     _this.showContent = false;
     //获取设备DeviceId
@@ -188,6 +187,12 @@ export default {
       fail: function (data, code) {
       }
     })
+  },
+  onShow() {
+      this.logined = this.logined
+      console.log(this.logined);
+      
+      this.getToken();
   },
   // 获取设备信息
   getLoad() {
@@ -225,25 +230,15 @@ export default {
       }
     })
   },
-  // 页面销毁
-  onDestroy() {
-    this.outAdDialog = true;
-    this.getOutAd()
-  },
-  onBackPress () {
-  // console.info(`触发：onBackPress`)
-  // true：表示自己处理；否则默认返回上一页
-  // return true
-},
   // 获取退出的广告
-  getOutAd(){
-   let para = new Object();
+  getOutAd() {
+    let para = new Object();
     para.category = this.category;
     para.scene = this.scene;
-    $apis.common.getAd(para,this.header).then((res) => {
+    $apis.common.getAd(para, this.header).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code == 0) {
-        this.outAdData= data.ad;
+        this.outAdData = data.ad;
         this.getAllAd("outOpen");
       } else {
         prompt.showToast({
@@ -252,24 +247,37 @@ export default {
       }
     })
   },
-  getLook(){
+  getLook() {
     this.outAdDialog = false;
   },
-  getExit(){
-   this.$app.exit();
+  getExit() {
+    this.$app.exit();
   },
-  getOutAdUrl(){
-    this.getAllAd("colose");
-    this.outAdDialog = false;
-    router.push({
-      uri: this.outAdData.link
+  getOutAdUrl() {
+    let _this = this;
+    pkg.hasInstalled({
+      package: _this.floatAd.packageName,
+      success: function (data) {
+        if (data.result == true) {
+          router.push({
+            uri: _this.outAdData.link
+          })
+        }else{
+            router.push({
+            uri: _this.outAdData.fallbackLink
+          })
+        }
+         _this.getAllAd("colose");
+         _this.outAdDialog = false;
+      },
     })
+   
     
   },
   // 判断是否加入桌面图标
- async getShortCut() {
-   let _this = this;
-   await shortcut.hasInstalled({
+  async getShortCut() {
+    let _this = this;
+    await shortcut.hasInstalled({
       success: function (data) {
         $utils.setStorage('addFlag', data);
         _this.addFlag = data;
@@ -277,8 +285,8 @@ export default {
     })
   },
   // 判断是否登录状态
-  async getToken(){ 
-   await $utils.getStorage('token').then(value => {
+  async getToken() {
+    await $utils.getStorage('token').then(value => {
       this.header.token = value;
       this.logined = true;
     })
@@ -291,10 +299,10 @@ export default {
     await storage.get({
       key: 'searchEngineId',
       success: function (data) {
-        if(data){
-           _this.flag = true;
-        }else{
-         _this.getSearchList();
+        if (data) {
+          _this.flag = true;
+        } else {
+          _this.getSearchList();
         }
       },
     })
@@ -305,7 +313,6 @@ export default {
   },
   // 关闭底部弹窗
   closeBox() {
-
     this.showContent = false;
   },
   closeFeedback() {
@@ -320,12 +327,12 @@ export default {
   },
   // 资讯跳转路由
   getRouterinfo() {
-    if(this.navs.length == 1){
-       $utils.route2theUrl('pages/info-detail2', {nav: this.navs});
-    }else{
-        $utils.route2theUrl('pages/information' ,{nav: this.navs});
+    if (this.navs.length == 1) {
+      $utils.route2theUrl('pages/info-detail2', { nav: this.navs });
+    } else {
+      $utils.route2theUrl('pages/information', { nav: this.navs });
     }
-    
+
   },
   getRouterCollect() {
     if (this.logined == true) {
@@ -375,11 +382,12 @@ export default {
   onCancel() { },
   onBackPress() {
     this.showContent = false;
-    console.info(`触发：onBackPress`)
+    this.outAdDialog = true;
+    this.getOutAd();
+    return true;
   },
   onDestroy() {
     this.showContent = false;
-    console.info(`触发：onDestroy`);
   },
   addMenu() {
     if (this.logined == true) {
@@ -396,12 +404,20 @@ export default {
   },
   // 跳转
   gotoUrl(val) {
-    // webview.loadUrl({
-    //   url: val,
-    // })
-    // location.href = val;
-    router.push({
-      uri: val
+    let _this = this;
+    pkg.hasInstalled({
+      package: val.packageName,
+      success: function (data) {
+        if (data.result == true) {
+          router.push({
+            uri: val.link
+          })
+        }else{
+            router.push({
+            uri: val.fallbackLink
+          })
+        }
+      },
     })
   },
   // 阻止冒泡
@@ -427,28 +443,39 @@ export default {
   },
   // 广告跳转
   gotoAd() {
-    this.getAllAd("click");
-    router.push({
-      uri: this.floatAd.link
+    let _this = this;
+    pkg.hasInstalled({
+      package: _this.floatAd.packageName,
+      success: function (data) {
+        if (data.result == true) {
+          router.push({
+            uri: _this.floatAd.link
+          })
+        }else{
+            router.push({
+            uri: _this.floatAd.fallbackLink
+          })
+        }
+         _this.getAllAd("click");
+      },
     })
-    // location.href = this.floatAd.link;
   },
   // 广告点击，展示加载完请求的事件
   getAllAd(val) {
     let para = new Object();
-    
+
     if (val == "open") {
       para.opt = 0;
       para.id = this.floatAd.id;
     } else if (val == "click") {
       para.opt = 1;
       para.id = this.floatAd.id;
-    }else if(val == "outOpen"){
-       para.opt =0;
-       para.id = this.outAdData.id;
-    }else if( val == "colose"){
-       para.opt =1;
-       para.id = this.outAdData.id;
+    } else if (val == "outOpen") {
+      para.opt = 0;
+      para.id = this.outAdData.id;
+    } else if (val == "colose") {
+      para.opt = 1;
+      para.id = this.outAdData.id;
     }
     $apis.common.getAdOpt(para, this.header).then((res) => {
       let data = JSON.parse(res.data);
@@ -748,7 +775,7 @@ export default {
     .adClose {
       width: 100%;
       margin-top: 20px;
-      
+
       .flex-box-mixins(column, flex-end, flex-end);
       .close {
         width: 50px;
@@ -765,24 +792,24 @@ export default {
         height: 100%;
       }
     }
-     .submit {
-    width: 45%;
-    height: 80px;
-    background-color: #f7f8fb;
-    border-radius: 50px;
-    padding: 0 30px;
-    margin: 0px 20px;
-    text-align: center;
-  }
-  .cancel {
-    width: 45%;
-    height: 80px;
-    margin: 0px 20px;
-    background-color: #567aff;
-    border-radius: 50px;
-    padding: 0 30px;
-    text-align: center;
-  }
+    .submit {
+      width: 45%;
+      height: 80px;
+      background-color: #f7f8fb;
+      border-radius: 50px;
+      padding: 0 30px;
+      margin: 0px 20px;
+      text-align: center;
+    }
+    .cancel {
+      width: 45%;
+      height: 80px;
+      margin: 0px 20px;
+      background-color: #567aff;
+      border-radius: 50px;
+      padding: 0 30px;
+      text-align: center;
+    }
   }
 }
 </style>

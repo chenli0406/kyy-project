@@ -32,7 +32,7 @@ export default {
     header: {
       deviceId: "",
       token: "",
-    }
+    },
   },
   onInit() {
     // 获取搜索引擎id
@@ -51,7 +51,6 @@ export default {
      // 获取设备id
     $utils.getStorage('deviceId').then(value => {
       this.header.deviceId = value;
-      this.getHotWord();
     })
     // 判断是否登录状态
     $utils.getStorage('token').then(value => {
@@ -61,25 +60,7 @@ export default {
   onReady() {
     this.$element('search-input').focus({ focus: true })
   },
-  getHotWord(){
-    console.log("11")
-    $apis.common.getHotWordList({}, this.header).then((res) => {
-      let data = JSON.parse(res.data);
-      if (data.code == 0) {
-          console.log(data);
-      } else {
-      prompt.showToast({
-          message: data.message
-        })
-      }
-    })
-    // $apis.common.getHotWord({}, this.header).then((res) =>{
-    //    let data = JSON.parse(res.data);
-    //    if(data.code == 0){
-    //      console.log(data);
-    //    }
-    // })
-  },
+ 
   search(e) {
     this.$emit('search', e.value)
   },

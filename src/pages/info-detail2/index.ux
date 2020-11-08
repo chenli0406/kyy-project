@@ -41,8 +41,8 @@
         </div>
       </div>
     </div>
-    <div class="adimg-box" if="{{adDialog}}" onclick="stopPropagation()">
-      <div class="box">
+    <div class="adimg-box" if="{{adDialog}}" @click="closeAd">
+      <div class="box" >
         <div class="adClose" @click="closeDialog">
           <image class="close" src="../../assets/images/dialong.png"></image>
         </div>
@@ -64,10 +64,10 @@ export default {
     adDialog: false,
     id: "",
     articleData: "",
-    category: 'float',
-    scene: 'search-result',
+    category: '插屏',
+    scene: '其它',
     adData: '',
-    title: '资讯详情',
+    title: '资讯列表',
     icon: require('../../assets/images/more.png'),
     historyData: [],
     header: {
@@ -88,7 +88,7 @@ export default {
     $utils.getStorage('deviceId').then(value => {
       this.header.deviceId = value;
       //  this.queryActicle();
-      //  this.getAd();
+       this.getAd();
     })
     // 判断是否登录状态
     $utils.getStorage('token').then(value => {
@@ -139,8 +139,8 @@ export default {
   getHome() {
     $utils.route2theUrl('pages/index')
   },
-  dialog() {
-    this.adDialog = true;
+  closeAd() {
+    this.adDialog = false;
   },
   closeDialog() {
     this.adDialog = false;
@@ -179,6 +179,7 @@ export default {
     $apis.common.getAd(para, this.header).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code == 0) {
+        this.adDialog = true;
         this.adData = data.ad;
         this.getAllAd("open");
       } else {
@@ -226,7 +227,6 @@ export default {
   font-size: 26px;
   .img {
     width: 100%;
-    height: 300px;
     align-content: center;
   }
   padding: 20px 30px;
@@ -344,7 +344,7 @@ export default {
   height: 100%;
 }
 .adimg-box {
-   width: 100%;
+  width: 100%;
   position: fixed;
   margin: 0 auto;
   background-color: rgba(0, 0, 0, 0.4);
@@ -367,12 +367,11 @@ export default {
     }
     .adImg {
      .flex-box-mixins(column, center, center);
-      width: 100%;
-      height: 260px;
+      width: 400px;
+      height: 400px;
       margin-top: 20px;
       .img{
          width: 100%;
-         height: 100%;
       }
     }
   }
