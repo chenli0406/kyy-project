@@ -173,7 +173,7 @@ export default {
     $utils.deleteStorage('token');
     this.dialog = false;
     this.logined = false;
-    $utils.route2theUrl('pages/index', { logined: false })
+    $utils.route2theUrl('pages/index', { logined: this.logined })
   },
   cancelOut() {
     this.dialog = false;

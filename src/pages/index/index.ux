@@ -112,7 +112,7 @@
         </div>
         <div class="btn">
           <text style="color:#000" class="submit" @click="getExit">确定</text>
-          <text style="color:#fff" class="cancel" @click="getLook">去看看</text>
+          <text style="color:#fff" class="cancel" @click="getOutAdUrl">去看看</text>
         </div>
       </div>
     </div>
@@ -171,11 +171,11 @@ export default {
     navs: '',
   },
   onInit() {
+    this.logined = this.logined;
     let _this = this;
     _this.getToken();
     _this.getShortCut();
     _this.showContent = false;
-    _this.logined = _this.logined;
     //获取设备DeviceId
     device.getDeviceId({
       success: function (data) {
@@ -190,7 +190,9 @@ export default {
     })
   },
   onShow() {
-      this.logined = this.logined
+    if(this.logined == "false"){
+       this.logined  = false
+    }  
   },
   // 获取设备信息
   getLoad() {

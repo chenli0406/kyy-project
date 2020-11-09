@@ -7,9 +7,9 @@
       icon="{{icon}}"
       onget-click="getClick"
     ></title-bar>
-    <!-- <div class="ad-btn" @click="dialog">
-        <my-avatar src="{{adData.picture}}" size="default"></my-avatar>
-    </div> -->
+    <div if="{{suspensionDialog}}" class="ad-btn"  @click="getSuspension">
+        <my-avatar src="{{suspensionData.picture}}" size="default"></my-avatar>
+    </div>
     <div style="margin-top:100px">
       <text style="color:#000" class="title"></text>
     </div>
@@ -76,11 +76,12 @@ export default {
       token: "",
     },
     href: "",
+    suspensionDialog: false,
+    suspensionData: "",
   },
   onInit() {
     let url = JSON.parse(this.nav)
     this.websrc = url[0].url;
-    console.log(this.nav);
     var page = router.getState()
     this.href= this.$app.$def.appData.BaseUrl+page.path +'/'+ this.id;
     // this.getHistoy();
@@ -88,6 +89,7 @@ export default {
     $utils.getStorage('deviceId').then(value => {
       this.header.deviceId = value;
       //  this.queryActicle();
+      this.getSuspensionAd();
       let timer = setTimeout(() =>{
          this.getAd();
       }, 4 * 1000)
@@ -231,7 +233,64 @@ export default {
   },
   getClick() {
     this.showContent = true;
-  }
+  },
+   // 获取悬浮广告
+  getSuspensionAd(){
+     let para = new Object();
+    para.category = '浮窗';
+    para.scene = '其它';
+    $apis.common.getAd(para, this.header).then((res) => {
+      let data = JSON.parse(res.data);
+      if (data.code == 0) {
+        if (data.ad) {
+          this.suspensionDialog = true;
+          this.suspensionData = data.ad;
+          this.clickSuspension("open");
+        }
+      } else {
+        prompt.showToast({
+          message: data.message
+        })
+      }
+    })
+  },
+  // 悬浮广告跳转
+  getSuspension(){
+    let _this = this;
+    pkg.hasInstalled({
+      package: _this.suspensionData.packageName,
+      success: function (data) {
+        if (data.result == true) {
+          router.push({
+            uri: _this.suspensionData.link
+          })
+        } else {
+          router.push({
+            uri: _this.suspensionData.fallbackLink
+          })
+        }
+        _this.clickSuspension("click");
+      },
+    })
+  },
+  // 悬浮广告的点击
+  clickSuspension(val) {
+    let para = new Object();
+    para.id = this.suspensionData.id;
+    if (val == "open") {
+      para.opt = 0;
+    } else if (val == "click") {
+      para.opt = 1;
+    }
+    $apis.common.getAdOpt(para, this.header).then((res) => {
+      let data = JSON.parse(res.data);
+      if (data.code != 0) {
+        prompt.showToast({
+          message: data.message
+        })
+      }
+    })
+  },
 }
 </script>
 
