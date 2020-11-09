@@ -1,0 +1,21 @@
+<import name="my-avatar" src="apex-ui/components/avatar/index"></import>
+<template>
+  <div>
+      <web>
+          
+      </web>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+    data: {
+    },
+    onReady() {
+    },
+}
+</script>
+
+<style>
+</style>

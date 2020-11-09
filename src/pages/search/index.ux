@@ -60,6 +60,7 @@ export default {
     // 获取设备id
     $utils.getStorage('deviceId').then(value => {
       this.header.deviceId = value;
+
       this.getAd();
       this.getHotWord();
     })

@@ -9,8 +9,8 @@
         </div>
       </div>
     </div>
-    <div class="ad-btn" @click="dialog">
-       <my-avatar src="{{adData.picture}}" size="default"></my-avatar>
+    <div if="{{suspensionDialog}}" class="ad-btn" @click="getSuspension">
+       <my-avatar src="{{suspensionData.picture}}" size="default"></my-avatar>
     </div>
     <div class="content">
       <web
@@ -86,7 +86,7 @@
       </div>
     </div>
     <!-- 广告 -->
-    <div class="adimg-box" if="{{adDialog}}">
+    <div class="adimg-box" if="{{adDialog}}" @click="closeAd">
       <div class="box">
         <div class="adClose" @click="closeDialog">
           <image class="c-img" src="../../assets/images/dialong.png"></image>
@@ -112,6 +112,7 @@ export default {
     logined: false,
     feedbackDailog: false,
     adDialog: false,
+    suspensionDialog: false,
     defaultAvatar: require('../../assets/images/index/default-avatar.png'),
     searchText: '',
     showContent: false,
@@ -124,13 +125,18 @@ export default {
     header: {
       deviceId: "",
       token: "",
-    }
+    },
+    suspensionData: "",
   },
   onInit() {
     // 获取设备id
     $utils.getStorage('deviceId').then(value => {
       this.header.deviceId = value;
-      this.getAd();
+      this.getSuspensionAd();
+      let timer = setTimeout(() =>{
+          this.getAd();
+      }, 4 * 1000)
+      
     })
     // 判断是否登录状态
     $utils.getStorage('token').then(value => {
@@ -149,15 +155,27 @@ export default {
     this.showContent = false;
     this.websrc = this.searchText;
   },
+  
   // 广告跳转
   openUrl() {
-
-    this.getAllAd("click");
-    router.push({
-      uri: this.adData.link
+    let _this = this;
+    pkg.hasInstalled({
+      package: _this.adData.packageName,
+      success: function (data) {
+        if (data.result == true) {
+          router.push({
+            uri: _this.adData.link
+          })
+        } else {
+          router.push({
+            uri: _this.adData.fallbackLink
+          })
+        }
+        _this.getAllAd("click");
+      },
     })
   },
-  // 获取广告
+  // 获取插屏广告
   getAd() {
     let para = new Object();
     para.category = this.category;
@@ -171,6 +189,63 @@ export default {
           this.getAllAd("open");
         }
       } else {
+        prompt.showToast({
+          message: data.message
+        })
+      }
+    })
+  },
+  // 获取悬浮广告
+  getSuspensionAd(){
+     let para = new Object();
+    para.category = '浮窗';
+    para.scene = '其它';
+    $apis.common.getAd(para, this.header).then((res) => {
+      let data = JSON.parse(res.data);
+      if (data.code == 0) {
+        if (data.ad) {
+          this.suspensionDialog = true;
+          this.suspensionData = data.ad;
+          this.clickSuspension("open");
+        }
+      } else {
+        prompt.showToast({
+          message: data.message
+        })
+      }
+    })
+  },
+  // 悬浮广告跳转
+  getSuspension(){
+    let _this = this;
+    pkg.hasInstalled({
+      package: _this.suspensionData.packageName,
+      success: function (data) {
+        if (data.result == true) {
+          router.push({
+            uri: _this.suspensionData.link
+          })
+        } else {
+          router.push({
+            uri: _this.suspensionData.fallbackLink
+          })
+        }
+        _this.clickSuspension("click");
+      },
+    })
+  },
+  // 悬浮广告的点击
+  clickSuspension(val) {
+    let para = new Object();
+    para.id = this.suspensionData.id;
+    if (val == "open") {
+      para.opt = 0;
+    } else if (val == "click") {
+      para.opt = 1;
+    }
+    $apis.common.getAdOpt(para, this.header).then((res) => {
+      let data = JSON.parse(res.data);
+      if (data.code != 0) {
         prompt.showToast({
           message: data.message
         })
@@ -289,6 +364,9 @@ export default {
       message: "刷新成功"
     });
     this.showContent = false;
+  },
+  closeAd(){
+    this.adDialog = false;
   }
 
 }

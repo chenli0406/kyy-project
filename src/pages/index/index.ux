@@ -175,6 +175,7 @@ export default {
     _this.getToken();
     _this.getShortCut();
     _this.showContent = false;
+    _this.logined = _this.logined;
     //获取设备DeviceId
     device.getDeviceId({
       success: function (data) {
@@ -190,9 +191,6 @@ export default {
   },
   onShow() {
       this.logined = this.logined
-      console.log(this.logined);
-      
-      this.getToken();
   },
   // 获取设备信息
   getLoad() {

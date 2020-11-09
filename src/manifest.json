@@ -43,7 +43,8 @@
       "name": "system.shortcut"
     },
     {"name":"service.ad"},
-    { "name": "system.package" }
+    { "name": "system.package" },
+    { "name": "system.media" }
   ],
   "permissions": [
     {
@@ -94,6 +95,9 @@
         "component": "index"
       },
       "pages/addMenu": {
+        "component": "index"
+      },
+      "pages/aa": {
         "component": "index"
       }
     }

@@ -1,3 +1,4 @@
+<import name="my-avatar" src="apex-ui/components/avatar/index"></import>
 <template>
   <div class="page-container">
     <search-bar></search-bar>
@@ -15,9 +16,12 @@
         </div>
       </tab-content>
     </tabs>
-      <!-- 广告 -->
-    <div class="adimg-box" if="{{adDialog}}">
-      <div class="box" @click="close">
+    <div if="{{suspensionDialog}}" class="ad-btn" @click="getSuspension">
+       <my-avatar src="{{suspensionData.picture}}" size="default"></my-avatar>
+    </div>
+    <!-- 广告 -->
+    <div class="adimg-box" if="{{adDialog}}" @click="close">
+      <div class="box">
         <div class="adClose" @click="closeDialog">
           <image class="c-img" src="../../assets/images/dialong.png"></image>
         </div>
@@ -40,6 +44,7 @@ import pkg from '@system.package'
 export default {
   props: [],
   data: {
+    suspensionDialog: false,
     tabList: [],
     selectedTab: 0,
     category: "",
@@ -70,11 +75,12 @@ export default {
       screenHeight: 0
     },
     packages: [],
-    navs:[],
+    navs: [],
     category: '插屏',
     scene: '其它',
     adData: '',
     adDialog: false,
+    suspensionData: "",
   },
   onInit() {
     // 获取设备id
@@ -82,7 +88,10 @@ export default {
       this.header.deviceId = value;
       this.device.id = value;
       this.getLoad();
-      this.getAd();
+      this.getSuspensionAd();
+      let timer = setTimeout(() => {
+        this.getAd();
+      }, 4 * 1000)
     })
     // 判断是否登录状态
     $utils.getStorage('token').then(value => {
@@ -118,8 +127,8 @@ export default {
         $apis.common.getLaunch(para, _this.header).then((res) => {
           let data = JSON.parse(res.data);
           _this.tabList = data.navs;
-          for(let key of _this.tabList){
-              _this.navs.push(key.title)
+          for (let key of _this.tabList) {
+            _this.navs.push(key.title)
           }
         })
       }
@@ -129,7 +138,7 @@ export default {
     let index = e.index || 0
     this.selectedTab = index;
   },
-   // 广告跳转
+  // 广告跳转
   openUrl() {
     let _this = this;
     pkg.hasInstalled({
@@ -139,16 +148,16 @@ export default {
           router.push({
             uri: _this.adData.link
           })
-        }else{
-            router.push({
+        } else {
+          router.push({
             uri: _this.adData.fallbackLink
           })
         }
-         _this.getAllAd("click");
+        _this.getAllAd("click");
       },
     })
   },
-   // 获取广告
+  // 获取广告
   getAd() {
     let para = new Object();
     para.category = this.category;
@@ -194,15 +203,84 @@ export default {
     }
     this.adDialog = false;
   },
-  close(){
+  close() {
     this.adDialog = false;
-  }
+  },
+  getSuspensionAd(){
+     let para = new Object();
+    para.category = '浮窗';
+    para.scene = '其它';
+    $apis.common.getAd(para, this.header).then((res) => {
+      let data = JSON.parse(res.data);
+      if (data.code == 0) {
+        if (data.ad) {
+          this.suspensionDialog = true;
+          this.suspensionData = data.ad;
+          console.log(this.suspensionData);
+          this.clickSuspension("open");
+        }
+      } else {
+        prompt.showToast({
+          message: data.message
+        })
+      }
+    })
+  },
+  // 悬浮广告跳转
+  getSuspension(){
+    let _this = this;
+    pkg.hasInstalled({
+      package: _this.suspensionData.packageName,
+      success: function (data) {
+        if (data.result == true) {
+          router.push({
+            uri: _this.suspensionData.link
+          })
+        } else {
+          router.push({
+            uri: _this.suspensionData.fallbackLink
+          })
+        }
+        _this.clickSuspension("click");
+      },
+    })
+  },
+  // 悬浮广告的点击
+  clickSuspension(val) {
+    let para = new Object();
+    para.id = this.suspensionData.id;
+    if (val == "open") {
+      para.opt = 0;
+    } else if (val == "click") {
+      para.opt = 1;
+    }
+    $apis.common.getAdOpt(para, this.header).then((res) => {
+      let data = JSON.parse(res.data);
+      if (data.code != 0) {
+        prompt.showToast({
+          message: data.message
+        })
+      }
+    })
+  },
 }
 </script>
 
 <style lang="less">
 @import '../../assets/styles/index.less';
-
+.ad-btn {
+    width: 110px;
+    height: 110px;
+    position: fixed;
+    top: 200px;
+    right: 30px;
+    .ad-img {
+      width: 100px;
+      height: 100px;
+      align-content: center;
+      border-radius: 50%;
+    }
+  }
 .adimg-box {
   width: 100%;
   position: fixed;
@@ -213,7 +291,7 @@ export default {
   justify-content: center;
   align-items: center;
   .box {
-     width: 100%;
+    width: 100%;
     padding: 0px 60px;
     .flex-box-mixins(column, center, center);
     .adClose {

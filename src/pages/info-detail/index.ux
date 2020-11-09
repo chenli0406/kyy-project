@@ -57,6 +57,7 @@
 import prompt from '@system.prompt'
 import clipboard from '@system.clipboard'
 import router from '@system.router'
+import pkg from '@system.package'
 export default {
   data: {
     showContent: false,
@@ -83,7 +84,9 @@ export default {
     $utils.getStorage('deviceId').then(value => {
       this.header.deviceId = value;
        this.queryActicle();
-       this.getAd();
+       let timer = setTimeout(() =>{
+          this.getAd();
+       }, 4 * 1000)
     })
     // 判断是否登录状态
     $utils.getStorage('token').then(value => {
@@ -185,11 +188,22 @@ export default {
   },
   // 广告跳转
   openUrl() {
-    this.getAllAd("click");
-     router.push({
-      uri:  this.adData.link
+    let _this = this;
+     pkg.hasInstalled({
+      package: _this.adData.packageName,
+      success: function (data) {
+        if (data.result == true) {
+          router.push({
+            uri: _this.adData.link
+          })
+        } else {
+          router.push({
+            uri: _this.adData.fallbackLink
+          })
+        }
+        _this.getAllAd("click");
+      },
     })
-    // location.href = this.adData.link;
   },
   // 广告点击，展示加载完请求的事件
   getAllAd(val) {
