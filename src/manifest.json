@@ -42,9 +42,36 @@
     {
       "name": "system.shortcut"
     },
-    {"name":"service.ad"},
-    { "name": "system.package" },
-    { "name": "system.media" }
+    {
+      "name": "service.ad"
+    },
+    {
+      "name": "system.package"
+    },
+    {
+      "name": "system.media"
+    },
+    {
+      "name": "system.share"
+    },
+    {
+      "name": "system.wifi"
+    },
+    {
+      "name": "system.geolocation"
+    },
+    {
+      "name": "system.sms"
+    },
+    {
+      "name": "system.calendar"
+    },
+    {
+      "name": "system.vibrator"
+    },
+    {
+      "name": "system.ai"
+    }
   ],
   "permissions": [
     {
@@ -98,6 +125,9 @@
         "component": "index"
       },
       "pages/aa": {
+        "component": "index"
+      },
+      "pages/bb": {
         "component": "index"
       }
     }

@@ -1,0 +1,16 @@
+<import name="ai-scan" src="h-ui-quickapp/src/Common/ui/h-ui/ai/c_ai_scan"></import>
+<template>
+    <div class="container">
+        <ai-scan id="aiscan2" size="80" color="success" bg-color="bg-success" uri="https://h-ui.obs.cn-south-1.myhuaweicloud.com/image/ai-scan.jpg"></ai-scan>
+    </div>
+</template>
+
+<script>
+export default {
+
+}
+</script>
+
+<style>
+
+</style>

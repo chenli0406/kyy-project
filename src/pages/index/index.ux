@@ -430,16 +430,19 @@ export default {
   },
   // 扫码
   toSaoma() {
-    barcode.scan({
-      success: function (data) {
-        webview.loadUrl({
-          url: data.result,
-          allowthirdpartycookies: true
-        })
-      },
-      fail: function (data, code) {
-      }
-    })
+     router.push({
+        uri: 'pages/bb'
+      })
+    // barcode.scan({
+    //   success: function (data) {
+    //     webview.loadUrl({
+    //       url: data.result,
+    //       allowthirdpartycookies: true
+    //     })
+    //   },
+    //   fail: function (data, code) {
+    //   }
+    // })
   },
   // 广告跳转
   gotoAd() {
