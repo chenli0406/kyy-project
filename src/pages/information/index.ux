@@ -20,7 +20,7 @@
       </div>
     </div>
     <!--弹窗登录 -->
-    <div class="test" if={{showContent}} onclick="stopPropagation()">
+    <div class="test" if="{{showContent}}" onclick="stopPropagation()">
       <div class="maskBox" @click="closeBox"></div>
       <div class="model translateYByEntry">
         <div class="popupBottom">
@@ -29,19 +29,19 @@
               <image src="{{defaultAvatar}}"></image>
             </div>
             <div class="login-btn">
-              <text class="login-title" if={{logined}}>已登录</text>
-              <text class="login-title" else  @click="login">点击登录</text>
+              <text class="login-title" if="{{logined}}">已登录</text>
+              <text class="login-title" else @click="login">点击登录</text>
               <text class="login-btn-title">欢迎使用XX浏览器</text>
             </div>
-            <text class="btn" if={{addFlag}} >已加入桌面</text>
-            <text class="btn" else   @click="addShortCut">加入桌面</text>
+            <text class="btn" if="{{addFlag}}">已加入桌面</text>
+            <text class="btn" else @click="addShortCut">加入桌面</text>
           </div>
           <div class="menu">
             <div class="menu-item" @click="getRouter('dol')">
               <image src="../../assets/images/index/download.png"> </image>
               <text>下载管理</text>
             </div>
-            <div class="menu-item" @click="getRouter('collection')">
+            <div class="menu-item" @click="addCollection">
               <image src="../../assets/images/index/collect-1.png"></image>
               <text>添加收藏</text>
             </div>
@@ -66,7 +66,7 @@
       </div>
     </div>
     <!-- 反馈 -->
-    <feedback if={{feedbackDailog}}  @close="closeFeedback"></feedback>
+    <feedback if="{{feedbackDailog}}" @close="closeFeedback"></feedback>
   </div>
 </template>
 <import  name="feedback" src="../../components/feedback/index"></import>
@@ -82,10 +82,23 @@ export default {
     feedbackDailog: false,
     addFlag: false,
     defaultAvatar: require('../../assets/images/index/default-avatar.png'),
-    navs:""
+    navs: "",
+    addCollection: "",
+    header: {
+      deviceId: "",
+      token: "",
+    },
+
   },
   onInit() {
     this.showContent = false;
+    $utils.getStorage('deviceId').then(value => {
+      this.header.deviceId = value;
+    })
+    // 判断是否登录状态
+    $utils.getStorage('token').then(value => {
+      this.header.token = value;
+    })
   },
   onReady() {
     this.navs = this.nav;
@@ -96,17 +109,17 @@ export default {
     // })
     // 是否加入桌面图标
     $utils.getStorage('addFlag').then(value => {
-      if(JSON.parse(value) ==true ){
-         this.addFlag = true;
-      }else{
-         this.addFlag = false;
+      if (JSON.parse(value) == true) {
+        this.addFlag = true;
+      } else {
+        this.addFlag = false;
       }
-     
+
     })
   },
-   // 判断是否登录状态
-  async getToken(){ 
-   await $utils.getStorage('token').then(value => {
+  // 判断是否登录状态
+  async getToken() {
+    await $utils.getStorage('token').then(value => {
       this.logined = true;
     })
   },
@@ -118,10 +131,10 @@ export default {
   closeBox() {
     this.showContent = false;
   },
-  closeFeedback(){
-     this.feedbackDailog = false;
+  closeFeedback() {
+    this.feedbackDailog = false;
   },
-  openDialog(){
+  openDialog() {
     this.showContent = false;
     this.feedbackDailog = true;
   },
@@ -137,15 +150,9 @@ export default {
     return false;
   },
   getRouterCollect() {
-    if(this.logined == true){
-        router.push({
-        uri: 'pages/collection'
-      })
-    }else{
-      //  router.push({
-      //   uri: 'pages/login'
-      // })
-    }
+    router.push({
+      uri: 'pages/collection'
+    })
   },
   // 菜单跳转
   getRouter(type) {
@@ -153,13 +160,6 @@ export default {
     switch (type) {
       case 'dol':
         $utils.route2theUrl('pages/download');
-        break;
-      case 'collection':
-           if(this.logined == true){
-               $utils.route2theUrl('pages/collection')
-           }else{
-            //  $utils.route2theUrl('pages/login')
-           }
         break;
       case 'history':
         $utils.route2theUrl('pages/history')
@@ -200,7 +200,30 @@ export default {
       fail: function (errmsg, errcode) {
       }
     })
-  }
+  },
+  // 添加收藏
+  addCollection() {
+    $utils.getStorage('addCollection').then(value => {
+      this.addCollection = JSON.parse(value);
+      let para = new Object();
+      para.title = this.addCollection.title;
+      para.url = this.addCollection.url;
+      $apis.common.addFavorite(para, this.header).then((res) => {
+        let data = JSON.parse(res.data);
+        if (data.code == 0) {
+          prompt.showToast({
+            message: '添加成功'
+          });
+        } else {
+          prompt.showToast({
+            message: data.message
+          })
+        }
+      
+      })
+    })
+   this.showContent = false;
+  },
 }
 </script>
 
@@ -228,10 +251,10 @@ export default {
       align-items: center;
       justify-content: center;
       image {
-       /* width: 45px;
+        /* width: 45px;
        height: 100%; */
-      margin: 0px 50px;
-    }
+        margin: 0px 50px;
+      }
     }
   }
 }
@@ -244,7 +267,7 @@ export default {
     justify-content: space-between;
     align-items: center;
     flex-direction: row;
-     padding: 40px 40px 20px 0;
+    padding: 40px 40px 20px 0;
     margin: 0px 30px;
     .avatar-img {
       width: 120px;

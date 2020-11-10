@@ -5,7 +5,7 @@
     <div class="title-bar">
       <div class="search-box">
         <div class="search">
-          <input type="text" id="search-input" class="search-input" value="{{searchText}}" />
+          <input type="text" id="search-input" class="search-input" value="{{titleName}}" />
         </div>
       </div>
     </div>
@@ -61,7 +61,7 @@
               <image src="../../assets/images/index/download.png"></image>
               <text>下载管理</text>
             </div>
-            <div class="menu-item" @click="getRouter('collection')">
+            <div class="menu-item" @click="addCollection">
               <image src="../../assets/images/index/collect-1.png"></image>
               <text>添加收藏</text>
             </div>
@@ -121,6 +121,7 @@ export default {
     scene: '其它',
     adData: '',
     websrc: '',
+    titleName: '',
     addFlag: false,
     header: {
       deviceId: "",
@@ -135,7 +136,7 @@ export default {
       this.getSuspensionAd();
       let timer = setTimeout(() =>{
           this.getAd();
-      }, 4 * 1000)
+      }, 3 * 1000)
       
     })
     // 判断是否登录状态
@@ -154,6 +155,7 @@ export default {
     })
     this.showContent = false;
     this.websrc = this.searchText;
+    this.titleName = this.title;
   },
   
   // 广告跳转
@@ -300,13 +302,6 @@ export default {
       case 'dol':
         $utils.route2theUrl('pages/download')
         break;
-      case 'collection':
-        if (this.logined == true) {
-          $utils.route2theUrl('pages/collection')
-        } else {
-          // $utils.route2theUrl('pages/login')
-        }
-        break;
       case 'history':
         $utils.route2theUrl('pages/history')
         break;
@@ -316,6 +311,25 @@ export default {
       default:
         break;
     }
+  },
+  // 添加收藏
+  addCollection(){
+    let para = new Object();
+    para.title = this.titleName;
+    para.url = this.searchText;
+    $apis.common.addFavorite(para, this.header).then((res) => {
+      let data = JSON.parse(res.data);
+      if (data.code == 0) {
+        prompt.showToast({
+          message: '添加成功'
+        });
+      } else {
+        prompt.showToast({
+          message: data.message
+        })
+      }
+      this.showContent = false;
+    })
   },
   // 登录
   login() {
@@ -330,15 +344,9 @@ export default {
     });
   },
   getCollect() {
-    if (this.logined == true) {
-      router.push({
+    router.push({
         uri: 'pages/collection'
-      })
-    } else {
-      // router.push({
-      //   uri: 'pages/login'
-      // })
-    }
+    })
   },
   goBack() {
     router.back()

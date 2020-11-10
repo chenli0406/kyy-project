@@ -86,7 +86,7 @@ export default {
        this.queryActicle();
        let timer = setTimeout(() =>{
           this.getAd();
-       }, 4 * 1000)
+       }, 3 * 1000)
     })
     // 判断是否登录状态
     $utils.getStorage('token').then(value => {

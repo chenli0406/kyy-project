@@ -82,7 +82,7 @@ export default {
       let data = JSON.parse(res.data);
       if (data.code == 0) {
         this.addHistoryData(e.value, url );
-        $utils.route2theUrl('pages/search-detail',{searchText: url});
+        $utils.route2theUrl('pages/search-detail',{searchText: url, title : e.value});
       } else {
       prompt.showToast({
           message: data.message

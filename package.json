@@ -2,7 +2,7 @@
   "name": "kyy",
   "version": "1.0.0",
   "subversion": {
-    "toolkit": "0.4.2"
+    "toolkit": "0.2.2"
   },
   "description": "浏览器",
   "scripts": {
@@ -16,7 +16,12 @@
     "debug": "hap debug",
     "precommit-msg": "echo '🚧 start pre-commit checks...' && exit 0",
     "prettier": "prettier --write 'src/**/*.js' 'src/**/*.ux'",
-    "prettier-watch": "onchange 'src/**/*.js' 'src/**/*.ux' -- prettier --write {{changed}}"
+    "prettier-watch": "onchange 'src/**/*.js' 'src/**/*.ux' -- prettier --write {{changed}}",
+    "postinstall": "hap postinstall",
+    "hap-update": "hap update",
+    "fa-build": "node node_modules/webpack/bin/webpack.js --config ./node_modules/fa-toolkit/webpack.config.js",
+    "fa-watch": "node node_modules/webpack/bin/webpack.js --watch --config ./node_modules/fa-toolkit/webpack.config.js",
+    "fa-release": "node ./node_modules/cross-env/src/bin/cross-env.js uglifyjs=true sign=release node_modules/webpack/bin/webpack.js --config ./node_modules/fa-toolkit/webpack.config.js"
   },
   "devDependencies": {
     "apex-ui": "latest",
@@ -29,7 +34,10 @@
     "less-loader": "^4.1.0",
     "onchange": "^5.2.0",
     "prettier": "^1.15.3",
-    "prettier-plugin-quickapp": "^0.1.0"
+    "prettier-plugin-quickapp": "^0.1.0",
+    "sass-loader": "^8.0.2",
+    "node-sass": "^4.13.1",
+    "cross-env": "^7.0.2"
   },
   "prettier": {
     "singleQuote": true,
@@ -42,5 +50,8 @@
   ],
   "browserslist": [
     "chrome 65"
-  ]
+  ],
+  "dependencies": {
+    "qrcode": "^1.4.4"
+  }
 }

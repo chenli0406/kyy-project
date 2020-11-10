@@ -11,7 +11,7 @@
       <tab-content class="tab-content">
         <div for="{{tabList}}">
           <div class="content" if="{{selectedTab === $idx}}">
-            <web class="web-comp" src="{{$item.url}}" id="web" allowthirdpartycookies="true"></web>
+            <web class="web-comp" src="{{$item.url}}"  allowthirdpartycookies="true"></web>
           </div>
         </div>
       </tab-content>
@@ -92,7 +92,7 @@ export default {
       this.getSuspensionAd();
       let timer = setTimeout(() => {
         this.getAd();
-      }, 4 * 1000)
+      }, 3 * 1000)
     })
     // 判断是否登录状态
     $utils.getStorage('token').then(value => {
@@ -132,6 +132,7 @@ export default {
         $apis.common.getLaunch(para, _this.header).then((res) => {
           let data = JSON.parse(res.data);
           _this.tabList = data.navs;
+          console.log(_this.tabList);
           for (let key of _this.tabList) {
             _this.navs.push(key.title)
           }
@@ -144,7 +145,8 @@ export default {
     this.selectedTab = index;
     for(let i = 0; i< this.tabList.length; i++){
          if(i == index){
-            this.addHistoryData( this.tabList[i].title, this.tabList[i].url)
+            this.addHistoryData( this.tabList[i].title, this.tabList[i].url);
+             $utils.setStorage('addCollection', this.tabList[i]);
          }
     }
   },

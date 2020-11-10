@@ -83,7 +83,8 @@ export default {
     let url = JSON.parse(this.nav)
     this.websrc = url[0].url;
     var page = router.getState()
-    this.href= this.$app.$def.appData.BaseUrl+page.path +'/'+ this.id;
+    // this.href= this.$app.$def.appData.BaseUrl+page.path +'/'+ this.id;
+     this.href= this.$app.$def.appData.BaseUrl+page.path;
     // this.getHistoy();
     // 获取设备id
     $utils.getStorage('deviceId').then(value => {
@@ -92,8 +93,7 @@ export default {
       this.getSuspensionAd();
       let timer = setTimeout(() =>{
          this.getAd();
-      }, 4 * 1000)
-       
+      }, 3* 1000)
     })
     // 判断是否登录状态
     $utils.getStorage('token').then(value => {
@@ -104,7 +104,11 @@ export default {
   onReady() {
     this.showContent = false;
   },
-  addHistoryData() {
+  onShow() {
+    let name = "资讯列表"
+    this.addHistoryData( name, this.href)   
+  },
+  addHistoryData(title, url) {
     var now = new Date();
     var year = now.getFullYear(); //得到年份
     var month = now.getMonth() + 1;//得到月份
@@ -112,10 +116,10 @@ export default {
     let nowDate = year + "-" + month + "-" + date;
     if (this.historyData.length > 20) {
       this.historyData.pop();
-      this.historyData.unshift({ time: nowDate, list: { title: this.articleData.title, url: this.href } });
+      this.historyData.unshift({ time: nowDate, list: { title: title, url: url } });
       $utils.setStorage('historyData', this.historyData);
     } else {
-      this.historyData.unshift({ time: nowDate, list: { title: this.articleData.title, url: this.href } });
+      this.historyData.unshift({ time: nowDate, list: { title: title, url: url } });
       $utils.setStorage('historyData', this.historyData);
     }
   },

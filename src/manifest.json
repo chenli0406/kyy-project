@@ -56,21 +56,6 @@
     },
     {
       "name": "system.wifi"
-    },
-    {
-      "name": "system.geolocation"
-    },
-    {
-      "name": "system.sms"
-    },
-    {
-      "name": "system.calendar"
-    },
-    {
-      "name": "system.vibrator"
-    },
-    {
-      "name": "system.ai"
     }
   ],
   "permissions": [
@@ -94,7 +79,7 @@
       "pages/info-detail": {
         "component": "index"
       },
-      "pages/info-detail2": {
+      "pages/info-list": {
         "component": "index"
       },
       "pages/history": {
@@ -126,9 +111,6 @@
       },
       "pages/aa": {
         "component": "index"
-      },
-      "pages/bb": {
-        "component": "index"
       }
     }
   },
@@ -153,7 +135,7 @@
         "titleBarText": "",
         "launchMode": "singleTask"
       },
-      "pages/info-detail2": {
+      "pages/info-list": {
         "titleBarText": "",
         "launchMode": "singleTask"
       },

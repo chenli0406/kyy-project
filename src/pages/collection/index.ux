@@ -55,12 +55,11 @@ export default {
      // 获取设备id
     $utils.getStorage('deviceId').then(value => {
       this.header.deviceId = value;
-
+      this.getList()
     })
     // 判断是否登录状态
     $utils.getStorage('token').then(value => {
       this.header.token = value;
-      this.getList()
     })
   },
   onReady() {

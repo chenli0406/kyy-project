@@ -50,6 +50,7 @@ export default {
       token: "",
     },
     hotWordList: "",
+    historyData: [],
   },
   onInit() {
     // 获取搜索引擎id
@@ -60,7 +61,6 @@ export default {
     // 获取设备id
     $utils.getStorage('deviceId').then(value => {
       this.header.deviceId = value;
-
       this.getAd();
       this.getHotWord();
     })
@@ -69,7 +69,10 @@ export default {
       this.header.token = value;
     })
     this.getSearchHistory()
-
+    // 获取搜索历史
+    $utils.getStorage('historyData').then(value => {
+        this.historyData = JSON.parse(value);
+    }) 
   },
   getSearchHistory() {
     // 获取搜索历史
@@ -78,7 +81,6 @@ export default {
     })
   },
   search(info) {
-    console.log(info.detail);
     if(info.detail == "http://" || info.detail == "https://" ){
         let searchUrl = this.searchEngineId[0].url;
         $utils.route2theUrl('pages/search-detail', { searchText: searchUrl });
@@ -92,7 +94,7 @@ export default {
     this.hotList = [];
   },
   toSearch(val) {
-     $utils.route2theUrl('pages/search-detail', { searchText: val.url });
+     $utils.route2theUrl('pages/search-detail', { searchText: val.url ,title: val.title});
     // let para = new Object();
     // para.keyword = val;
     // para.searchEngineId = this.searchEngineId[0].id;
@@ -108,10 +110,10 @@ export default {
     // })
   },
   toHotWord(val){
-    console.log(this.searchEngineId)
     let searchUrl = this.searchEngineId[0].url;
     let url = searchUrl.replace('%s',val);
-     $utils.route2theUrl('pages/search-detail', { searchText: url });
+    $utils.route2theUrl('pages/search-detail', { searchText: url ,title : val});
+    this.addHistoryData( val, url)
   },
   getHotWord(){
     $apis.common.getHotWordList({}, this.header).then((res) => {
@@ -199,6 +201,22 @@ export default {
       return value.slice(0, 40) + '...'
     }
     return value
+  },
+   // 历史缓存
+  addHistoryData(title, url) {
+    var now = new Date();
+    var year = now.getFullYear(); //得到年份
+    var month = now.getMonth() + 1;//得到月份
+    var date = now.getDate();//得到日期
+    let nowDate = year + "-" + month + "-" + date;
+    if (this.historyData.length > 20) {
+      this.historyData.pop();
+      this.historyData.unshift({ time: nowDate, list: { title: title, url: url } });
+      $utils.setStorage('historyData', this.historyData);
+    } else {
+      this.historyData.unshift({ time: nowDate, list: { title: title, url } });
+      $utils.setStorage('historyData', this.historyData);
+    }
   },
 
 }

@@ -328,22 +328,25 @@ export default {
   // 资讯跳转路由
   getRouterinfo() {
     if (this.navs.length == 1) {
-      $utils.route2theUrl('pages/info-detail2', { nav: this.navs });
+      $utils.route2theUrl('pages/info-list', { nav: this.navs });
     } else {
-      $utils.route2theUrl('pages/information', { nav: this.navs });
+       $utils.route2theUrl('pages/information', { nav: this.navs });
     }
 
   },
   getRouterCollect() {
-    if (this.logined == true) {
-      router.push({
+     router.push({
         uri: 'pages/collection'
       })
-    } else {
-      // router.push({
-      //   uri: 'pages/login'
-      // })
-    }
+    // if (this.logined == true) {
+    //   router.push({
+    //     uri: 'pages/collection'
+    //   })
+    // } else {
+    //   router.push({
+    //     uri: 'pages/login'
+    //   })
+    // }
   },
   toSearch() {
     $utils.route2theUrl('pages/search', {})
@@ -430,19 +433,19 @@ export default {
   },
   // 扫码
   toSaoma() {
-     router.push({
-        uri: 'pages/bb'
-      })
-    // barcode.scan({
-    //   success: function (data) {
-    //     webview.loadUrl({
-    //       url: data.result,
-    //       allowthirdpartycookies: true
-    //     })
-    //   },
-    //   fail: function (data, code) {
-    //   }
-    // })
+    //  router.push({
+    //     uri: 'pages/aa'
+    //   })
+    barcode.scan({
+      success: function (data) {
+        webview.loadUrl({
+          url: data.result,
+          allowthirdpartycookies: true
+        })
+      },
+      fail: function (data, code) {
+      }
+    })
   },
   // 广告跳转
   gotoAd() {

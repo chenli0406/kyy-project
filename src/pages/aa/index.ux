@@ -1,23 +1,24 @@
 <template>
   <div class="page-wrapper">
-    <title-bar
-      title="{{title}}"
-      show-back="{{true}}"
-      icon=""
-      onget-click="getClick"
-    ></title-bar>
+    <title-bar title="{{title}}" show-back="{{true}}" icon="" onget-click="getClick"></title-bar>
     <div class="container">
-      <camera id="camera" class="camera" deviceposition="{{deviceposition}}" flash="{{flash}}" onerror="handlerError"></camera>
+      <camera
+        id="camera"
+        class="camera"
+        deviceposition="{{deviceposition}}"
+        flash="{{flash}}"
+        onerror="handlerError"
+      ></camera>
       <div class="btn">
-       <div @click="switchFlash" class="takeImg">
-        <image src="../../assets/images/diantong.png"></image>
-       </div>
-       <div @click="takePhoto" class="takeImg">
-        <text>扫码</text>
-       </div>
+        <div @click="switchFlash" class="takeImg">
+          <image src="../../assets/images/diantong.png"></image>
+        </div>
+        <div @click="takePhoto" class="takeImg">
+          <text>扫码</text>
+        </div>
         <div @click="takeImg" class="takeImg">
-        <image src="../../assets/images/takeimg.png"></image>
-      </div>
+          <image src="../../assets/images/takeimg.png"></image>
+        </div>
       </div>
     </div>
   </div>
@@ -25,7 +26,7 @@
 <import name="title-bar" src="../../components/common/bar/title-bar"></import>
 <script>
 import media from '@system.media'
-// import QRCode from 'qrcode2';
+import QRCode from 'qrcode'
 export default {
   private: {
     componentName: '扫码',
@@ -37,9 +38,9 @@ export default {
     title: "扫码",
   },
   onInit() {
-  // let timer = setInterval(() =>{
-  //        this.takePhoto()
-  //   }, 2 * 1000)
+    // let timer = setInterval(() =>{
+    //        this.takePhoto()
+    //   }, 2 * 1000)
   },
   takePhoto() {
     let _this = this
@@ -51,6 +52,13 @@ export default {
         // 获取回调中的照片地址
         _this.pictureUrl = data.uri;
         console.log(data);
+        QRCode.toDataURL(data.uri)
+          .then(url => {
+            console.log(url)
+          })
+          .catch(err => {
+            console.error(err)
+          })
         console.log(_this.pictureUrl);
       },
       fail(data, code) {
@@ -103,7 +111,7 @@ export default {
 .camera {
   flex: 1;
 }
-.btn{
+.btn {
   width: 100%;
   flex-direction: row;
   justify-content: space-between;
