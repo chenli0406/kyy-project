@@ -109,7 +109,7 @@
       "pages/addMenu": {
         "component": "index"
       },
-      "pages/aa": {
+      "pages/saoma": {
         "component": "index"
       }
     }

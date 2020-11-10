@@ -9,8 +9,8 @@
         </div>
       </div>
     </div>
-    <div if="{{suspensionDialog}}" class="ad-btn" @click="getSuspension">
-       <my-avatar src="{{suspensionData.picture}}" size="default"></my-avatar>
+    <div if="{{suspensionDialog}}" class="ad-btn" @touchmove="touchmove">
+       <my-avatar @click="getSuspension" src="{{suspensionData.picture}}" size="default"></my-avatar>
     </div>
     <div class="content">
       <web
@@ -375,6 +375,9 @@ export default {
   },
   closeAd(){
     this.adDialog = false;
+  },
+  touchmove(){
+
   }
 
 }
@@ -593,7 +596,7 @@ export default {
 }
 
 .adimg-box {
-   width: 100%;
+  width: 100%;
   position: fixed;
   background-color: rgba(0, 0, 0, 0.4);
   height: 100%;

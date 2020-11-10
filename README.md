@@ -39,7 +39,7 @@ yarn server & yarn watch
 yarn server
 # 在终端另一 Tab 下运行：
 yarn watch
-
+https://blog.csdn.net/yanical/article/details/7213289
 # ✨ 新增「快应用」页面
 yarn gen YourPageName
 ## 6、内置命令
