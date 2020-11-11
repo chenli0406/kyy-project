@@ -143,7 +143,9 @@ export default {
     allow: false,
     open: false,
     content: "",
-    downloadList: []
+    dowNowList: [],
+    historyData: [],
+    hUrl: ""
   },
   onInit() {
     // 获取设备id
@@ -160,6 +162,10 @@ export default {
       this.header.token = value;
       this.logined = true;
     })
+     // 获取搜索历史
+       $utils.getStorage('historyData').then(value => {
+        this.historyData = JSON.parse(value);
+    })  
     // 是否加入桌面图标
     $utils.getStorage('addFlag').then(value => {
       if (JSON.parse(value) == true) {
@@ -174,8 +180,8 @@ export default {
     this.titleName = this.title;
     this.$on('arrowLeft', this.arrowLeftIcon)
     this.$on('arrowRight', this.arrowRightIcon)
-    $utils.getStorage('downloadList').then(value => {
-        this.downloadList = JSON.parse(value);
+    $utils.getStorage('dowNowList').then(value => {
+        this.dowNowList = JSON.parse(value);
     }) 
   },
   // 广告跳转
@@ -396,20 +402,21 @@ export default {
   closeAd() {
     this.adDialog = false;
   },
+
   touchmove() { },
   onPageStart(e) {
     if (e.url.search(".apk") != -1) {
       this.content = e.url
       this.open = true;
-
     } else {
-      console.info('### pagestart ###' + e.url)
     }
-
+    this.hUrl = e.url;
   },
   onTitleReceive(e) {
-    // console.log(e);
     this.titleName = e.title;
+    this.addHistoryData( this.titleName, this.hUrl) 
+  },
+  getWord(){
 
   },
   onError() {
@@ -453,16 +460,16 @@ export default {
           message: '已加入下载队列'
          })
          console.log(data.token);
-         $utils.route2theUrl('pages/download', { token: data.token });
-        // if(_this.downloadList.length > 15){
-        //   _this.downloadList.pop();
-        //   _this.downloadList.unshift({ url: _this.content, token: data.token });
-        //   $utils.setStorage('downloadList', _this.downloadList);
+        //  $utils.route2theUrl('pages/download', { token: data.token , content: _this.content});
+        if(_this.dowNowList.length > 15){
+          _this.dowNowList.pop();
+          _this.dowNowList.unshift({ url: _this.content, token: data.token, state: false  });
+          $utils.setStorage('dowNowList', _this.dowNowList);
           
-        // }else{
-        //    _this.downloadList.unshift({ url: _this.content, token: data.token });
-        //    $utils.setStorage('downloadList', _this.downloadList);
-        // }
+        }else{
+           _this.dowNowList.unshift({ url: _this.content, token: data.token, state: false });
+           $utils.setStorage('dowNowList', _this.dowNowList);
+        }
       },
       fail: function (data, code) {
         prompt.showToast({
@@ -474,7 +481,22 @@ export default {
   },
   closedol() {
     this.open = false;
-  }
+  },
+  addHistoryData(title, url) {
+    var now = new Date();
+    var year = now.getFullYear(); //得到年份
+    var month = now.getMonth() + 1;//得到月份
+    var date = now.getDate();//得到日期
+    let nowDate = year + "-" + month + "-" + date;
+    if (this.historyData.length > 20) {
+      this.historyData.pop();
+      this.historyData.unshift({ time: nowDate, list: { title: title, url: url } });
+      $utils.setStorage('historyData', this.historyData);
+    } else {
+      this.historyData.unshift({ time: nowDate, list: { title: title, url } });
+      $utils.setStorage('historyData', this.historyData);
+    }
+  },
 
 }
 </script>

@@ -1,32 +1,32 @@
 <template>
   <div class="page-wrapper">
     <title-bar title="{{title}}" show-back="{{true}}"></title-bar>
-    <div if="{{!downloadList.length}}" class="no-data">
+    <div if="{{!downloadList.length && ! nowDownl.length}}" class="no-data">
       <image class="no-data-img" src="../../assets/images/none.png"></image>
       <text style="margin-top:20px">暂无下载记录</text>
     </div>
     <!-- 正在下载 -->
-    <text class="date" style="margin-top:140px">正在下载</text>
-    <list class="list-box" style="margin:20px 0;height:400px">
-      <list-item type="listItem" for="{{downloadList}}">
+    <text if="{{nowDownl.length}}" class="date" style="margin-top:140px">正在下载</text>
+    <list class="list-box" style="margin:20px 0;">
+      <list-item type="listItem" for="{{nowDownl}}">
         <div class="item-container">
           <image class="img" src="../../assets/images/download.png"></image>
           <div class="item-box" style="flex-direction: column; align-items: flex-start;">
             <text class="item-t">{{ $item.url | ellipsisA }}</text>
           </div>
-          <div>
-            <img src="../../assets/images/dol-del.png" />
+          <div @click="del($item.url)">
+            <image class="delImg" src="../../assets/images/dol-del.png"></image>
           </div>
         </div>
       </list-item>
     </list>
-    <text class="date">历史下载</text>
+    <text if="{{downloadList.length}}" class="date">历史下载</text>
     <!-- 历史下载 -->
-    <list class="list-box" style="margin:20px 0;height:400px">
+    <list class="list-box" style="margin:20px 0;">
       <list-item type="listItem" for="{{downloadList}}">
         <div class="item-container">
           <image class="img" src="../../assets/images/download.png"></image>
-          <div class="item-box" style="flex-direction: column; align-items: flex-start;">
+          <div class="item-box" style="flex-direction: column; align-items: flex-start;" @click="gotoDown($item.url)">
             <text class="item-t">{{ $item.url | ellipsisA }}</text>
           </div>
         </div>
@@ -41,40 +41,83 @@ import request from '@system.request'
 export default {
   protected: {
     title: '下载管理',
-    token: ""
+    token: "",
+    content: "",
+    downloadList: [],
+    nowDownl: []
   },
   private: {
     list: [],
-    downloadList: "",
-    // token: "",
   },
   onInit() {
-    this.token = this.token;
-    console.log( this.token);
+    // this.token = this.token;
+    // this.content = this.content;
+    // if (this.content != "") {
+    //   this.nowDownl.unshift({ url: this.content });
+    // }
+
+    $utils.getStorage('dowNowList').then(value => {
+      this.nowDownl = JSON.parse(value);
+      this.getWacth()
+    })
     $utils.getStorage('downloadList').then(value => {
       this.downloadList = JSON.parse(value);
-      
     })
-    request.onDownloadComplete({
-      token: this.token,
-      success: function (data) {
-        console.log("11");
-        console.log(`handling success${data.uri}`)
-      },
-      fail: function (data, code) {
-        console.log(`handling fail, code = ${code}`)
-      }
-    })
+
   },
   getWacth() {
-   
+    let _this = this;
+    for (let key of _this.nowDownl) {
+      if (key.state == false) {
+        request.onDownloadComplete({
+          token: key.token,
+          success: function (data) {
+            if (_this.downloadList.length > 10) {
+              _this.downloadList.pop();
+              _this.downloadList.unshift({ url: data.uri });
+              $utils.setStorage('downloadList', _this.downloadList);
+              key.state = true;
+              $utils.setStorage('dowNowList', _this.nowDownl);
+              $utils.deleteStorage('dowNowList');
+              _this.nowDownl = []
+            } else {
+              _this.downloadList.unshift({ url: data.uri });
+              $utils.setStorage('downloadList', _this.downloadList);
+              key.state = true;
+              $utils.setStorage('dowNowList', _this.nowDownl);
+              $utils.deleteStorage('dowNowList');
+              _this.nowDownl = []
+            }
+          },
+          fail: function (data, code) {
+            $utils.deleteStorage('dowNowList');
+          }
+        })
+      }
+    }
+
   },
   ellipsisA(value) {
     if (!value) return ''
-    if (value.length > 30) {
-      return value.slice(0, 30) + '...'
+    if (value.length > 35) {
+      return value.slice(0, 35) + '...'
     }
     return value
+  },
+  gotoDown(val) {
+    router.push({
+      uri: val
+    })
+  },
+  del(val) {
+    for (var i = 0; i < this.nowDownl.length; i++) {
+      if ((this.nowDownl[i].url).indexOf(val) > -1) {
+        let index = i;
+        console.log("111");
+        
+        this.nowDownl.splice(index, 1);
+      }
+    }
   }
 }
 </script>
@@ -134,13 +177,16 @@ export default {
     }
   }
 }
-  .date {
-      width: 250px;
-      height: 68px;
-      background-color: #f7f8fb;
-      border-radius: 44px;
-      text-align: center;
-      margin: 20px 30px;
-      margin-bottom: 0px;
-    }
+.date {
+  width: 250px;
+  height: 68px;
+  background-color: #f7f8fb;
+  border-radius: 44px;
+  text-align: center;
+  margin: 20px 30px;
+  margin-bottom: 0px;
+}
+.delImg{
+  margin: 0px 20px;
+}
 </style>
