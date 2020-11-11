@@ -434,7 +434,7 @@ export default {
   // 扫码
   toSaoma() {
     //  router.push({
-    //     uri: 'pages/aa'
+    //     uri: 'pages/saoma'
     //   })
     barcode.scan({
       success: function (data) {

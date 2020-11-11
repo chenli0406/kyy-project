@@ -1,4 +1,5 @@
 <import name="my-avatar" src="apex-ui/components/avatar/index"></import>
+<import name="my-dialog" src="apex-ui/components/dialog/index"></import>
 <template>
   <div class="page-wrapper">
     <!-- 搜索 -->
@@ -10,16 +11,18 @@
       </div>
     </div>
     <div if="{{suspensionDialog}}" class="ad-btn" @touchmove="touchmove">
-       <my-avatar @click="getSuspension" src="{{suspensionData.picture}}" size="default"></my-avatar>
+      <my-avatar @click="getSuspension" src="{{suspensionData.picture}}" size="default"></my-avatar>
     </div>
     <div class="content">
       <web
         class="web-comp"
         src="{{websrc}}"
         id="web"
-        canForward="true"
-        canBack="true"
         allowthirdpartycookies="true"
+        onpagestart="onPageStart"
+        onpagefinish="onPageFinish"
+        ontitlereceive="onTitleReceive"
+        onerror="onError"
       ></web>
     </div>
     <!-- 底部菜单 -->
@@ -96,6 +99,14 @@
         </div>
       </div>
     </div>
+    <!-- 下载弹窗 -->
+    <my-dialog
+      visible="{{open}}"
+      title="保存文件"
+      content="{{content}}"
+      onaffirm="affirm"
+      oncancel="closedol"
+    ></my-dialog>
     <!-- 反馈 -->
     <feedback if="{{feedbackDailog}}" @close="closeFeedback"></feedback>
   </div>
@@ -107,6 +118,7 @@ import prompt from '@system.prompt'
 import shortcut from '@system.shortcut'
 import pkg from '@system.package'
 import ad from '@service.ad'
+import request from '@system.request'
 export default {
   data: {
     logined: false,
@@ -128,16 +140,20 @@ export default {
       token: "",
     },
     suspensionData: "",
+    allow: false,
+    open: false,
+    content: "",
+    downloadList: []
   },
   onInit() {
     // 获取设备id
     $utils.getStorage('deviceId').then(value => {
       this.header.deviceId = value;
       this.getSuspensionAd();
-      let timer = setTimeout(() =>{
-          this.getAd();
+      let timer = setTimeout(() => {
+        this.getAd();
       }, 3 * 1000)
-      
+
     })
     // 判断是否登录状态
     $utils.getStorage('token').then(value => {
@@ -156,8 +172,12 @@ export default {
     this.showContent = false;
     this.websrc = this.searchText;
     this.titleName = this.title;
+    this.$on('arrowLeft', this.arrowLeftIcon)
+    this.$on('arrowRight', this.arrowRightIcon)
+    $utils.getStorage('downloadList').then(value => {
+        this.downloadList = JSON.parse(value);
+    }) 
   },
-  
   // 广告跳转
   openUrl() {
     let _this = this;
@@ -198,8 +218,8 @@ export default {
     })
   },
   // 获取悬浮广告
-  getSuspensionAd(){
-     let para = new Object();
+  getSuspensionAd() {
+    let para = new Object();
     para.category = '浮窗';
     para.scene = '其它';
     $apis.common.getAd(para, this.header).then((res) => {
@@ -218,7 +238,7 @@ export default {
     })
   },
   // 悬浮广告跳转
-  getSuspension(){
+  getSuspension() {
     let _this = this;
     pkg.hasInstalled({
       package: _this.suspensionData.packageName,
@@ -313,7 +333,7 @@ export default {
     }
   },
   // 添加收藏
-  addCollection(){
+  addCollection() {
     let para = new Object();
     para.title = this.titleName;
     para.url = this.searchText;
@@ -345,7 +365,7 @@ export default {
   },
   getCollect() {
     router.push({
-        uri: 'pages/collection'
+      uri: 'pages/collection'
     })
   },
   goBack() {
@@ -373,11 +393,87 @@ export default {
     });
     this.showContent = false;
   },
-  closeAd(){
+  closeAd() {
     this.adDialog = false;
   },
-  touchmove(){
+  touchmove() { },
+  onPageStart(e) {
+    if (e.url.search(".apk") != -1) {
+      this.content = e.url
+      this.open = true;
 
+    } else {
+      console.info('### pagestart ###' + e.url)
+    }
+
+  },
+  onTitleReceive(e) {
+    // console.log(e);
+    this.titleName = e.title;
+
+  },
+  onError() {
+    console.info('### pageError ###')
+  },
+  arrowLeftIcon() {
+    this.isCanBack()
+  },
+  arrowRightIcon() {
+    this.isCanForward()
+  },
+  isCanForward() {
+    this.$element('web').canForward({
+      callback: function (e) {
+        if (e) {
+          this.$element('web').forward()
+        }
+      }.bind(this)
+    })
+  },
+  isCanBack() {
+    this.$element('web').canBack({
+      callback: function (e) {
+        if (e) {
+          this.$element('web').back()
+        } else {
+          router.back()
+        }
+      }.bind(this)
+    })
+  },
+  enter() {
+
+  },
+  affirm() {
+    let _this = this;
+    request.download({
+      url: _this.content,
+      success: function (data) {
+         prompt.showToast({
+          message: '已加入下载队列'
+         })
+         console.log(data.token);
+         $utils.route2theUrl('pages/download', { token: data.token });
+        // if(_this.downloadList.length > 15){
+        //   _this.downloadList.pop();
+        //   _this.downloadList.unshift({ url: _this.content, token: data.token });
+        //   $utils.setStorage('downloadList', _this.downloadList);
+          
+        // }else{
+        //    _this.downloadList.unshift({ url: _this.content, token: data.token });
+        //    $utils.setStorage('downloadList', _this.downloadList);
+        // }
+      },
+      fail: function (data, code) {
+        prompt.showToast({
+          message: code
+         })
+      }
+    })
+    _this.open = false;
+  },
+  closedol() {
+    this.open = false;
   }
 
 }
@@ -604,9 +700,9 @@ export default {
   justify-content: center;
   align-items: center;
   .box {
-     width: 100%;
+    width: 100%;
     padding: 0px 60px;
-   .flex-box-mixins(column, center, center);
+    .flex-box-mixins(column, center, center);
     .adClose {
       width: 100%;
       margin-top: 20px;

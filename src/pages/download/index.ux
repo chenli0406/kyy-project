@@ -1,20 +1,35 @@
 <template>
   <div class="page-wrapper">
-     <title-bar title="{{title}}" show-back="{{true}}"></title-bar>
-     <div if="{{!list.length}}" class="no-data">
+    <title-bar title="{{title}}" show-back="{{true}}"></title-bar>
+    <div if="{{!downloadList.length}}" class="no-data">
       <image class="no-data-img" src="../../assets/images/none.png"></image>
       <text style="margin-top:20px">暂无下载记录</text>
     </div>
-    <list class="list-box" style="margin-top:120px">
-      <list-item type="listItem" for="{{list}}">
-        <text class="date">2020020</text>
+    <!-- 正在下载 -->
+    <text class="date" style="margin-top:140px">正在下载</text>
+    <list class="list-box" style="margin:20px 0;height:400px">
+      <list-item type="listItem" for="{{downloadList}}">
         <div class="item-container">
           <image class="img" src="../../assets/images/download.png"></image>
           <div class="item-box" style="flex-direction: column; align-items: flex-start;">
-            <text class="item-t">{{$item.title | ellipsisA}}</text>
+            <text class="item-t">{{ $item.url | ellipsisA }}</text>
+          </div>
+          <div>
+            <img src="../../assets/images/dol-del.png" />
           </div>
         </div>
-
+      </list-item>
+    </list>
+    <text class="date">历史下载</text>
+    <!-- 历史下载 -->
+    <list class="list-box" style="margin:20px 0;height:400px">
+      <list-item type="listItem" for="{{downloadList}}">
+        <div class="item-container">
+          <image class="img" src="../../assets/images/download.png"></image>
+          <div class="item-box" style="flex-direction: column; align-items: flex-start;">
+            <text class="item-t">{{ $item.url | ellipsisA }}</text>
+          </div>
+        </div>
       </list-item>
     </list>
   </div>
@@ -24,16 +39,40 @@
 import router from '@system.router'
 import request from '@system.request'
 export default {
-   protected: {
+  protected: {
     title: '下载管理',
+    token: ""
   },
   private: {
-    list: []
+    list: [],
+    downloadList: "",
+    // token: "",
+  },
+  onInit() {
+    this.token = this.token;
+    console.log( this.token);
+    $utils.getStorage('downloadList').then(value => {
+      this.downloadList = JSON.parse(value);
+      
+    })
+    request.onDownloadComplete({
+      token: this.token,
+      success: function (data) {
+        console.log("11");
+        console.log(`handling success${data.uri}`)
+      },
+      fail: function (data, code) {
+        console.log(`handling fail, code = ${code}`)
+      }
+    })
+  },
+  getWacth() {
+   
   },
   ellipsisA(value) {
     if (!value) return ''
-    if (value.length > 20) {
-      return value.slice(0, 20) + '...'
+    if (value.length > 30) {
+      return value.slice(0, 30) + '...'
     }
     return value
   }
@@ -58,17 +97,9 @@ export default {
   list-item {
     padding: 15px 0;
     margin-bottom: 10px;
-    border-bottom: 1px solid #eee;
     flex-direction: column;
-    .date {
-    width: 250px;
-    height: 68px;
-    background-color: #f7f8fb;
-    border-radius: 44px;
-    text-align: center;
-    margin: 20px 0;
-  }
     .item-container {
+      align-items: center;
       .item-box {
         width: 80%;
       }
@@ -103,4 +134,13 @@ export default {
     }
   }
 }
+  .date {
+      width: 250px;
+      height: 68px;
+      background-color: #f7f8fb;
+      border-radius: 44px;
+      text-align: center;
+      margin: 20px 30px;
+      margin-bottom: 0px;
+    }
 </style>
