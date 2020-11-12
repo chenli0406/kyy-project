@@ -1,6 +1,6 @@
 <template>
   <div class="page-wrapper">
-     <image src="../../../assets/images/left.png" class="back iconfont"  onclick="goBack"></image>
+     <image src="../../assets/images/left.png" class="back iconfont"  onclick="goBack"></image>
     <div class="logo-box">
       <image class="logo" src="../../assets/images/logo.png"></image>
     </div>

@@ -7,12 +7,20 @@
     </div>
     <!-- 正在下载 -->
     <text if="{{nowDownl.length}}" class="date" style="margin-top:140px">正在下载</text>
-    <list class="list-box" style="margin:20px 0;">
+    <list if="{{nowDownl.length}}" class="list-box" style="margin:20px 0;  height:300px">
       <list-item type="listItem" for="{{nowDownl}}">
         <div class="item-container">
           <image class="img" src="../../assets/images/download.png"></image>
-          <div class="item-box" style="flex-direction: column; align-items: flex-start;">
-            <text class="item-t">{{ $item.url | ellipsisA }}</text>
+          <div style="flex-direction: column; width: 80%; ">
+            <div class="item-box" style="flex-direction: column; align-items: flex-start;">
+              <text class="item-t">{{ $item.url | ellipsisA }}</text>
+            </div>
+            <div class="progress">
+              <div show="{{box}}" class="progress-box"></div>
+              <div show="{{box1}}" class="progress-box1"></div>
+              <div show="{{box2}}" class="progress-box2"></div>
+              <div show="{{box3}}" class="progress-box3"></div>
+            </div>
           </div>
           <div @click="del($item.url)">
             <image class="delImg" src="../../assets/images/dol-del.png"></image>
@@ -20,13 +28,17 @@
         </div>
       </list-item>
     </list>
-    <text if="{{downloadList.length}}" class="date">历史下载</text>
+    <text if="{{downloadList.length}}" class="date" style="margin-top:140px">历史下载</text>
     <!-- 历史下载 -->
-    <list class="list-box" style="margin:20px 0;">
+    <list if="{{downloadList.length}}" class="list-box" style="margin:20px 0;">
       <list-item type="listItem" for="{{downloadList}}">
         <div class="item-container">
           <image class="img" src="../../assets/images/download.png"></image>
-          <div class="item-box" style="flex-direction: column; align-items: flex-start;" @click="gotoDown($item.url)">
+          <div
+            class="item-box"
+            style="flex-direction: column; align-items: flex-start;"
+            @click="gotoDown($item.url)"
+          >
             <text class="item-t">{{ $item.url | ellipsisA }}</text>
           </div>
         </div>
@@ -44,7 +56,11 @@ export default {
     token: "",
     content: "",
     downloadList: [],
-    nowDownl: []
+    nowDownl: [],
+    box: true,
+    box1: false,
+    box2: false,
+    box3: false,
   },
   private: {
     list: [],
@@ -58,12 +74,24 @@ export default {
 
     $utils.getStorage('dowNowList').then(value => {
       this.nowDownl = JSON.parse(value);
+      setTimeout(() => {
+        this.box1 = true;
+        this.box = false;
+      }, 1000 * 6)
+      setTimeout(() => {
+        this.box1 = false;
+        this.box = false;
+        this.box2 = true;
+      }, 1000 * 12)
       this.getWacth()
     })
     $utils.getStorage('downloadList').then(value => {
       this.downloadList = JSON.parse(value);
     })
 
+  },
+  onDestroy() {
+    $utils.deleteStorage('dowNowList');
   },
   getWacth() {
     let _this = this;
@@ -72,6 +100,8 @@ export default {
         request.onDownloadComplete({
           token: key.token,
           success: function (data) {
+            _this.box3 = true;
+             _this.box2 = false;
             if (_this.downloadList.length > 10) {
               _this.downloadList.pop();
               _this.downloadList.unshift({ url: data.uri });
@@ -113,8 +143,6 @@ export default {
     for (var i = 0; i < this.nowDownl.length; i++) {
       if ((this.nowDownl[i].url).indexOf(val) > -1) {
         let index = i;
-        console.log("111");
-        
         this.nowDownl.splice(index, 1);
       }
     }
@@ -144,14 +172,12 @@ export default {
     .item-container {
       align-items: center;
       .item-box {
-        width: 80%;
       }
       .item-t {
         height: 40px;
         width: 100%;
         font-size: 30px;
         color: #000;
-        text-overflow: ellipsis;
         margin-bottom: 10px;
       }
       .img {
@@ -186,7 +212,37 @@ export default {
   margin: 20px 30px;
   margin-bottom: 0px;
 }
-.delImg{
+.delImg {
   margin: 0px 20px;
+}
+.progress {
+  width: 100%;
+  background-color: #f7f8fb;
+  border-radius: 6px;
+  height: 6px;
+}
+.progress-box {
+  width: 20%;
+  background-color: #ff9e2c;
+  border-radius: 6px;
+  height: 6px;
+}
+.progress-box1 {
+  width: 50%;
+  background-color: #ff9e2c;
+  border-radius: 6px;
+  height: 6px;
+}
+.progress-box2 {
+  width: 70%;
+  background-color: #ff9e2c;
+  border-radius: 6px;
+  height: 6px;
+}
+.progress-box3 {
+  width: 99%;
+  background-color: #ff9e2c;
+  border-radius: 6px;
+  height: 6px;
 }
 </style>

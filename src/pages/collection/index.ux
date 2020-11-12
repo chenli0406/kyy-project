@@ -6,7 +6,7 @@
       <list-item type="listItem" for="{{list.data}}">
         <div class="item-container">
           <image class="img" src="../../assets/images/collect-item.png"></image>
-          <div class="item-box" style="flex-direction: column; align-items: flex-start;">
+          <div class="item-box" style="flex-direction: column; align-items: flex-start;" @click="gotoUrl($item)">
             <text class="item-t">{{ $item.title | ellipsisA }}</text>
             <text class="item">{{ $item.url | ellipsis }}</text>
           </div>
@@ -165,6 +165,9 @@ export default {
   },
   submit() {
     this.showBtn = false;
+  },
+  gotoUrl(val){
+      $utils.route2theUrl('pages/search-detail',{searchText: val.url, title : val.title});
   }
 }
 </script> 
@@ -175,6 +178,7 @@ export default {
   background-color: #fff;
   .list-box {
     padding: 20px 30px;
+    margin-bottom: 100px;
     list-item {
       padding: 15px 0;
       height: 130px;
@@ -187,7 +191,7 @@ export default {
         }
         .item-t {
           height: 40px;
-          width: 80%;
+          width: 90%;
           font-size: 30px;
           color: #000;
           text-overflow: ellipsis;
@@ -195,7 +199,7 @@ export default {
         }
         .item {
           height: 28px;
-          width: 80%;
+          width: 90%;
           font-size: 26px;
           color: #666666;
           margin-top: 10px;
@@ -226,8 +230,10 @@ export default {
     }
   }
   .btn-box {
+    width: 100%;
     position: fixed;
-    bottom: 40px;
+    bottom: 2px;
+    background-color: #fff;
     .btn-1 {
       width: 36%;
       height: 80px;

@@ -54,19 +54,6 @@
         </div>
       </div>
     </div>
-    <!-- <div class="adimg-box" if="{{outDialog}}">
-      <div class="box">
-        <div style="margin-bottom:40px;">
-          <text style="text-align: center;color:#000;font-size:40px;font-weight: 500;"
-            >是否确定注销当前账号注销后所有信息将被抹除</text
-          >
-        </div>
-        <div class="btn">
-          <text style="color:#000" class="submit" @click="submit">确定</text>
-          <text style="color:#fff" class="cancel" @click="cancel">取消</text>
-        </div>
-      </div>
-    </div> -->
     <!-- 退出广告 -->
     <!-- 搜索引擎 -->
     <div class="test" if="{{show}}" onclick="stopPropagation()">
@@ -123,7 +110,8 @@ export default {
     header: {
       deviceId: "",
       token: "",
-    }
+    },
+    searchEngineId: "",
 
   },
   onInit() {
@@ -138,8 +126,12 @@ export default {
       this.header.token = value;
       this.logined = true;
     })
-
+    $utils.getStorage('searchEngineId').then(value => {
+      this.searchEngineId = JSON.parse(value);
+      this.selectName = this.searchEngineId[0].name;
+    })
   },
+
   onReady() {
     // this.getSearchList();
   },
@@ -196,7 +188,7 @@ export default {
       let data = JSON.parse(res.data);
       if (data.code == 0) {
         this.options = data.searchEngines;
-        this.selectName = this.options[0].name;
+        // this.selectName = this.options[0].name;
         // $utils.setStorage('searchEngineId', this.options[0].id);
       } else {
         prompt.showToast({

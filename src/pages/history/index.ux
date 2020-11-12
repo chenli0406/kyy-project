@@ -10,7 +10,7 @@
         <text class="date">{{ $item.time}}</text>
         <div class="item-container" for="{{ $item.list }}">
           <image class="img" src="../../assets/images/collect-item.png"></image>
-          <div class="item-box" style="flex-direction: column; align-items: flex-start;">
+          <div class="item-box" style="flex-direction: column; align-items: flex-start;" @click="gotoUrl($item)">
             <text class="item-t">{{$item.title | ellipsisA}}</text>
             <text class="item">{{$item.url | ellipsis}}</text>
           </div>
@@ -71,6 +71,9 @@ export default {
     prompt.showToast({
           message: '清除成功'
     })
+  },
+  gotoUrl(val){
+      $utils.route2theUrl('pages/search-detail',{searchText: val.url, title : val.title});
   }
 }
 </script>

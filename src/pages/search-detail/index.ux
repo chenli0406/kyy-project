@@ -10,7 +10,11 @@
         </div>
       </div>
     </div>
-    <div if="{{suspensionDialog}}" class="ad-btn" @touchmove="touchmove">
+    <div if="{{suspensionDialog}}" 
+        style="right: {{menuStyle.left+'px'}}; top:{{menuStyle.top+'px'}};position: fixed;"
+        ontouchstart="menuTouchStart"
+        ontouchmove="menuTouchMove"
+        ontouchend="menuTouchEnd">
       <my-avatar @click="getSuspension" src="{{suspensionData.picture}}" size="default"></my-avatar>
     </div>
     <div class="content">
@@ -27,10 +31,10 @@
     </div>
     <!-- 底部菜单 -->
     <div class="bottom">
-      <div class="b-box" @click="goBack()">
+      <div class="b-box" @click="arrowLeftIcon()">
         <image src="../../assets/images/left.png"></image>
       </div>
-      <div class="b-box">
+      <div class="b-box" @click="arrowRightIcon()">
         <image src="../../assets/images/right.png"></image>
       </div>
       <div class="b-box" @click="getPopup()">
@@ -119,6 +123,7 @@ import shortcut from '@system.shortcut'
 import pkg from '@system.package'
 import ad from '@service.ad'
 import request from '@system.request'
+import device from '@system.device'
 export default {
   data: {
     logined: false,
@@ -145,7 +150,15 @@ export default {
     content: "",
     dowNowList: [],
     historyData: [],
-    hUrl: ""
+    hUrl: "",
+    menuStyle: {
+      left: 60, 
+      top: 200,
+      disX: 0,
+      disY: 0
+    },
+    beginDrag: false,
+    device: "",
   },
   onInit() {
     // 获取设备id
@@ -183,6 +196,12 @@ export default {
     $utils.getStorage('dowNowList').then(value => {
         this.dowNowList = JSON.parse(value);
     }) 
+    let _this = this;
+    device.getInfo({
+      success: function (ret) {
+       _this.device = ret;
+      }
+    })
   },
   // 广告跳转
   openUrl() {
@@ -402,8 +421,6 @@ export default {
   closeAd() {
     this.adDialog = false;
   },
-
-  touchmove() { },
   onPageStart(e) {
     if (e.url.search(".apk") != -1) {
       this.content = e.url
@@ -497,7 +514,26 @@ export default {
       $utils.setStorage('historyData', this.historyData);
     }
   },
-
+  menuTouchStart(event) {
+    this.beginDrag = true;
+    this.menuStyle.disX = event.touches[0].offsetX;
+    this.menuStyle.disY = event.touches[0].offsetY
+  },
+  menuTouchMove(event) {
+    if (this.beginDrag) {
+      event.stopPropagation()
+      let resetDeviceScreenWidth = event.touches[0].clientX > this.device.windowWidth ? ((this.device.windowWidth / this.device.screenDensity) * 4) : this.device.windowWidth;
+      let resetDeviceScreenHeight = event.touches[0].clientY > this.device.windowHeight ? ((this.device.windowHeight / this.device.screenDensity) * 3) : this.device.windowHeight;
+      let menuStyleLeft = event.touches[0].clientX - this.menuStyle.disX;
+      let menuStyleTop = event.touches[0].clientY - this.menuStyle.disY;
+      this.menuStyle.left = menuStyleLeft < 0 ? (menuStyleLeft > (resetDeviceScreenWidth - 104) ? resetDeviceScreenWidth + 104 : menuStyleLeft) : 10;
+      this.menuStyle.top = menuStyleTop > 0 ? (menuStyleTop > (resetDeviceScreenHeight - 404) ? resetDeviceScreenHeight - 404 : menuStyleTop) : 200;
+    }
+  },
+  menuTouchEnd() {
+    this.beginDrag = false;
+    this.menuStyle.disX = this.menuStyle.disY = 0;
+  }
 }
 </script>
 
@@ -506,19 +542,6 @@ export default {
 .page-wrapper {
   padding: 10px 30px;
   background-color: #fff;
-  .ad-btn {
-    width: 110px;
-    height: 110px;
-    position: fixed;
-    top: 130px;
-    right: 30px;
-    .ad-img {
-      width: 100px;
-      height: 100px;
-      align-content: center;
-      border-radius: 50%;
-    }
-  }
   .title-bar {
     position: fixed;
     top: 0px;
