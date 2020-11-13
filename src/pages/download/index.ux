@@ -7,7 +7,7 @@
     </div>
     <!-- 正在下载 -->
     <text if="{{nowDownl.length}}" class="date" style="margin-top:140px">正在下载</text>
-    <list if="{{nowDownl.length}}" class="list-box" style="margin:20px 0;  height:300px">
+    <list if="{{nowDownl.length}}" class="list-box" style="margin:20px 0;">
       <list-item type="listItem" for="{{nowDownl}}">
         <div class="item-container">
           <image class="img" src="../../assets/images/download.png"></image>
@@ -36,7 +36,7 @@
           <image class="img" src="../../assets/images/download.png"></image>
           <div
             class="item-box"
-            style="flex-direction: column; align-items: flex-start;"
+            style="flex-direction: column; align-items: flex-start;width:90%;"
             @click="gotoDown($item.url)"
           >
             <text class="item-t">{{ $item.url | ellipsisA }}</text>
@@ -71,19 +71,23 @@ export default {
     // if (this.content != "") {
     //   this.nowDownl.unshift({ url: this.content });
     // }
-
+    
     $utils.getStorage('dowNowList').then(value => {
       this.nowDownl = JSON.parse(value);
-      setTimeout(() => {
-        this.box1 = true;
-        this.box = false;
-      }, 1000 * 6)
-      setTimeout(() => {
-        this.box1 = false;
-        this.box = false;
-        this.box2 = true;
-      }, 1000 * 12)
-      this.getWacth()
+      for (let key of this.nowDownl) {
+        if (key.state === false) {
+          setTimeout(() => {
+            this.box1 = true;
+            this.box = false;
+          }, 1000 * 6)
+          setTimeout(() => {
+            this.box1 = false;
+            this.box = false;
+            this.box2 = true;
+          }, 1000 * 12)
+          this.getWacth()
+        }
+      }
     })
     $utils.getStorage('downloadList').then(value => {
       this.downloadList = JSON.parse(value);
@@ -91,36 +95,36 @@ export default {
 
   },
   onDestroy() {
-    $utils.deleteStorage('dowNowList');
+    // $utils.deleteStorage('dowNowList');
   },
   getWacth() {
     let _this = this;
-    for (let key of _this.nowDownl) {
-      if (key.state == false) {
+    for (let i = 0; i< _this.nowDownl.length; i++) {
+      if (_this.nowDownl[i].state === false) {
         request.onDownloadComplete({
-          token: key.token,
+          token: _this.nowDownl[i].token,
           success: function (data) {
             _this.box3 = true;
-             _this.box2 = false;
+            _this.box2 = false;
             if (_this.downloadList.length > 10) {
               _this.downloadList.pop();
               _this.downloadList.unshift({ url: data.uri });
               $utils.setStorage('downloadList', _this.downloadList);
-              key.state = true;
+              let index = i;
+              _this.nowDownl.splice(index, 1);
               $utils.setStorage('dowNowList', _this.nowDownl);
-              $utils.deleteStorage('dowNowList');
-              _this.nowDownl = []
             } else {
               _this.downloadList.unshift({ url: data.uri });
               $utils.setStorage('downloadList', _this.downloadList);
-              key.state = true;
+               let index = i;
+              _this.nowDownl.splice(index, 1);
               $utils.setStorage('dowNowList', _this.nowDownl);
-              $utils.deleteStorage('dowNowList');
-              _this.nowDownl = []
             }
           },
           fail: function (data, code) {
-            $utils.deleteStorage('dowNowList');
+            let index = i;
+            _this.nowDownl.splice(index, 1);
+            $utils.setStorage('dowNowList', _this.nowDownl);
           }
         })
       }
@@ -144,6 +148,7 @@ export default {
       if ((this.nowDownl[i].url).indexOf(val) > -1) {
         let index = i;
         this.nowDownl.splice(index, 1);
+        $utils.setStorage('dowNowList', this.nowDownl);
       }
     }
   }

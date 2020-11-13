@@ -7,8 +7,13 @@
       icon="{{icon}}"
       onget-click="getClick"
     ></title-bar>
-    <div if="{{suspensionDialog}}" class="ad-btn"  @click="getSuspension">
-        <my-avatar src="{{suspensionData.picture}}" size="default"></my-avatar>
+    <div if="{{suspensionDialog}}" 
+      style="right: {{menuStyle.left+'px'}}; top:{{menuStyle.top+'px'}};position: fixed;"
+      ontouchstart="menuTouchStart"
+      ontouchmove="menuTouchMove"
+      ontouchend="menuTouchEnd"
+     >
+     <my-avatar src="{{suspensionData.picture}}" @click="getSuspension" size="default"></my-avatar>
     </div>
     <div style="margin-top:100px">
       <text style="color:#000" class="title"></text>
@@ -19,6 +24,10 @@
         src="{{websrc}}"
         id="web"
         allowthirdpartycookies="true"
+        onpagestart="onPageStart"
+        onpagefinish="onPageFinish"
+        ontitlereceive="onTitleReceive"
+        onerror="onError"
       ></web>
     </div>
     <div class="return-btn" @click="goto">
@@ -59,6 +68,7 @@ import prompt from '@system.prompt'
 import clipboard from '@system.clipboard'
 import router from '@system.router'
 import pkg from '@system.package'
+import device from '@system.device';
 export default {
   data: {
     showContent: false,
@@ -78,6 +88,17 @@ export default {
     href: "",
     suspensionDialog: false,
     suspensionData: "",
+    menuStyle: {
+      left: 60, 
+      top: 200,
+      disX: 0,
+      disY: 0
+    },
+    beginDrag: false,
+    devices: "",
+    content: "",
+    hUrl: "",
+    titleName: "",
   },
   onInit() {
     let url = JSON.parse(this.nav)
@@ -95,9 +116,19 @@ export default {
          this.getAd();
       }, 3* 1000)
     })
+    // 获取搜索历史
+    $utils.getStorage('historyData').then(value => {
+        this.historyData = JSON.parse(value);
+    }) 
     // 判断是否登录状态
     $utils.getStorage('token').then(value => {
       this.header.token = value;
+    })
+    let _this = this;
+    device.getInfo({
+      success: function (ret) {
+       _this.devices = ret;
+      }
     })
     this.copyUrl()
   },
@@ -106,7 +137,7 @@ export default {
   },
   onShow() {
     let name = "资讯列表"
-    this.addHistoryData( name, this.href)   
+    // this.addHistoryData( name, this.href)   
   },
   addHistoryData(title, url) {
     var now = new Date();
@@ -293,6 +324,63 @@ export default {
           message: data.message
         })
       }
+    })
+  },
+   menuTouchStart(event) {
+    this.beginDrag = true;
+    this.menuStyle.disX = event.touches[0].offsetX;
+    this.menuStyle.disY = event.touches[0].offsetY
+  },
+  menuTouchMove(event) {
+    if (this.beginDrag) {
+      event.stopPropagation()
+      let resetDeviceScreenWidth = event.touches[0].clientX > this.devices.windowWidth ? ((this.devices.windowWidth / this.devices.screenDensity) * 4) : this.devices.windowWidth;
+      let resetDeviceScreenHeight = event.touches[0].clientY > this.devices.windowHeight ? ((this.devices.windowHeight / this.devices.screenDensity) * 3) : this.devices.windowHeight;
+      let menuStyleLeft = event.touches[0].clientX - this.menuStyle.disX;
+      let menuStyleTop = event.touches[0].clientY - this.menuStyle.disY;
+      this.menuStyle.left = menuStyleLeft < 0 ? (menuStyleLeft > (resetDeviceScreenWidth - 104) ? resetDeviceScreenWidth + 104 : menuStyleLeft) : 10;
+      this.menuStyle.top = menuStyleTop > 0 ? (menuStyleTop > (resetDeviceScreenHeight - 800) ? resetDeviceScreenHeight - 800 : menuStyleTop) : 200;
+    }
+  },
+  menuTouchEnd() {
+    this.beginDrag = false;
+    this.menuStyle.disX = this.menuStyle.disY = 0;
+  },
+  onPageStart(e) {
+    this.hUrl = e.url;
+  },
+  onTitleReceive(e) {
+    this.titleName = e.title;
+    // let url = this.hUrl +"/s?wd="+this.titleName
+    this.addHistoryData( this.titleName, this.hUrl);
+  },
+  onError() {
+    console.info('### pageError ###')
+  },
+  arrowLeftIcon() {
+    this.isCanBack()
+  },
+  arrowRightIcon() {
+    this.isCanForward()
+  },
+  isCanForward() {
+    this.$element('web').canForward({
+      callback: function (e) {
+        if (e) {
+          this.$element('web').forward()
+        }
+      }.bind(this)
+    })
+  },
+  isCanBack() {
+    this.$element('web').canBack({
+      callback: function (e) {
+        if (e) {
+          this.$element('web').back()
+        } else {
+          router.back()
+        }
+      }.bind(this)
     })
   },
 }

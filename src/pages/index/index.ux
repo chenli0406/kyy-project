@@ -77,7 +77,7 @@
               <image src="../../assets/images/index/download.png"> </image>
               <text>下载管理</text>
             </div>
-            <div class="menu-item" @click="getRouter('collection')">
+            <div class="menu-item">
               <image src="../../assets/images/index/collect-1.png"></image>
               <text>添加收藏</text>
             </div>
@@ -328,7 +328,7 @@ export default {
   // 资讯跳转路由
   getRouterinfo() {
     if (this.navs.length == 1) {
-      $utils.route2theUrl('pages/info-list', { nav: this.navs });
+       $utils.route2theUrl('pages/infor-one', { nav: this.navs });
     } else {
        $utils.route2theUrl('pages/information', { nav: this.navs });
     }
@@ -338,15 +338,7 @@ export default {
      router.push({
         uri: 'pages/collection'
       })
-    // if (this.logined == true) {
-    //   router.push({
-    //     uri: 'pages/collection'
-    //   })
-    // } else {
-    //   router.push({
-    //     uri: 'pages/login'
-    //   })
-    // }
+
   },
   toSearch() {
     $utils.route2theUrl('pages/search', {})
@@ -357,13 +349,6 @@ export default {
     switch (type) {
       case 'dol':
         $utils.route2theUrl('pages/download');
-        break;
-      case 'collection':
-        if (this.logined == true) {
-          $utils.route2theUrl('pages/collection')
-        } else {
-          // $utils.route2theUrl('pages/login')
-        }
         break;
       case 'history':
         $utils.route2theUrl('pages/history')

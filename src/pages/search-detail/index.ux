@@ -161,6 +161,9 @@ export default {
     device: "",
   },
   onInit() {
+    this.showContent = false;
+    this.websrc = this.searchText;
+    this.titleName = this.title;
     // 获取设备id
     $utils.getStorage('deviceId').then(value => {
       this.header.deviceId = value;
@@ -188,9 +191,6 @@ export default {
       }
 
     })
-    this.showContent = false;
-    this.websrc = this.searchText;
-    this.titleName = this.title;
     this.$on('arrowLeft', this.arrowLeftIcon)
     this.$on('arrowRight', this.arrowRightIcon)
     $utils.getStorage('dowNowList').then(value => {
@@ -361,7 +361,7 @@ export default {
   addCollection() {
     let para = new Object();
     para.title = this.titleName;
-    para.url = this.searchText;
+    para.url = this.hUrl;
     $apis.common.addFavorite(para, this.header).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code == 0) {
@@ -476,8 +476,7 @@ export default {
          prompt.showToast({
           message: '已加入下载队列'
          })
-         console.log(data.token);
-        //  $utils.route2theUrl('pages/download', { token: data.token , content: _this.content});
+         
         if(_this.dowNowList.length > 15){
           _this.dowNowList.pop();
           _this.dowNowList.unshift({ url: _this.content, token: data.token, state: false  });
@@ -527,7 +526,7 @@ export default {
       let menuStyleLeft = event.touches[0].clientX - this.menuStyle.disX;
       let menuStyleTop = event.touches[0].clientY - this.menuStyle.disY;
       this.menuStyle.left = menuStyleLeft < 0 ? (menuStyleLeft > (resetDeviceScreenWidth - 104) ? resetDeviceScreenWidth + 104 : menuStyleLeft) : 10;
-      this.menuStyle.top = menuStyleTop > 0 ? (menuStyleTop > (resetDeviceScreenHeight - 404) ? resetDeviceScreenHeight - 404 : menuStyleTop) : 200;
+      this.menuStyle.top = menuStyleTop > 0 ? (menuStyleTop > (resetDeviceScreenHeight - 800) ? resetDeviceScreenHeight - 800 : menuStyleTop) : 200;
     }
   },
   menuTouchEnd() {

@@ -53,8 +53,8 @@ export default {
   },
   ellipsis(value) {
     if (!value) return ''
-    if (value.length > 40) {
-      return value.slice(0,40) + '...'
+    if (value.length > 34) {
+      return value.slice(0,34) + '...'
     }
     return value
   },

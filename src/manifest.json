@@ -111,6 +111,9 @@
       },
       "pages/saoma": {
         "component": "index"
+      },
+      "pages/infor-one": {
+        "component": "index"
       }
     }
   },
@@ -172,6 +175,10 @@
       },
       "pages/addMenu": {
         "titleBarText": ""
+      },
+      "pages/infor-one": {
+        "component": "index",
+        "launchMode": "singleTask"
       }
     }
   }

@@ -1,10 +1,10 @@
 
-<import name="homes" src="../../components/homes"></import>
+<import name="list" src="../../components/list"></import>
 
 <template>
   <div class="page-wrapper">
     <!-- 底部菜单 -->
-    <homes onemit-evt="emitEvt"></homes>
+    <list onemit-evt="emitEvt" websrc={{websrc}}></list>
     <div class="bottom">
       <div class="b-box" @click="getRouterIndex()">
         <image src="../../assets/images/index/index.png"></image>
@@ -89,9 +89,12 @@ export default {
       token: "",
     },
     message: "",
+    websrc: "",
 
   },
   onInit() {
+    let url = JSON.parse(this.nav)
+    this.websrc = url[0].url;
     this.showContent = false;
     $utils.getStorage('deviceId').then(value => {
       this.header.deviceId = value;

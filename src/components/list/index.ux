@@ -2,29 +2,18 @@
 <template>
   <div class="page-container">
     <search-bar></search-bar>
-    <tabs onchange="changeTab">
-      <underline-tab-bar
-        tab-list="{{navs}}"
-        selected-tab="{{selectedTab}}"
-        mode="scrollable"
-      ></underline-tab-bar>
-      <tab-content class="tab-content">
-        <div for="{{tabList}}">
-          <div class="content" if="{{selectedTab === $idx}}">
-            <web 
-            class="web-comp" 
-            src="{{$item.url}}"  
-            allowthirdpartycookies="true"
-            id="web"
-            onpagestart="onPageStart"
-            onpagefinish="onPageFinish"
-            ontitlereceive="onTitleReceive"
-            onerror="onError"
-            ></web>
-          </div>
-        </div>
-      </tab-content>
-    </tabs>
+    <div class="content">
+      <web
+        class="web-comp"
+        src="{{websrc}}"
+        id="web"
+        allowthirdpartycookies="true"
+        onpagestart="onPageStart"
+        onpagefinish="onPageFinish"
+        ontitlereceive="onTitleReceive"
+        onerror="onError"
+      ></web>
+    </div>
     <div if="{{suspensionDialog}}" 
      style="right: {{menuStyle.left+'px'}}; top:{{menuStyle.top+'px'}};position: fixed;"
      ontouchstart="menuTouchStart"
@@ -48,15 +37,12 @@
 </template>
 
 <import name="search-bar" src="../common/bar/search-bar"></import>
-<import name="underline-tab-bar" src="../common/tab/underline-tab-bar"></import>
-<import name="article-list" src="../common/list/article-list"></import>
-
 <script>
 import device from '@system.device';
 import router from '@system.router'
 import pkg from '@system.package'
 export default {
-  props: [],
+  props: ['websrc'],
   data: {
     suspensionDialog: false,
     tabList: [],
@@ -73,22 +59,6 @@ export default {
       deviceId: "",
       token: "",
     },
-    device: {
-      id: "",
-      imei: "",
-      brand: "",
-      manufacturer: "",
-      model: "",
-      osType: "",
-      osVersionName: "",
-      osVersionCode: "",
-      platformVersionName: "",
-      platformVersionCode: "",
-      region: "",
-      screenWidth: 0,
-      screenHeight: 0
-    },
-    packages: [],
     navs: [],
     category: '插屏',
     scene: '其它',
@@ -112,8 +82,6 @@ export default {
     // 获取设备id
     $utils.getStorage('deviceId').then(value => {
       this.header.deviceId = value;
-      this.device.id = value;
-      this.getLoad();
       this.getSuspensionAd();
       let timer = setTimeout(() => {
         this.getAd();
@@ -128,53 +96,11 @@ export default {
         this.historyData = JSON.parse(value);
     }) 
     let _this = this;
-  },
-  getLoad() {
-    let _this = this;
-    // 获取设备信息
     device.getInfo({
       success: function (ret) {
-        _this.device.brand = ret.brand;
-        _this.device.manufacturer = ret.manufacturer;
-        _this.device.model = ret.model;
-        _this.device.osType = ret.osType;
-        _this.device.osVersionName = ret.osVersionName;
-        _this.device.osVersionCode = ret.osVersionCode;
-        _this.device.platformVersionName = ret.platformVersionName;
-        _this.device.platformVersionCode = ret.platformVersionCode;
-        _this.device.region = ret.region;
-        _this.device.screenWidth = ret.screenWidth;
-        _this.device.screenHeight = ret.screenHeight;
-        _this.devices = ret;
-        let para = new Object();
-        var device = require('@system.device')
-        var host = device.host;
-        if (host) {
-          _this.packages.push(host.package);
-        }
-        para.device = _this.device;
-        para.packages = _this.packages;
-
-        $apis.common.getLaunch(para, _this.header).then((res) => {
-          let data = JSON.parse(res.data);
-          _this.tabList = data.navs;
-          console.log(_this.tabList);
-          for (let key of _this.tabList) {
-            _this.navs.push(key.title)
-          }
-        })
+       _this.devices = ret;
       }
     })
-  },
-  changeTab(e) {
-    let index = e.index || 0
-    this.selectedTab = index;
-    for(let i = 0; i< this.tabList.length; i++){
-         if(i == index){
-            // this.addHistoryData( this.tabList[i].title, this.tabList[i].url);
-            //  $utils.setStorage('addCollection', this.tabList[i]);
-         }
-    }
   },
   // 广告跳转
   openUrl() {
@@ -194,6 +120,9 @@ export default {
         _this.getAllAd("click");
       },
     })
+  },
+   onReady() {
+    this.showContent = false;
   },
   // 获取广告
   getAd() {
@@ -245,7 +174,7 @@ export default {
     this.adDialog = false;
   },
   getSuspensionAd(){
-     let para = new Object();
+    let para = new Object();
     para.category = '浮窗';
     para.scene = '其它';
     $apis.common.getAd(para, this.header).then((res) => {
@@ -318,17 +247,13 @@ export default {
     }
   },
   onPageStart(e) {
-    // if (e.url.search(".apk") != -1) {
-    //   this.content = e.url
-    // } else {
-    // }
     this.hUrl = e.url;
   },
   onTitleReceive(e) {
     this.titleName = e.title;
     let url = this.hUrl +"/s?wd="+this.titleName
     this.addHistoryData( this.titleName, url);
-     this.changeAction(this.titleName, url)
+    this.changeAction(this.titleName, url)
   },
   onError() {
     console.info('### pageError ###')
@@ -383,6 +308,8 @@ export default {
     this.$emit('emitEvt',{ title: title, url: url })
 
   },
+  onPageFinish(e){
+  }
 }
 </script>
 
@@ -400,6 +327,9 @@ export default {
       align-content: center;
       border-radius: 50%;
     }
+  }
+  .content{
+    flex: 1;
   }
 .adimg-box {
   width: 100%;
