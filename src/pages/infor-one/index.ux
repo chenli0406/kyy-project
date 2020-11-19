@@ -1,10 +1,10 @@
 
-<import name="list" src="../../components/list"></import>
+<import name="lists" src="../../components/lists"></import>
 
 <template>
   <div class="page-wrapper">
     <!-- 底部菜单 -->
-    <list onemit-evt="emitEvt" websrc={{websrc}}></list>
+    <lists onemit-evt="emitEvt" websrc={{websrc}}></lists>
     <div class="bottom">
       <div class="b-box" @click="getRouterIndex()">
         <image src="../../assets/images/index/index.png"></image>
