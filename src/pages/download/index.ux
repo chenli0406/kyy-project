@@ -176,8 +176,6 @@ export default {
     flex-direction: column;
     .item-container {
       align-items: center;
-      .item-box {
-      }
       .item-t {
         height: 40px;
         width: 100%;

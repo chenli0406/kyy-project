@@ -130,8 +130,9 @@ export default {
       this.historyData = JSON.parse(value);
     })
     let _this = this;
-    this.$on('arrowLeft', this.arrowLeftIcon)
-    this.$on('arrowRight', this.arrowRightIcon)
+    this.$on('arrowLeft', this.arrowLeftIcon);
+    this.$on('arrowRight', this.arrowRightIcon);
+    this.$on('evtType', this.evtType)
   },
   getLoad() {
     let _this = this;
@@ -258,7 +259,6 @@ export default {
         if (data.ad) {
           this.suspensionDialog = true;
           this.suspensionData = data.ad;
-          console.log(this.suspensionData);
           this.clickSuspension("open");
         }
       } else {
@@ -327,13 +327,14 @@ export default {
     // } else {
     // }
     this.hUrl = e.url;
-
   },
   onTitleReceive(e) {
+    this.getAd();
+    this.getSuspensionAd();
     this.titleName = e.title;
     let url = this.hUrl + "/s?wd=" + this.titleName
     this.addHistoryData(this.titleName, url);
-    this.changeAction(this.titleName, url)
+    this.changeAction(this.titleName, url);
   },
   onError() {
   },
@@ -387,10 +388,9 @@ export default {
   },
   changeAction(title, url) {
     this.$emit('emitEvt', { title: title, url: url })
-
   },
-  onBackPress() {
-    this.$element('web').canBack({
+  evtType(){
+     this.$element('web').canBack({
       callback: function (e) {
         if (e) {
           this.$element('web').back()
@@ -399,8 +399,7 @@ export default {
         }
       }.bind(this)
     })
-    return true;
-  },
+  }
 }
 </script>
 

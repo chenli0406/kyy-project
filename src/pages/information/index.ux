@@ -4,7 +4,7 @@
 <template>
   <div class="page-wrapper">
     <!-- 底部菜单 -->
-    <homes onemit-evt="emitEvt"></homes>
+    <homes onemit-evt="emitEvt" id="homes"></homes>
     <div class="bottom">
       <div class="b-box" @click="getRouterIndex()">
         <image src="../../assets/images/index/index.png"></image>
@@ -223,7 +223,11 @@ export default {
   },
   emitEvt(evt) {
     this.message = evt.detail
-  }
+  },
+  onBackPress() {
+    this.$broadcast("evtType");
+    return true;
+  },
 }
 </script>
 
