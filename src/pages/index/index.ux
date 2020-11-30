@@ -331,6 +331,7 @@ export default {
        $utils.route2theUrl('pages/infor-one', { nav: this.navs });
     } else {
        $utils.route2theUrl('pages/information', { nav: this.navs });
+      // $utils.route2theUrl('pages/infor-one', { nav: this.navs });
     }
 
   },
@@ -766,7 +767,6 @@ export default {
     .adClose {
       width: 100%;
       margin-top: 20px;
-
       .flex-box-mixins(column, flex-end, flex-end);
       .close {
         width: 50px;

@@ -99,7 +99,7 @@
           <image class="c-img" src="../../assets/images/dialong.png"></image>
         </div>
         <div class="adImg" @click="openUrl">
-          <image class="img" src="{{adData.picture}}"></image>
+          <image class="img" style="width: 400px;" src="{{adData.picture}}"></image>
         </div>
       </div>
     </div>
@@ -532,7 +532,19 @@ export default {
   menuTouchEnd() {
     this.beginDrag = false;
     this.menuStyle.disX = this.menuStyle.disY = 0;
-  }
+  },
+  onBackPress() {
+    this.$element('web').canBack({
+      callback: function (e) {
+        if (e) {
+          this.$element('web').back()
+        } else {
+          router.back()
+        }
+      }.bind(this)
+    })
+    return true;
+  },
 }
 </script>
 
@@ -740,16 +752,18 @@ export default {
   position: fixed;
   background-color: rgba(0, 0, 0, 0.4);
   height: 100%;
+  margin: 0 auto;
   display: flex;
   justify-content: center;
   align-items: center;
   .box {
-    width: 100%;
-    padding: 0px 60px;
+    width: 70%;
+    background-color: #ffffff;
+    border-radius: 40px; 
+    padding: 40px;
     .flex-box-mixins(column, center, center);
     .adClose {
       width: 100%;
-      margin-top: 20px;
       .flex-box-mixins(column, flex-end, flex-end);
       .c-img {
         width: 50px;
@@ -758,8 +772,8 @@ export default {
     }
     .adImg {
       .flex-box-mixins(column, center, center);
-      width: 400px;
-      height: 400px;
+      width: 100%;
+      margin-top: 20px;
       .img {
         width: 100%;
       }
