@@ -4,36 +4,16 @@
   <div class="page-container">
     <search-bar></search-bar>
     <tabs onchange="changeTab">
-      <underline-tab-bar
-        tab-list="{{navs}}"
-        selected-tab="{{selectedTab}}"
-        mode="scrollable"
-      ></underline-tab-bar>
+      <underline-tab-bar tab-list="{{navs}}" selected-tab="{{selectedTab}}" mode="scrollable"></underline-tab-bar>
       <tab-content class="tab-content">
         <div for="{{tabList}}">
           <div class="content" if="{{selectedTab === $idx}}">
-            <web
-              class="web-comp"
-              src="{{$item.url}}"
-              allowthirdpartycookies="true"
-              id="web"
-              onpagestart="onPageStart"
-              onpagefinish="onPageFinish"
-              ontitlereceive="onTitleReceive"
-              onerror="onError"
-              onprogress="onProgress"
-            ></web>
+            <web class="web-comp" src="{{$item.url}}" allowthirdpartycookies="true" id="web" onpagestart="onPageStart" onpagefinish="onPageFinish" ontitlereceive="onTitleReceive" onerror="onError" onprogress="onProgress"></web>
           </div>
         </div>
       </tab-content>
     </tabs>
-    <div
-      if="{{suspensionDialog}}"
-      style="right: {{menuStyle.left+'px'}}; top:{{menuStyle.top+'px'}};position: fixed;"
-      ontouchstart="menuTouchStart"
-      ontouchmove="menuTouchMove"
-      ontouchend="menuTouchEnd"
-    >
+    <div if="{{suspensionDialog}}" style="right: {{menuStyle.left+'px'}}; top:{{menuStyle.top+'px'}};position: fixed;" ontouchstart="menuTouchStart" ontouchmove="menuTouchMove" ontouchend="menuTouchEnd">
       <my-avatar src="{{suspensionData.picture}}" size="default" @click="getSuspension"></my-avatar>
     </div>
     <!-- 广告 -->
@@ -48,13 +28,7 @@
       </div>
     </div>
     <!-- 下载弹窗 -->
-    <my-dialog
-      visible="{{open}}"
-      title="保存文件"
-      content="{{content}}"
-      onaffirm="affirm"
-      oncancel="closedol"
-    ></my-dialog>
+    <my-dialog visible="{{open}}" title="保存文件" content="{{content}}" onaffirm="affirm" oncancel="closedol"></my-dialog>
   </div>
 </template>
 
@@ -189,8 +163,8 @@ export default {
     this.selectedTab = index;
     for (let i = 0; i < this.tabList.length; i++) {
       if (i == index) {
-        this.addHistoryData( this.tabList[i].title, this.tabList[i].url);
-         $utils.setStorage('addCollection', this.tabList[i]);
+        this.addHistoryData(this.tabList[i].title, this.tabList[i].url);
+        $utils.setStorage('addCollection', this.tabList[i]);
         $apis.common.getNavClick({ id: this.tabList[i].id }, this.header).then((res) => {
           let data = JSON.parse(res.data);
           if (data.code != 0) {
@@ -350,16 +324,18 @@ export default {
     this.hUrl = e.url;
   },
   onTitleReceive(e) {
-    console.log("11");
-    console.log(e);
-    // this.getSuspensionAd();
-    // let timer = setTimeout(() => {
-    //   this.getAd();
-    // }, 1 * 1000)
-    this.titleName = e.title;
-    let url = this.hUrl + "/s?wd=" + this.titleName
-    this.addHistoryData(this.titleName, url);
-    this.changeAction(this.titleName, url);
+    if (this.titleName != e.title) {
+      this.getSuspensionAd();
+      let timer = setTimeout(() => {
+        this.getAd();
+      }, 1 * 1000)
+      let url = this.hUrl + "/s?wd=" + this.titleName
+      this.addHistoryData(this.titleName, url);
+      this.changeAction(this.titleName, url);
+    }else{
+          this.titleName = e.title;
+    }
+
   },
   onError() {
   },
