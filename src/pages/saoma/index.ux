@@ -3,8 +3,12 @@
     <!-- <title-bar title="{{title}}" show-back="{{true}}" icon="" onget-click="getClick"></title-bar> -->
     <div class="container">
       <div class="title-bar">
-      <image style="margin-right:60px;" src="../../assets/images/saoyisao.png"  onclick="goBack"></image> 
-      <text class="center-title">扫码</text>
+        <image
+          style="margin-right:60px;"
+          src="../../assets/images/saoyisao.png"
+          onclick="goBack"
+        ></image>
+        <text class="center-title">扫码</text>
       </div>
       <camera
         id="camera"
@@ -31,6 +35,8 @@
 import media from '@system.media'
 // import QRCode from 'qrcode'
 import router from '@system.router'
+import image from '@system.image'
+import file from '@system.file'
 export default {
   private: {
     componentName: '扫码',
@@ -63,7 +69,8 @@ export default {
         //   .catch(err => {
         //     console.error(err)
         //   })
-        console.log(_this.pictureUrl);
+        _this.getBase64(data.uri);
+
       },
       fail(data, code) {
         console.log('take photos failed：code' + code.code)
@@ -93,17 +100,83 @@ export default {
     console.log('用户不允许使用摄像头')
   },
   takeImg() {
+    let _this = this
     media.pickImage({
       success: function (data) {
         console.log(`handling success: ${data.uri}`)
+        _this.getBase64(data.uri);
       },
       fail: function (data, code) {
         console.log(`handling fail, code = ${code}`)
       }
     })
   },
-  goBack(){
-     router.back()
+  goBack() {
+    router.back()
+  },
+  getBase64(val) {
+    let _this = this
+    image.compressImage({
+      uri: val,
+      radio: 2, // 变为原图的1/2大小
+      format: 'JPEG',
+      success: function (data) {
+        console.info('compressimg' + val)
+        file.readArrayBuffer({
+          uri: val, success: function (temp) {
+            // console.log('base64===' + _arrayBufferToBase64(temp.buffer))
+            var strBase64 = 'data:image/png;base64,' + _this.arrayBufferToBase64(temp.buffer);
+            console.log("111");
+            console.log(strBase64);
+          }, fail: function (data, code) {
+            console.info('base64=== error')
+          }
+        })
+      },
+      fail: function (data, code) {
+        console.info(`handling fail, code = ${code}`)
+      }
+    })
+  },
+  arrayBufferToBase64(raw) {
+    var base64 = ''
+    var encodings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+    var bytes = new Uint8Array(raw)
+    var byteLength = bytes.byteLength;
+    var byteRemainder = byteLength % 3
+    var mainLength = byteLength - byteRemainder
+    var a, b, c, d
+    var chunk
+    // Main loop deals with bytes in chunks of 3
+    for (var i = 0; i < mainLength; i = i + 3) {
+      // Combine the three bytes into a single integer
+      chunk = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2]
+      // Use bitmasks to extract 6-bit segments from the triplet
+      a = (chunk & 16515072) >> 18 // 16515072 = (2^6 - 1) << 18
+      b = (chunk & 258048) >> 12 // 258048 = (2^6 - 1) << 12
+      c = (chunk & 4032) >> 6 // 4032 = (2^6 - 1) << 6
+      d = chunk & 63 // 63 = 2^6 - 1
+      // Convert the raw binary segments to the appropriate ASCII encoding
+      base64 += encodings[a] + encodings[b] + encodings[c] + encodings[d]
+    }
+    // Deal with the remaining bytes and padding
+    if (byteRemainder == 1) {
+      chunk = bytes[mainLength]
+      a = (chunk & 252) >> 2 // 252 = (2^6 - 1) << 2;
+      // Set the 4 least significant bits to zero
+      b = (chunk & 3) << 4 // 3 = 2^2 - 1;
+      base64 += encodings[a] + encodings[b] + '=='
+    }
+    else if (byteRemainder == 2) {
+      chunk = (bytes[mainLength] << 8) | bytes[mainLength + 1]
+      a = (chunk & 16128) >> 8 // 16128 = (2^6 - 1) << 8;
+      b = (chunk & 1008) >> 4 // 1008 = (2^6 - 1) << 4;
+      // Set the 2 least significant bits to zero
+      c = (chunk & 15) << 2 // 15 = 2^4 - 1;
+      base64 += encodings[a] + encodings[b] + encodings[c] + '='
+    }
+    // return 'data:image/jpeg;base64' + base64
+    return base64
   }
 }
 </script>
@@ -126,16 +199,15 @@ export default {
   position: fixed;
   bottom: 70px;
 }
-.title-bar{
+.title-bar {
   position: fixed;
-  top:40px;
+  top: 40px;
   padding-left: 60px;
- 
 }
- .center-title{
-    font-size: 40px;
-    text-align: left;
-    padding-right: 100px;
-    color: #fff;
-  }
+.center-title {
+  font-size: 40px;
+  text-align: left;
+  padding-right: 100px;
+  color: #fff;
+}
 </style>

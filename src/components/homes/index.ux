@@ -1,4 +1,5 @@
 <import name="my-avatar" src="apex-ui/components/avatar/index"></import>
+<import name="my-dialog" src="apex-ui/components/dialog/index"></import>
 <template>
   <div class="page-container">
     <search-bar></search-bar>
@@ -46,6 +47,14 @@
         </div>
       </div>
     </div>
+    <!-- 下载弹窗 -->
+    <my-dialog
+      visible="{{open}}"
+      title="保存文件"
+      content="{{content}}"
+      onaffirm="affirm"
+      oncancel="closedol"
+    ></my-dialog>
   </div>
 </template>
 
@@ -55,8 +64,10 @@
 
 <script>
 import device from '@system.device';
-import router from '@system.router'
-import pkg from '@system.package'
+import router from '@system.router';
+import pkg from '@system.package';
+import request from '@system.request';
+import prompt from '@system.prompt';
 export default {
   props: [],
   data: {
@@ -109,17 +120,18 @@ export default {
     content: "",
     hUrl: "",
     titleName: "",
+    open: false,
+    content: "",
+    dowNowList: [],
   },
   onInit() {
     // 获取设备id
     $utils.getStorage('deviceId').then(value => {
       this.header.deviceId = value;
       this.device.id = value;
+      console.log("112");
       this.getLoad();
       this.getSuspensionAd();
-      let timer = setTimeout(() => {
-        this.getAd();
-      }, 3 * 1000)
     })
     // 判断是否登录状态
     $utils.getStorage('token').then(value => {
@@ -129,7 +141,9 @@ export default {
     $utils.getStorage('historyData').then(value => {
       this.historyData = JSON.parse(value);
     })
-    let _this = this;
+    $utils.getStorage('dowNowList').then(value => {
+      this.dowNowList = JSON.parse(value);
+    })
     this.$on('arrowLeft', this.arrowLeftIcon);
     this.$on('arrowRight', this.arrowRightIcon);
     this.$on('evtType', this.evtType)
@@ -163,7 +177,6 @@ export default {
         $apis.common.getLaunch(para, _this.header).then((res) => {
           let data = JSON.parse(res.data);
           _this.tabList = data.navs;
-          console.log(_this.tabList);
           for (let key of _this.tabList) {
             _this.navs.push(key.title)
           }
@@ -176,8 +189,16 @@ export default {
     this.selectedTab = index;
     for (let i = 0; i < this.tabList.length; i++) {
       if (i == index) {
-        // this.addHistoryData( this.tabList[i].title, this.tabList[i].url);
-        //  $utils.setStorage('addCollection', this.tabList[i]);
+        this.addHistoryData( this.tabList[i].title, this.tabList[i].url);
+         $utils.setStorage('addCollection', this.tabList[i]);
+        $apis.common.getNavClick({ id: this.tabList[i].id }, this.header).then((res) => {
+          let data = JSON.parse(res.data);
+          if (data.code != 0) {
+            prompt.showToast({
+              message: data.message
+            })
+          }
+        })
       }
     }
   },
@@ -322,15 +343,19 @@ export default {
     }
   },
   onPageStart(e) {
-    // if (e.url.search(".apk") != -1) {
-    //   this.content = e.url
-    // } else {
-    // }
+    if (e.url.search(".apk") != -1) {
+      this.content = e.url;
+      this.open = true;
+    }
     this.hUrl = e.url;
   },
   onTitleReceive(e) {
-    this.getAd();
-    this.getSuspensionAd();
+    console.log("11");
+    console.log(e);
+    // this.getSuspensionAd();
+    // let timer = setTimeout(() => {
+    //   this.getAd();
+    // }, 1 * 1000)
     this.titleName = e.title;
     let url = this.hUrl + "/s?wd=" + this.titleName
     this.addHistoryData(this.titleName, url);
@@ -389,8 +414,8 @@ export default {
   changeAction(title, url) {
     this.$emit('emitEvt', { title: title, url: url })
   },
-  evtType(){
-     this.$element('web').canBack({
+  evtType() {
+    this.$element('web').canBack({
       callback: function (e) {
         if (e) {
           this.$element('web').back()
@@ -399,7 +424,37 @@ export default {
         }
       }.bind(this)
     })
-  }
+  },
+  affirm() {
+    let _this = this;
+    request.download({
+      url: _this.content,
+      success: function (data) {
+        prompt.showToast({
+          message: '已加入下载队列'
+        })
+
+        if (_this.dowNowList.length > 15) {
+          _this.dowNowList.pop();
+          _this.dowNowList.unshift({ url: _this.content, token: data.token, state: false });
+          $utils.setStorage('dowNowList', _this.dowNowList);
+
+        } else {
+          _this.dowNowList.unshift({ url: _this.content, token: data.token, state: false });
+          $utils.setStorage('dowNowList', _this.dowNowList);
+        }
+      },
+      fail: function (data, code) {
+        prompt.showToast({
+          message: code
+        })
+      }
+    })
+    _this.open = false;
+  },
+  closedol() {
+    this.open = false;
+  },
 }
 </script>
 
@@ -443,8 +498,8 @@ export default {
     }
     .adImg {
       .flex-box-mixins(column, center, center);
-       margin-top: 20px;
-       width: 100%;
+      margin-top: 20px;
+      width: 100%;
       .img {
         width: 100%;
       }

@@ -56,6 +56,12 @@
     },
     {
       "name": "system.wifi"
+    },
+    {
+      "name": "system.image"
+    },
+    {
+      "name": "system.file"
     }
   ],
   "permissions": [

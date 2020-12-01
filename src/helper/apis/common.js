@@ -62,4 +62,8 @@ export default {
   getHotWordList(data ,op) {
     return $ajax.get(BaseUrl + '/api/hotword', data ,op)
   },
+  // 资讯类目点击
+  getNavClick(data ,op) {
+    return $ajax.post(BaseUrl + '/api/nav-click', data ,op)
+  },
 }

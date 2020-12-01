@@ -226,7 +226,11 @@ export default {
   },
   emitEvt(evt) {
     this.message = evt.detail
-  }
+  },
+  onBackPress() {
+    this.$broadcast("evtType");
+    return true;
+  },
 }
 </script>
 

@@ -1,4 +1,5 @@
 <import name="my-avatar" src="apex-ui/components/avatar/index"></import>
+<import name="my-dialog" src="apex-ui/components/dialog/index"></import>
 <template>
   <div class="page-container">
     <search-bar></search-bar>
@@ -34,14 +35,24 @@
         </div>
       </div>
     </div>
+      <!-- 下载弹窗 -->
+    <my-dialog
+      visible="{{open}}"
+      title="保存文件"
+      content="{{content}}"
+      onaffirm="affirm"
+      oncancel="closedol"
+    ></my-dialog>
   </div>
 </template>
 
 <import name="search-bar" src="../common/bar/search-bar"></import>
 <script>
 import device from '@system.device';
-import router from '@system.router'
-import pkg from '@system.package'
+import router from '@system.router';
+import pkg from '@system.package';
+import request from '@system.request';
+import prompt from '@system.prompt';
 export default {
   props: ['websrc'],
   data: {
@@ -78,6 +89,9 @@ export default {
     content: "",
     hUrl: "",
     titleName: "",
+    open: false,
+    content: "",
+    dowNowList: [],
   },
   onInit() {
     // 获取设备id
@@ -96,9 +110,12 @@ export default {
     $utils.getStorage('historyData').then(value => {
       this.historyData = JSON.parse(value);
     })
-    this.$on('arrowLeft', this.arrowLeftIcon)
-    this.$on('arrowRight', this.arrowRightIcon)
-
+    this.$on('arrowLeft', this.arrowLeftIcon);
+    this.$on('arrowRight', this.arrowRightIcon);
+    this.$on('evtType', this.evtType);
+    $utils.getStorage('dowNowList').then(value => {
+        this.dowNowList = JSON.parse(value);
+    }) 
     let _this = this;
     device.getInfo({
       success: function (ret) {
@@ -251,9 +268,17 @@ export default {
     }
   },
   onPageStart(e) {
+     if (e.url.search(".apk") != -1) {
+      this.content = e.url;
+      this.open = true;
+    }
     this.hUrl = e.url;
   },
   onTitleReceive(e) {
+    this.getSuspensionAd();
+    let timer = setTimeout(() => {
+        this.getAd();
+    }, 1 * 1000)
     this.titleName = e.title;
     let url = this.hUrl + "/s?wd=" + this.titleName
     this.addHistoryData(this.titleName, url);
@@ -325,6 +350,47 @@ export default {
       }.bind(this)
     })
     return true;
+  },
+  evtType(){
+     this.$element('web').canBack({
+      callback: function (e) {
+        if (e) {
+          this.$element('web').back()
+        } else {
+          router.back()
+        }
+      }.bind(this)
+    })
+  },
+  affirm() {
+    let _this = this;
+    request.download({
+      url: _this.content,
+      success: function (data) {
+         prompt.showToast({
+          message: '已加入下载队列'
+         })
+         
+        if(_this.dowNowList.length > 15){
+          _this.dowNowList.pop();
+          _this.dowNowList.unshift({ url: _this.content, token: data.token, state: false  });
+          $utils.setStorage('dowNowList', _this.dowNowList);
+          
+        }else{
+           _this.dowNowList.unshift({ url: _this.content, token: data.token, state: false });
+           $utils.setStorage('dowNowList', _this.dowNowList);
+        }
+      },
+      fail: function (data, code) {
+        prompt.showToast({
+          message: code
+         })
+      }
+    })
+    _this.open = false;
+  },
+  closedol() {
+    this.open = false;
   },
 }
 </script>

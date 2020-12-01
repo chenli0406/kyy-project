@@ -329,11 +329,18 @@ export default {
   getRouterinfo() {
     if (this.navs.length == 1) {
        $utils.route2theUrl('pages/infor-one', { nav: this.navs });
+        $apis.common.getNavClick({ id: this.navs[0].id }, this.header).then((res) => {
+          let data = JSON.parse(res.data);
+          if (data.code != 0) {
+            prompt.showToast({
+              message: data.message
+            })
+          }
+        })
     } else {
        $utils.route2theUrl('pages/information', { nav: this.navs });
-      // $utils.route2theUrl('pages/infor-one', { nav: this.navs });
+        //$utils.route2theUrl('pages/infor-one', { nav: this.navs });
     }
-
   },
   getRouterCollect() {
      router.push({

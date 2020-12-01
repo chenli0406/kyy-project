@@ -11,7 +11,7 @@
         onEnterkeyclick="enter"
         maxlength="200"
       />
-      <image onclick="toSaoma" style="margin:0px 8px; width: 40px;height: 40px;" src="../../../assets/images/saoma.png"></image>
+      <image onclick="toSaoma" style="margin:0px 8px; width: 40px;" src="../../../assets/images/saoma.png"></image>
       <text style="padding: 0px 8px;">|</text>
       <text class="cancel" onclick="goBack">取消</text>
     </div>

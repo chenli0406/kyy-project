@@ -2,9 +2,9 @@
   <div class="page-wrapper">
     <search-input-bar onsearch="search"></search-input-bar>
     <div class="search-hot">
-      <div class="hot-wordlist" style="margin:10px 0"  if="{{hotWordList.length}}">
+      <div class="hot-wordlist" style="margin:10px 0" if="{{hotWordList.length}}">
         <text class="hotlist-item">热搜词:</text>
-        <text class="hotlist-item" for="hotWordList" @click="toHotWord($item)">{{$item}}</text>
+        <text class="hotlist-item" for="hotWordList" @click="toHotWord($item)">{{ $item }}</text>
       </div>
       <text if="{{hotList.length}}" style="margin:10px 0">搜索历史</text>
       <div class="hot-list">
@@ -34,6 +34,7 @@
 import router from '@system.router'
 import ad from '@service.ad'
 import pkg from '@system.package'
+import webview from '@system.webview'
 export default {
   private: {
     searchText: '',
@@ -71,8 +72,8 @@ export default {
     this.getSearchHistory()
     // 获取搜索历史
     $utils.getStorage('historyData').then(value => {
-        this.historyData = JSON.parse(value);
-    }) 
+      this.historyData = JSON.parse(value);
+    })
   },
   getSearchHistory() {
     // 获取搜索历史
@@ -81,20 +82,25 @@ export default {
     })
   },
   search(info) {
-    if(info.detail == "http://" || info.detail == "https://" ){
-        let searchUrl = this.searchEngineId[0].url;
-        $utils.route2theUrl('pages/search-detail', { searchText: searchUrl });
-    }else{
-       this.searchText = info.detail
+    if (info.detail == "http://" || info.detail == "https://") {
+      // let searchUrl = this.searchEngineId[0].url;
+      console.log("111");
+      webview.loadUrl({
+        url: this.searchEngineId[0].url,
+        allowthirdpartycookies: true
+      })
+      // $utils.route2theUrl('pages/search-detail', { searchText: searchUrl });
+    } else {
+      this.searchText = info.detail
     }
-   
+
   },
   delHostList() {
     $utils.deleteStorage('searchHistory');
     this.hotList = [];
   },
   toSearch(val) {
-     $utils.route2theUrl('pages/search-detail', { searchText: val.url ,title: val.title});
+    $utils.route2theUrl('pages/search-detail', { searchText: val.url, title: val.title });
     // let para = new Object();
     // para.keyword = val;
     // para.searchEngineId = this.searchEngineId[0].id;
@@ -109,19 +115,19 @@ export default {
     //   }
     // })
   },
-  toHotWord(val){
+  toHotWord(val) {
     let searchUrl = this.searchEngineId[0].url;
-    let url = searchUrl.replace('%s',val);
-    $utils.route2theUrl('pages/search-detail', { searchText: url ,title : val});
-    this.addHistoryData( val, url)
+    let url = searchUrl.replace('%s', val);
+    $utils.route2theUrl('pages/search-detail', { searchText: url, title: val });
+    this.addHistoryData(val, url)
   },
-  getHotWord(){
+  getHotWord() {
     $apis.common.getHotWordList({}, this.header).then((res) => {
       let data = JSON.parse(res.data);
       if (data.code == 0) {
-         this.hotWordList = data.data;
+        this.hotWordList = data.data;
       } else {
-      prompt.showToast({
+        prompt.showToast({
           message: data.message
         })
       }
@@ -158,12 +164,12 @@ export default {
           router.push({
             uri: _this.adData.link
           })
-        }else{
-            router.push({
+        } else {
+          router.push({
             uri: _this.adData.fallbackLink
           })
         }
-         _this.getAllAd("click");
+        _this.getAllAd("click");
       },
     })
   },
@@ -202,7 +208,7 @@ export default {
     }
     return value
   },
-   // 历史缓存
+  // 历史缓存
   addHistoryData(title, url) {
     var now = new Date();
     var year = now.getFullYear(); //得到年份
@@ -272,21 +278,21 @@ export default {
       }
     }
     .adImg {
-       .flex-box-mixins(column, center, center);
-       width: 400px;
-       height: 400px;
+      .flex-box-mixins(column, center, center);
+      width: 400px;
+      height: 400px;
 
       .img {
         width: 100%;
       }
     }
   }
-  .hot-wordlist{
+  .hot-wordlist {
     width: 100%;
     flex-wrap: wrap;
-    .hotlist-item{
-       height: 50px;
-       padding-right: 20px; 
+    .hotlist-item {
+      height: 50px;
+      padding-right: 20px;
     }
   }
 }
