@@ -25,6 +25,7 @@
 <script>
 import router from '@system.router'
 import prompt from '@system.prompt'
+import webview from '@system.webview'
 export default {
   data: {
     title: '历史记录',
@@ -73,7 +74,15 @@ export default {
     })
   },
   gotoUrl(val){
-      $utils.route2theUrl('pages/search-detail',{searchText: val.url, title : val.title});
+     if(val.title.indexOf("http://") > -1 || val.title.indexOf("https://") > -1){
+               webview.loadUrl({
+                  url: val.title,
+                  allowthirdpartycookies: true
+                })
+        }else{
+             $utils.route2theUrl('pages/search-detail',{searchText: val.url, title : val.title});
+        }
+    
   }
 }
 </script>

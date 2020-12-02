@@ -4,11 +4,12 @@
   <div class="page-wrapper">
     <!-- 搜索 -->
     <div class="title-bar">
-      <div class="search-box">
+      <!-- <div class="search-box">
         <div class="search">
           <input type="text" id="search-input" class="search-input" value="{{titleName}}" />
         </div>
-      </div>
+      </div> -->
+      <search-input onsearch="search" title="{{titleName}}"></search-input>
     </div>
     <div if="{{suspensionDialog}}" 
         style="right: {{menuStyle.left+'px'}}; top:{{menuStyle.top+'px'}};position: fixed;"
@@ -113,8 +114,10 @@
     ></my-dialog>
     <!-- 反馈 -->
     <feedback if="{{feedbackDailog}}" @close="closeFeedback"></feedback>
+    
   </div>
 </template>
+<import name="search-input" src="../../components/common/bar/search"></import>
 <import  name="feedback" src="../../components/feedback/index"></import>
 <script>
 import router from '@system.router'
@@ -422,11 +425,10 @@ export default {
     this.adDialog = false;
   },
   onPageStart(e) {
-    if (e.url.search(".apk") != -1) {
+    if (e.url.indexOf(".apk") != -1 &&  ( e.url.indexOf("http:") != -1 || e.url.indexOf("https:") != -1)) {
       this.content = e.url
       this.open = true;
-    } else {
-    }
+    } 
     this.hUrl = e.url;
   },
   onTitleReceive(e) {

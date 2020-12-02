@@ -13,7 +13,7 @@
           <image class="img" src="../../assets/images/download.png"></image>
           <div style="flex-direction: column; width: 80%; ">
             <div class="item-box" style="flex-direction: column; align-items: flex-start;">
-              <text class="item-t">{{ $item.url | ellipsisA }}</text>
+              <text class="item-t">{{ $item.url | ellipsis }}</text>
             </div>
             <div class="progress">
               <div show="{{box}}" class="progress-box"></div>
@@ -135,6 +135,13 @@ export default {
     if (!value) return ''
     if (value.length > 35) {
       return value.slice(0, 35) + '...'
+    }
+    return value
+  },
+  ellipsis(value) {
+    if (!value) return ''
+    if (value.length > 28) {
+      return value.slice(0, 28) + '...'
     }
     return value
   },

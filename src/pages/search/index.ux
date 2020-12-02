@@ -82,38 +82,21 @@ export default {
     })
   },
   search(info) {
-    if (info.detail == "http://" || info.detail == "https://") {
-      // let searchUrl = this.searchEngineId[0].url;
-      console.log("111");
-      webview.loadUrl({
-        url: this.searchEngineId[0].url,
-        allowthirdpartycookies: true
-      })
-      // $utils.route2theUrl('pages/search-detail', { searchText: searchUrl });
-    } else {
       this.searchText = info.detail
-    }
-
   },
   delHostList() {
     $utils.deleteStorage('searchHistory');
     this.hotList = [];
   },
   toSearch(val) {
-    $utils.route2theUrl('pages/search-detail', { searchText: val.url, title: val.title });
-    // let para = new Object();
-    // para.keyword = val;
-    // para.searchEngineId = this.searchEngineId[0].id;
-    // $apis.common.getSearchLog(para).then((res) => {
-    //   let data = JSON.parse(res.data);
-    //   if (data.code == 0) {
-    //     $utils.route2theUrl('pages/search-detail',{item: data.data, searchText: val});
-    //   } else {
-    //   prompt.showToast({
-    //       message: data.message
-    //     })
-    //   }
-    // })
+     if(val.title.indexOf("http://") > -1 || val.title.indexOf("https://") > -1){
+               webview.loadUrl({
+                  url: val.title,
+                  allowthirdpartycookies: true
+                })
+        }else{
+           $utils.route2theUrl('pages/search-detail', { searchText: val.url, title: val.title });
+        }
   },
   toHotWord(val) {
     let searchUrl = this.searchEngineId[0].url;

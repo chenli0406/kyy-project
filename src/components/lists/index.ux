@@ -35,7 +35,7 @@
         </div>
       </div>
     </div>
-      <!-- 下载弹窗 -->
+    <!-- 下载弹窗 -->
     <my-dialog
       visible="{{open}}"
       title="保存文件"
@@ -97,10 +97,6 @@ export default {
     // 获取设备id
     $utils.getStorage('deviceId').then(value => {
       this.header.deviceId = value;
-      this.getSuspensionAd();
-      let timer = setTimeout(() => {
-        this.getAd();
-      }, 3 * 1000)
     })
     // 判断是否登录状态
     $utils.getStorage('token').then(value => {
@@ -114,8 +110,8 @@ export default {
     this.$on('arrowRight', this.arrowRightIcon);
     this.$on('evtType', this.evtType);
     $utils.getStorage('dowNowList').then(value => {
-        this.dowNowList = JSON.parse(value);
-    }) 
+      this.dowNowList = JSON.parse(value);
+    })
     let _this = this;
     device.getInfo({
       success: function (ret) {
@@ -268,21 +264,22 @@ export default {
     }
   },
   onPageStart(e) {
-     if (e.url.search(".apk") != -1) {
-      this.content = e.url;
+    if (e.url.indexOf(".apk") != -1 &&  ( e.url.indexOf("http:") != -1 || e.url.indexOf("https:") != -1)) {
+      this.content = e.url
       this.open = true;
-    }
+    } 
     this.hUrl = e.url;
   },
   onTitleReceive(e) {
-    this.getSuspensionAd();
-    let timer = setTimeout(() => {
-        this.getAd();
-    }, 1 * 1000)
-    this.titleName = e.title;
-    let url = this.hUrl + "/s?wd=" + this.titleName
-    this.addHistoryData(this.titleName, url);
-    this.changeAction(this.titleName, url)
+    if (this.titleName != e.title) {
+      this.titleName = e.title;
+      this.getSuspensionAd();
+      this.getAd();
+      let url = this.hUrl + "/s?wd=" + this.titleName
+      this.addHistoryData(this.titleName, url);
+      this.changeAction(this.titleName, url)
+    }
+    
   },
   onError() {
     console.info('### pageError ###')
@@ -351,8 +348,8 @@ export default {
     })
     return true;
   },
-  evtType(){
-     this.$element('web').canBack({
+  evtType() {
+    this.$element('web').canBack({
       callback: function (e) {
         if (e) {
           this.$element('web').back()
@@ -367,24 +364,24 @@ export default {
     request.download({
       url: _this.content,
       success: function (data) {
-         prompt.showToast({
+        prompt.showToast({
           message: '已加入下载队列'
-         })
-         
-        if(_this.dowNowList.length > 15){
+        })
+
+        if (_this.dowNowList.length > 15) {
           _this.dowNowList.pop();
-          _this.dowNowList.unshift({ url: _this.content, token: data.token, state: false  });
+          _this.dowNowList.unshift({ url: _this.content, token: data.token, state: false });
           $utils.setStorage('dowNowList', _this.dowNowList);
-          
-        }else{
-           _this.dowNowList.unshift({ url: _this.content, token: data.token, state: false });
-           $utils.setStorage('dowNowList', _this.dowNowList);
+
+        } else {
+          _this.dowNowList.unshift({ url: _this.content, token: data.token, state: false });
+          $utils.setStorage('dowNowList', _this.dowNowList);
         }
       },
       fail: function (data, code) {
         prompt.showToast({
           message: code
-         })
+        })
       }
     })
     _this.open = false;
@@ -439,7 +436,7 @@ export default {
     .adImg {
       .flex-box-mixins(column, center, center);
       margin-top: 20px;
-       width: 100%;
+      width: 100%;
       .img {
         width: 100%;
       }

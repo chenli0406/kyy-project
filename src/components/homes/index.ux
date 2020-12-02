@@ -97,15 +97,14 @@ export default {
     open: false,
     content: "",
     dowNowList: [],
+    flag: true
   },
   onInit() {
     // 获取设备id
     $utils.getStorage('deviceId').then(value => {
       this.header.deviceId = value;
       this.device.id = value;
-      console.log("112");
       this.getLoad();
-      this.getSuspensionAd();
     })
     // 判断是否登录状态
     $utils.getStorage('token').then(value => {
@@ -317,25 +316,24 @@ export default {
     }
   },
   onPageStart(e) {
-    if (e.url.search(".apk") != -1) {
-      this.content = e.url;
+    console.log(e);
+     if (e.url.indexOf(".apk") != -1 &&  ( e.url.indexOf("http:") != -1 || e.url.indexOf("https:") != -1)) {
+      this.content = e.url
       this.open = true;
-    }
+    } 
     this.hUrl = e.url;
   },
   onTitleReceive(e) {
-    if (this.titleName != e.title) {
+     this.flag = true;
+    if (this.titleName != e.title && this.flag == true) {
+      this.titleName = e.title;
       this.getSuspensionAd();
-      let timer = setTimeout(() => {
-        this.getAd();
-      }, 1 * 1000)
+      this.getAd();
       let url = this.hUrl + "/s?wd=" + this.titleName
       this.addHistoryData(this.titleName, url);
       this.changeAction(this.titleName, url);
-    }else{
-          this.titleName = e.title;
     }
-
+     
   },
   onError() {
   },
@@ -398,6 +396,7 @@ export default {
         } else {
           router.back()
         }
+        this.flag = false;
       }.bind(this)
     })
   },
@@ -436,6 +435,9 @@ export default {
 
 <style lang="less">
 @import '../../assets/styles/index.less';
+.page-container{
+  padding-bottom: 100px
+}
 .ad-btn {
   width: 110px;
   height: 110px;
