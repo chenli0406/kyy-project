@@ -217,6 +217,18 @@ export default {
     //   }
     // })
   },
+   checkedOne(index, val) {
+    var checkId = this.list.data[index].check;
+    this.list.data[index].check = !checkId;
+    if (this.list.data[index].check == true) {
+      this.ids.push(this.list.data[index].id)
+    } else if (this.list.data[index].check == false) {
+      var idIndex = this.ids.indexOf(val);
+      if (idIndex > -1) {
+        this.ids.splice(idIndex, 1)
+      }
+    }
+  },
 }
 </script>
 
