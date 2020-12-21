@@ -1,6 +1,6 @@
 <template>
   <div class="page-wrapper">
-    <title-bar title="{{title}}" show-back="{{true}}"></title-bar>
+    <title-bar title="{{title}}" show-back="{{true}}" icon="{{icon}}" onget-click="getClick"></title-bar>
     <div if="{{!downloadList.length && ! nowDownl.length}}" class="no-data">
       <image class="no-data-img" src="../../assets/images/none.png"></image>
       <text style="margin-top:20px">暂无下载记录</text>
@@ -41,9 +41,14 @@
           >
             <text class="item-t">{{ $item.url | ellipsisA }}</text>
           </div>
+           <div if={{showBtn}} class="{{ $item.check == false? 'check-box' : 'check-active'}}" @click="checkedOne($idx,$item.id)"></div>
         </div>
       </list-item>
     </list>
+     <div if={{showBtn}} class="btn-box" style="flex-direction: row;justify-content:center">
+      <text @click="del" class="{{ ids.length > 0 ? 'btn': 'btn-1' }}">删除</text>
+      <text class="btn" @click="submit">完成</text>
+    </div>
   </div>
 </template>
 <import name="title-bar" src="../../components/common/bar/title-bar"></import>
@@ -53,9 +58,24 @@ import request from '@system.request'
 export default {
   protected: {
     title: '下载管理',
+    icon: require('../../assets/images/sc-icon.png'),
     token: "",
     content: "",
-    downloadList: [],
+    showBtn: false,
+    ids: [],
+    downloadList: [
+      {
+        url: '1111111111111111111'
+      },
+       {
+        url: '1111111111111111111'
+      },
+       {
+        url: '1111111111111111111'
+      }, {
+        url: '1111111111111111111'
+      }
+    ],
     nowDownl: [],
     box: true,
     box1: false,
@@ -158,7 +178,45 @@ export default {
         $utils.setStorage('dowNowList', this.nowDownl);
       }
     }
-  }
+  },
+  getClick() {
+    this.showBtn = true;
+  },
+  submit() {
+    this.showBtn = false;
+  },
+  del() {
+    let para = new Object();
+    para.ids = this.ids;
+    // $apis.common.delFavorite(para, this.header).then((res) => {
+    //   let data = JSON.parse(res.data);
+    //   if (data.code == 0) {
+    //     prompt.showToast({
+    //       message: '删除成功'
+    //     });
+    //     $apis.common.getfavoriteList({ page: this.list.page },this.header).then((res) => {
+    //       let data = JSON.parse(res.data);
+    //       if (data.code == 0) {
+    //         this.list.page = data.page;
+    //         this.list.load = data.hasMore;
+    //         if (data.favorites.length == 0) {
+    //           this.list.data = []
+    //         } else {
+    //           this.list.data = [];
+    //           data.favorites.map((item, index) => {
+    //             this.list.data.push((Object.assign({}, item, { check: false })))
+    //           })
+    //         }
+
+    //       }
+    //     })
+    //   } else {
+    //     prompt.showToast({
+    //       message: data.message
+    //     });
+    //   }
+    // })
+  },
 }
 </script>
 

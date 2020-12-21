@@ -103,10 +103,10 @@ export default {
     })
   },
   getPrivacy(){
-    $utils.route2theUrl('pages/aboutUs', { item: {title: '隐私政策',url: "http://qa.kimiz.top/privacy.html"} })
+    $utils.route2theUrl('pages/aboutUs', { item: {title: '隐私政策',url: "http://qa.mytooyoo.com/privacy.html"} })
   },
   getAgreement(){
-    $utils.route2theUrl('pages/aboutUs', { item: {title: '用户协议', url: "http://qa.kimiz.top/agreement.html"} })
+    $utils.route2theUrl('pages/aboutUs', { item: {title: '用户协议', url: "http://qa.mytooyoo.com/agreement.html"} })
   },
   goBack() {
     router.back()

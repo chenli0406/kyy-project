@@ -92,17 +92,17 @@ export default {
       {
         title: '隐私政策',
         page: 'pages/aboutUs',
-        url: "http://qa.kimiz.top/privacy.html"
+        url: "http://qa.mytooyoo.com/privacy.html"
       },
       {
         title: '用户协议',
         page: 'pages/aboutUs',
-        url: "http://qa.kimiz.top/agreement.html"
+        url: "http://qa.mytooyoo.com/agreement.html"
       },
       {
         title: '关于我们',
         page: 'pages/aboutUs',
-        url: "http://qa.kimiz.top/about.html"
+        url: "http://qa.mytooyoo.com/about.html"
       },
     ],
     options: [],

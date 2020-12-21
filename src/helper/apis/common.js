@@ -1,6 +1,6 @@
 import $ajax from '../ajax'
 import $utils from '../utils'
-let BaseUrl = 'http://qa.kimiz.top';
+let BaseUrl = 'http://qa.mytooyoo.com';
 export default {
   // 初始化
   getPing(data) {

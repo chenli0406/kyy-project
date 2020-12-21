@@ -31,6 +31,7 @@
 <script>
 import router from '@system.router'
 import prompt from '@system.prompt'
+import webview from '@system.webview'
 export default {
   protected: {
     title: '收藏',
@@ -48,7 +49,6 @@ export default {
     showBtn: false,
     header: {
       deviceId: "",
-      token: "",
     }
   },
   onInit() {
@@ -59,7 +59,7 @@ export default {
     })
     // 判断是否登录状态
     $utils.getStorage('token').then(value => {
-      this.header.token = value;
+      // this.header.token = value;
     })
   },
   onReady() {
@@ -73,9 +73,11 @@ export default {
         prompt.showToast({
           message: '删除成功'
         });
+        this.list.page = 1;
         $apis.common.getfavoriteList({ page: this.list.page },this.header).then((res) => {
           let data = JSON.parse(res.data);
           if (data.code == 0) {
+            this.ids = [];
             this.list.page = data.page;
             this.list.load = data.hasMore;
             if (data.favorites.length == 0) {
@@ -93,6 +95,7 @@ export default {
         prompt.showToast({
           message: data.message
         });
+        this.ids = [];
       }
     })
   },
@@ -167,7 +170,8 @@ export default {
     this.showBtn = false;
   },
   gotoUrl(val){
-      $utils.route2theUrl('pages/search-detail',{searchText: val.url, title : val.title});
+      // $utils.route2theUrl('pages/search-detail',{searchText: val.url, title : val.title});
+    webview.loadUrl({ url: val.url,allowthirdpartycookies: true})
   }
 }
 </script> 

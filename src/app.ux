@@ -16,7 +16,7 @@ export default {
   showMenu: $utils.showMenu,
   createShortcut: $utils.createShortcut,
   appData: {
-    BaseUrl: 'http://qa.kimiz.top',
+    BaseUrl: 'http://qa.mytooyoo.com',
   },
   onCreate() {
     // shortcut.systemPromptEnabled = false;
