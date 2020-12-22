@@ -30,23 +30,24 @@
     </list>
     <text if="{{downloadList.length}}" class="date" style="margin-top:140px">历史下载</text>
     <!-- 历史下载 -->
-    <list if="{{downloadList.length}}" class="list-box" style="margin:20px 0;">
+    <list if="{{downloadList.length}}" class="list-box" style="margin:20px 0; padding-bottom:100px;">
       <list-item type="listItem" for="{{downloadList}}">
         <div class="item-container">
           <image class="img" src="../../assets/images/download.png"></image>
           <div
             class="item-box"
-            style="flex-direction: column; align-items: flex-start;width:90%;"
+            style="flex-direction: column; align-items: flex-start;width:80%;"
             @click="gotoDown($item.url)"
           >
             <text class="item-t">{{ $item.url | ellipsisA }}</text>
           </div>
-           <div if={{showBtn}} class="{{ $item.check == false? 'check-box' : 'check-active'}}" @click="checkedOne($idx,$item.id)"></div>
+           <div if={{showBtn}} class="{{ $item.check == false? 'check-box' : 'check-active'}}"
+            @click="checkedOne($idx,$item.check,$item.url)"></div>
         </div>
       </list-item>
     </list>
-     <div if={{showBtn}} class="btn-box" style="flex-direction: row;justify-content:center">
-      <text @click="del" class="{{ ids.length > 0 ? 'btn': 'btn-1' }}">删除</text>
+     <div if={{showBtn}}  class="btn-box" style="flex-direction: row;justify-content:center">
+      <text @click="delAll" class="{{ ids.length > 0 ? 'btn': 'btn-1' }}">删除</text>
       <text class="btn" @click="submit">完成</text>
     </div>
   </div>
@@ -63,19 +64,7 @@ export default {
     content: "",
     showBtn: false,
     ids: [],
-    downloadList: [
-      {
-        url: '1111111111111111111'
-      },
-       {
-        url: '1111111111111111111'
-      },
-       {
-        url: '1111111111111111111'
-      }, {
-        url: '1111111111111111111'
-      }
-    ],
+    downloadList: [],
     nowDownl: [],
     box: true,
     box1: false,
@@ -91,7 +80,6 @@ export default {
     // if (this.content != "") {
     //   this.nowDownl.unshift({ url: this.content });
     // }
-    
     $utils.getStorage('dowNowList').then(value => {
       this.nowDownl = JSON.parse(value);
       for (let key of this.nowDownl) {
@@ -112,7 +100,7 @@ export default {
     $utils.getStorage('downloadList').then(value => {
       this.downloadList = JSON.parse(value);
     })
-
+   
   },
   onDestroy() {
     // $utils.deleteStorage('dowNowList');
@@ -128,13 +116,13 @@ export default {
             _this.box2 = false;
             if (_this.downloadList.length > 10) {
               _this.downloadList.pop();
-              _this.downloadList.unshift({ url: data.uri });
+              _this.downloadList.unshift({ url: data.uri , check: false});
               $utils.setStorage('downloadList', _this.downloadList);
               let index = i;
               _this.nowDownl.splice(index, 1);
               $utils.setStorage('dowNowList', _this.nowDownl);
             } else {
-              _this.downloadList.unshift({ url: data.uri });
+              _this.downloadList.unshift({ url: data.uri,check: false });
               $utils.setStorage('downloadList', _this.downloadList);
                let index = i;
               _this.nowDownl.splice(index, 1);
@@ -180,50 +168,33 @@ export default {
     }
   },
   getClick() {
-    this.showBtn = true;
+    if(this.downloadList.length>0){
+         this.showBtn = true;
+    }
+    
   },
   submit() {
     this.showBtn = false;
   },
-  del() {
-    let para = new Object();
-    para.ids = this.ids;
-    // $apis.common.delFavorite(para, this.header).then((res) => {
-    //   let data = JSON.parse(res.data);
-    //   if (data.code == 0) {
-    //     prompt.showToast({
-    //       message: '删除成功'
-    //     });
-    //     $apis.common.getfavoriteList({ page: this.list.page },this.header).then((res) => {
-    //       let data = JSON.parse(res.data);
-    //       if (data.code == 0) {
-    //         this.list.page = data.page;
-    //         this.list.load = data.hasMore;
-    //         if (data.favorites.length == 0) {
-    //           this.list.data = []
-    //         } else {
-    //           this.list.data = [];
-    //           data.favorites.map((item, index) => {
-    //             this.list.data.push((Object.assign({}, item, { check: false })))
-    //           })
-    //         }
-
-    //       }
-    //     })
-    //   } else {
-    //     prompt.showToast({
-    //       message: data.message
-    //     });
-    //   }
-    // })
+  delAll() {
+    console.log(this.ids);
+      for(let i = 0; i< this.downloadList.length; i++){
+        for(let j =0; j< this.ids.length;j++){
+            if(this.ids[j] == this.downloadList[i].url){
+             this.downloadList.splice(i,1)   }
+        }
+      }
+      this.showBtn = false;
+      this.ids = [];
+      $utils.setStorage('downloadList', this.downloadList);
   },
-   checkedOne(index, val) {
-    var checkId = this.list.data[index].check;
-    this.list.data[index].check = !checkId;
-    if (this.list.data[index].check == true) {
-      this.ids.push(this.list.data[index].id)
-    } else if (this.list.data[index].check == false) {
-      var idIndex = this.ids.indexOf(val);
+  checkedOne(index,check,url) {
+    var checkId = this.downloadList[index].check;
+    this.downloadList[index].check = !checkId;
+    if (this.downloadList[index].check == true) {
+       this.ids.push(url)
+    } else if (this.downloadList[index].check == false) {
+     var idIndex = this.ids.indexOf(url);
       if (idIndex > -1) {
         this.ids.splice(idIndex, 1)
       }
@@ -325,4 +296,45 @@ export default {
   border-radius: 6px;
   height: 6px;
 }
+ .check-box {
+        margin-top: 10px;
+        align-items: center;
+        width: 40px;
+        height: 40px;
+        border: 2px solid #ccc;
+        border-radius: 20px;
+      }
+      .check-active {
+        width: 40px;
+        height: 40px;
+        margin-top: 10px;
+        background-image: url('../../assets/images/check.png');
+        background-position: center;
+      }
+  .btn-box {
+    width: 100%;
+    position: fixed;
+    bottom: 2px;
+    background-color: #fff;
+    .btn-1 {
+      width: 36%;
+      height: 80px;
+      font-size: 40px;
+      color: #999999;
+      text-align: center;
+      margin: 20px;
+      background-color: #e2e2e2;
+      border-radius: 40px;
+    }
+    .btn {
+      width: 36%;
+      height: 80px;
+      color: #fff;
+      font-size: 40px;
+      text-align: center;
+      background-color: #567aff;
+      margin: 20px;
+      border-radius: 40px;
+    }
+  }
 </style>

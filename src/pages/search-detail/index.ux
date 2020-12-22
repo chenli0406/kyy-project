@@ -425,6 +425,7 @@ export default {
     this.adDialog = false;
   },
   onPageStart(e) {
+    console.log(e)
     if (e.url.indexOf(".apk") != -1 &&  ( e.url.indexOf("http:") != -1 || e.url.indexOf("https:") != -1)) {
       this.content = e.url
       this.open = true;
