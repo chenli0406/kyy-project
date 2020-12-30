@@ -67,7 +67,7 @@
             <div class="login-btn">
               <text class="login-title" if={{logined}}>已登录</text>
               <text class="login-title" else @click="login">点击登录</text>
-              <text class="login-btn-title">欢迎使用XX浏览器</text>
+              <text class="login-btn-title">欢迎使用茉莉浏览器</text>
             </div>
             <text class="btn" if={{addFlag}}>已加入桌面</text>
             <text class="btn" else @click="addShortCut">加入桌面</text>

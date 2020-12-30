@@ -40,7 +40,7 @@ yarn server
 # 在终端另一 Tab 下运行：
 yarn watch
 https://blog.csdn.net/yanical/article/details/7213289
-# ✨ 新增「快应用」页面
+# ✨ 新增「茉莉浏览器」页面
 yarn gen YourPageName
 ## 6、内置命令
 
@@ -51,7 +51,7 @@ yarn gen YourPageName
 | `yarn watch`  | 开启监听(watch)  | 如不嫌麻烦，可使用，不推荐 |
 | `yarn build ` | 编译打包，生成 `rpk`包  | 对内置 `hap build` 命令的转接 |
 | `yarn release ` | 生成 `rpk`包并增加签名  | 对内置 `hap release` 命令的转接  |
-| `yarn gen `  | 新增「快应用」页面 | 助你高效生成页面，模版可自定义，推荐 ✓|
+| `yarn gen `  | 新增「茉莉浏览器」页面 | 助你高效生成页面，模版可自定义，推荐 ✓|
 | `yarn prettier`  | 一键美化代码(js/css/less/ux)  | 实在是团队开发好帮手，推荐 ✓ |
 | `yarn prettier-watch`  | 对变化代码文件格式、实时美化 | 极大提升代码编写效率，强烈推荐 ✔️|
 
